@@ -25,6 +25,8 @@ interface ProviderModel<TRules extends readonly ProviderFormRule[] = readonly Pr
   voices?: { title: string; voice: string }[];
   /** 模型专属的 form-create JSON 规则，节点表单值作为 request.other 传入。 */
   rules?: TRules;
+  /** 适配器自定义的调用与回退配置（如 callMode、endpoint、resultPath、priority）；宿主不解释，仅供应商自身读取。 */
+  adapter?: Record<string, unknown>;
 }
 
 interface ProviderFormRule {
@@ -42,6 +44,8 @@ interface ProviderContext<TConfig = Record<string, unknown>> {
   signal?: AbortSignal;
   /** 宿主直接注入工具，供应商无需 import；FFmpeg 为按需安装的插件能力。 */
   tool: ProviderTools;
+  /** 运行时注入的供应商自身模型列表，便于按模型配置分派（如候选回退顺序）。 */
+  models?: ProviderModel[];
 }
 
 interface MediaRequest {

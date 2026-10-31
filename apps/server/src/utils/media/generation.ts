@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 import { mediaProviders, type Provider } from "@toonflow/providers";
 import type { GeneratedMedia, MediaGenerationRequest, MediaModel, MediaReference } from "@toonflow/tools-scaffold/runtime";
 import conf from "@/utils/conf";
+import { getConfigApiKey, getConfigBaseUrl } from "@/utils/appConfig";
 import { getMediaProvider, listMediaProviders, loadMediaProviderSource } from "@/utils/media/provider";
 import { lockWorkspaceFiles, resolveWorkspacePath, writeWorkspaceFile } from "@/utils/workspace/files";
 import { beginGeneration, getProviderPrice } from "@/utils/media/billing";
@@ -154,7 +155,12 @@ async function configuredProvider(request: MediaGenerationRequest, mediaType: "i
   const info = await getMediaProvider(request.providerId);
   if (!info.models.some(model => model.id === request.modelId && model.type === mediaType)) invalid("所选媒体模型不存在或类型不匹配，请重新选择");
   const configurations = record(conf.get("settings", {}).mediaProviderConfigs);
-  return loadMediaProviderSource(info.source, record(configurations[info.id]), signal, undefined, directory);
+  // ACT: config.json 中集中托管的 apiKey/baseUrl 优先级高于 data/settings.json，便于团队统一配置且不入库；未配置项保留设置界面的值。
+  const stored = record(configurations[info.id]);
+  const overrideApiKey = getConfigApiKey(info.id);
+  const overrideBaseUrl = getConfigBaseUrl(info.id);
+  const config = { ...stored, ...(overrideApiKey ? { apiKey: overrideApiKey } : {}), ...(overrideBaseUrl ? { baseUrl: overrideBaseUrl } : {}) };
+  return loadMediaProviderSource(info.source, config, signal, undefined, directory);
 }
 
 async function preparePriceRequest(directory: string | undefined, mediaType: "image" | "video" | "audio", request: MediaGenerationRequest, signal?: AbortSignal) {

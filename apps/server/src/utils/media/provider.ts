@@ -9,6 +9,7 @@ import tfRouter from "@toonflow/providers/media/tfRouter";
 import { parse, parseExpression } from "@babel/parser";
 import { z } from "zod";
 import conf from "@/utils/conf";
+import { getConfigApiKey } from "@/utils/appConfig";
 import { convertAudio } from "@/utils/media/audioProcessor";
 import { createWorkspaceFfmpeg } from "@/utils/ffmpeg";
 import { lockWorkspaceFiles, writeWorkspaceFile } from "@/utils/workspace/files";
@@ -171,7 +172,7 @@ function parseProvider(source: string) {
         : target.computed && target.property.type === "StringLiteral" ? target.property.value : "";
       return ["vendor", "textRequest", "imageRequest", "videoRequest", "ttsRequest"].includes(name);
     });
-    if (legacy) invalid("检测到旧版 Toonflow 供应商 TS，无法在 Toonflow 2.0 中使用。请在「添加自定义媒体供应商」中点击「一键复制提示词」，结合旧代码和接口资料重新生成新版代码后再导入。");
+    if (legacy) invalid("检测到旧版 chat2movie 供应商 TS，无法在 chat2movie 2.0 中使用。请在「添加自定义媒体供应商」中点击「一键复制提示词」，结合旧代码和接口资料重新生成新版代码后再导入。");
     invalid("供应商须通过 export default 导出对象");
   }
   const object = unwrap(exported.declaration as Expression);
@@ -318,6 +319,9 @@ export async function saveMediaProvider(fileName: string, models: z.infer<typeof
 }
 
 export function getMediaProviderApiKey(id: string) {
+  // ACT: 优先使用仓库根 config.json 中集中托管的密钥（不入库）；未配置时回退到 data/settings.json 的旧存储，保证兼容。
+  const fromConfig = getConfigApiKey(id);
+  if (fromConfig) return fromConfig;
   const value: unknown = conf.get(`settings.mediaProviderConfigs.${id}.apiKey`);
   return typeof value === "string" ? value.trim().replace(/^Bearer(?:\s+|$)/i, "").trim() : "";
 }

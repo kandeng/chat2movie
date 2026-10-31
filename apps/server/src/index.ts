@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import { createApp } from "./app";
-import config from "../../../electrobun.config";
+// ACT: 应用版本号改为读取仓库根 package.json（可用 TOONFLOW_APP_VERSION 覆盖），不再依赖已移除的 electrobun 配置。
+import rootPackage from "../../../package.json";
 
 const startTime = Date.now();
 const realPort = Number(process.env.TOONFLOW_SERVER_PORT || 3000);
@@ -11,7 +12,7 @@ const appDirectory = resolve(import.meta.dirname, fromSource ? "../../.." : "../
 const dataDirectory = process.env.TOONFLOW_DATA_DIR ?? resolve(appDirectory, "data");
 const app = await createApp({
   webRoot: resolve(appDirectory, "build/web"),
-  appVersion: config.app.version,
+  appVersion: process.env.TOONFLOW_APP_VERSION || rootPackage.version,
   dataDirectory,
   toolsRoot: resolve(appDirectory, "build/tools"),
   nodesRoot: resolve(appDirectory, "build/nodes"),
@@ -22,11 +23,9 @@ const app = await createApp({
   skillsRoot: resolve(appDirectory, fromSource ? "packages/skills" : "build/skills"),
 });
 const { initializeMcpRuntime } = await import("./utils/mcp/runtime");
-const { startMobileLinkRuntime } = await import("./utils/mobileLink");
 app.listen(realPort, async (error?: Error) => {
   if (error) throw error;
   await initializeMcpRuntime(app, `http://127.0.0.1:${realPort}`, resolve(appDirectory, fromSource ? "packages/mcp/src/stdio.ts" : "build/mcp/stdio.js"));
-  await startMobileLinkRuntime(app).catch(error => console.error("设备互联启动失败：", error));
   console.log(`[服务启动成功]: http://localhost:${realPort}`);
   console.log(`[启动耗时]: ${(Date.now() - startTime).toFixed(2)}ms`);
 });

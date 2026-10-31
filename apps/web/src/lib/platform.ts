@@ -1,35 +1,19 @@
-// ACT: 客户端切换连接会重新加载页面，运行模式只在启动时读取。
-const parameters = new URLSearchParams(window.location.search);
-const desktop = parameters.get("desktop") === "1";
-const mobile = parameters.get("mobile") === "1";
-const remoteConnection = (mobile || desktop) && parameters.get("remote") === "1";
-const platformSimulationValues = ["actual", "browser", "windowsDesktop", "macDesktop", "mobile"] as const;
-
-// ACT: 模拟只用于前端分支；宿主握手、原生调用与连接边界始终读取真实平台。
+// ACT: 客户端（桌面/移动）已随本次精简移除，网页始终运行在浏览器模式；
+// 不再解析 ?desktop/?mobile/?remote，也不提供平台模拟。保留导出名以兼容既有引用，桌面/移动相关值恒为 false。
 export const actualPlatform = {
-  isDesktop: desktop,
-  isMobile: mobile,
-  isRemoteConnection: remoteConnection,
-  isLocalDesktop: desktop && !remoteConnection,
-  isLocalMobile: mobile && !remoteConnection,
+  isDesktop: false,
+  isMobile: false,
+  isRemoteConnection: false,
+  isLocalDesktop: false,
+  isLocalMobile: false,
   isWindows: /Windows/i.test(navigator.userAgent),
   isMac: navigator.platform.includes("Mac"),
-} as const;
+};
 
-export const platformSimulation = platformSimulationValues.find(value => value === parameters.get("simulatePlatform")) ?? "actual";
-export const isMobile = platformSimulation === "actual" ? actualPlatform.isMobile : platformSimulation === "mobile";
-export const isDesktop = platformSimulation === "actual" ? actualPlatform.isDesktop : platformSimulation === "windowsDesktop" || platformSimulation === "macDesktop";
-export const isRemoteConnection = actualPlatform.isRemoteConnection;
-export const isLocalDesktop = isDesktop && !isRemoteConnection;
-export const isLocalMobile = isMobile && !isRemoteConnection;
-export const isWindows = platformSimulation === "actual" || platformSimulation === "browser" ? actualPlatform.isWindows : platformSimulation === "windowsDesktop";
-export const isMac = platformSimulation === "actual" || platformSimulation === "browser" ? actualPlatform.isMac : platformSimulation === "macDesktop";
-
-export function setPlatformSimulation(value: string) {
-  if (!platformSimulationValues.some(option => option === value)) throw new Error("不支持的模拟平台");
-  if (value === platformSimulation) return;
-  const url = new URL(window.location.href);
-  if (value === "actual") url.searchParams.delete("simulatePlatform");
-  else url.searchParams.set("simulatePlatform", value);
-  window.location.replace(url.href);
-}
+export const isMobile: boolean = false;
+export const isDesktop: boolean = false;
+export const isRemoteConnection: boolean = false;
+export const isLocalDesktop: boolean = false;
+export const isLocalMobile: boolean = false;
+export const isWindows = actualPlatform.isWindows;
+export const isMac = actualPlatform.isMac;

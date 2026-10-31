@@ -1,26 +1,23 @@
-// ACT: 一个进程一个宿主，由启动入口声明；子进程默认是独立服务，不继承宿主权限。
-let runtimeHost: "server" | "desktop" | "mobile" = "server";
-
-export function setRuntimeHost(host: typeof runtimeHost) {
-  runtimeHost = host;
-}
-
-// 宿主在启动过程中设置，每次调用读取，不在导入时缓存或初始化配置。
+// ACT: 客户端（桌面/移动）已随本次精简移除，服务端进程是唯一宿主；
+// 平台信息仅用于区分“本机原生开发页面”与“服务器部署”，不再支持运行时切换宿主。
 export function getRuntimePlatform() {
   const os = (process.platform as string) === "openharmony" || (process.platform === "linux" && process.env.TOONFLOW_PLATFORM === "ohos") ? "ohos" : process.platform;
   const development = process.env.NODE_ENV === "dev";
-  const desktop = runtimeHost === "desktop";
-  const mobile = runtimeHost === "mobile";
   const desktopSystem = process.platform === "win32" || process.platform === "darwin";
   const nativeDevelopment = desktopSystem && development;
   // local 表示本机任意工作目录能力，不代替请求授权。
-  const local = desktopSystem && (development || desktop);
+  const local = desktopSystem && development;
 
   return {
-    os, development, desktop, mobile, local,
+    os,
+    development,
+    // ACT: 桌面/移动宿主已移除，恒为 false；保留字段以维持返回结构稳定。
+    desktop: false,
+    mobile: false,
+    local,
     nativeDevelopment,
-    browserSupported: desktop || development,
-    // 此限制与 local 不等价：Linux 桌面宿主仍限制 Host，但不开放任意工作目录。
-    requiresLocalHost: desktop || nativeDevelopment,
+    browserSupported: development,
+    // 此限制与 local 不等价：仅本机原生开发场景要求 Host 为本机。
+    requiresLocalHost: nativeDevelopment,
   };
 }

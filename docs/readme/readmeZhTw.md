@@ -1,21 +1,13 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=Toonflow&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="Toonflow" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=chat2movie&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="chat2movie" width="100%" />
 
 <p>
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app">
+  <a href="https://github.com/kandeng/chat2movie">
     <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" />
-  </a>
-  &nbsp;|&nbsp;
-  <a href="https://gitee.com/HBAI-Ltd/Toonflow-app">
-    <img src="https://img.shields.io/badge/Gitee-C71D23?style=flat-square&logo=gitee&logoColor=white" alt="Gitee" />
-  </a>
-  &nbsp;|&nbsp;
-  <a href="https://atomgit.com/HBAI-Ltd/Toonflow-app">
-    <img src="../images/atomgitLogo.svg" alt="AtomGit" height="20" />
   </a>
 </p>
 
 <p align="center">
-  <a href="../../README.md">简体中文</a> |
+  <a href="../../README_toonflow.md">简体中文</a> |
   <strong>繁體中文</strong> |
   <a href="./readmeEn.md">English</a> |
   <a href="./readmeJa.md">日本語</a> |
@@ -45,47 +37,44 @@
 <div align="center">
 
 <p align="center">
-  <img src="../images/logo.png" alt="Toonflow 標誌" width="120" height="120" />
+  <img src="../images/logo.png" alt="chat2movie 標誌" width="120" height="120" />
 </p>
 
 <a href="https://git.io/typing-svg">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=Toonflow;AI%20%E7%9F%AD%E5%8A%87%E5%B7%A5%E5%BB%A0;%E8%AE%93%E9%9D%88%E6%84%9F%E6%88%90%E7%82%BA%E7%9C%8B%E5%BE%97%E8%A6%8B%E7%9A%84%E6%95%85%E4%BA%8B" />
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=Toonflow;AI%20%E7%9F%AD%E5%8A%87%E5%B7%A5%E5%BB%A0;%E8%AE%93%E9%9D%88%E6%84%9F%E6%88%90%E7%82%BA%E7%9C%8B%E5%BE%97%E8%A6%8B%E7%9A%84%E6%95%85%E4%BA%8B" alt="Toonflow · AI 短劇工廠 · 讓靈感成為看得見的故事" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=chat2movie;AI%20%E7%9F%AD%E5%8A%87%E5%B7%A5%E5%BB%A0;%E8%AE%93%E9%9D%88%E6%84%9F%E6%88%90%E7%82%BA%E7%9C%8B%E5%BE%97%E8%A6%8B%E7%9A%84%E6%95%85%E4%BA%8B" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=chat2movie;AI%20%E7%9F%AD%E5%8A%87%E5%B7%A5%E5%BB%A0;%E8%AE%93%E9%9D%88%E6%84%9F%E6%88%90%E7%82%BA%E7%9C%8B%E5%BE%97%E8%A6%8B%E7%9A%84%E6%95%85%E4%BA%8B" alt="chat2movie · AI 短劇工廠 · 讓靈感成為看得見的故事" width="600" />
   </picture>
 </a>
 
 <p align="center">
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/stargazers">
-    <img src="https://img.shields.io/github/stars/HBAI-Ltd/Toonflow-app?style=for-the-badge&logo=github" alt="星標徽章" />
+  <a href="https://github.com/kandeng/chat2movie/stargazers">
+    <img src="https://img.shields.io/github/stars/kandeng/chat2movie?style=for-the-badge&logo=github" alt="星標徽章" />
   </a>
   <a href="../../LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT 授權徽章" />
   </a>
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/releases">
-    <img src="https://img.shields.io/github/v/release/HBAI-Ltd/Toonflow-app?style=for-the-badge" alt="發行版本" />
+  <a href="https://github.com/kandeng/chat2movie/releases">
+    <img src="https://img.shields.io/github/v/release/kandeng/chat2movie?style=for-the-badge" alt="發行版本" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/network/members">
-    <img src="https://img.shields.io/github/forks/HBAI-Ltd/Toonflow-app?style=for-the-badge&logo=github&color=orange" alt="Fork 徽章" />
-  </a>
-  <a href="https://atomgit.com/HBAI-Ltd/Toonflow-app">
-    <img src="https://img.shields.io/badge/AtomGit-G--Star%20No.540-FF6B35?style=for-the-badge&logo=git&logoColor=white" alt="AtomGit G-Star No.540" />
+  <a href="https://github.com/kandeng/chat2movie/network/members">
+    <img src="https://img.shields.io/github/forks/kandeng/chat2movie?style=for-the-badge&logo=github&color=orange" alt="Fork 徽章" />
   </a>
   <a href="https://discord.gg/HEjKmpNpAZ">
     <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/issues">
-    <img src="https://img.shields.io/github/issues/HBAI-Ltd/Toonflow-app?style=for-the-badge&color=F48D73" alt="問題追蹤" />
+  <a href="https://github.com/kandeng/chat2movie/issues">
+    <img src="https://img.shields.io/github/issues/kandeng/chat2movie?style=for-the-badge&color=F48D73" alt="問題追蹤" />
   </a>
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/HBAI-Ltd/Toonflow-app?style=for-the-badge&color=2088FF" alt="貢獻者" />
+  <a href="https://github.com/kandeng/chat2movie/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/kandeng/chat2movie?style=for-the-badge&color=2088FF" alt="貢獻者" />
   </a>
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/commits">
-    <img src="https://img.shields.io/github/last-commit/HBAI-Ltd/Toonflow-app?style=for-the-badge&color=blueviolet" alt="最近提交" />
+  <a href="https://github.com/kandeng/chat2movie/commits">
+    <img src="https://img.shields.io/github/last-commit/kandeng/chat2movie?style=for-the-badge&color=blueviolet" alt="最近提交" />
   </a>
 </p>
 <p align="center">
@@ -97,29 +86,29 @@
 
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="HBAI-Ltd/Toonflow-app | Trendshift HTML Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="HBAI-Ltd/Toonflow-app | Trendshift Vue Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="HBAI-Ltd/Toonflow-app | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
-  </a>
-</p>
-<p align="center">
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="HBAI-Ltd/Toonflow-app | Trendshift Vue Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="HBAI-Ltd/Toonflow-app | Trendshift HTML Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="HBAI-Ltd/Toonflow-app | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
   </a>
 </p>
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="HBAI-Ltd/Toonflow-app | Trendshift HTML Repository Of The Month" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+  </a>
+</p>
+<p align="center">
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Month" width="250" height="55" />
   </a>
 </p>
 
@@ -134,12 +123,12 @@
     <tr>
       <td width="50%" align="center">
         <a href="../images/gStar.png">
-          <img src="../images/gStar.png" alt="Toonflow AtomGit G-Star 認證證書 No.540" width="100%" />
+          <img src="../images/gStar.png" alt="chat2movie AtomGit G-Star 認證證書 No.540" width="100%" />
         </a>
       </td>
       <td width="50%" align="center">
         <a href="../images/gvp.jpg">
-          <img src="../images/gvp.jpg" alt="Toonflow Gitee GVP 認證證書" width="100%" />
+          <img src="../images/gvp.jpg" alt="chat2movie Gitee GVP 認證證書" width="100%" />
         </a>
       </td>
     </tr>
@@ -147,7 +136,7 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/HBAI-Ltd/Toonflow-app/releases">下載桌面版</a> ·
+  <a href="https://github.com/kandeng/chat2movie/releases">下載桌面版</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/RXFqdgR2Xo0dXZxGfd0cZCGgnwf">使用教學</a> ·
   <a href="https://api.toonflow.net/console/plugIn">外掛市集</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd">開發者文件</a> ·
@@ -158,7 +147,7 @@
 
 ## 1. 💛 贊助與支持
 
-感謝以下合作夥伴對 Toonflow 開源專案的支持。
+感謝以下合作夥伴對 chat2movie 開源專案的支持。
 
 <table>
   <tr>
@@ -200,7 +189,7 @@
 
 ## 2. 🌟 亮點
 
-Toonflow 是面向短劇、動態漫畫與短影片製作的開源 AI 創作平台，將劇本、素材與影片片段整合到同一張無限畫布。
+chat2movie 是面向短劇、動態漫畫與短影片製作的開源 AI 創作平台，將劇本、素材與影片片段整合到同一張無限畫布。
 
 | 功能 | 說明 |
 | --- | --- |
@@ -224,25 +213,25 @@ Toonflow 是面向短劇、動態漫畫與短影片製作的開源 AI 創作平�
 
 <div align="center">
 
-<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="Toonflow 專案首頁與靈感創作" width="80%" /></a><br /><sub>專案首頁與靈感創作</sub>
+<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="chat2movie 專案首頁與靈感創作" width="80%" /></a><br /><sub>專案首頁與靈感創作</sub>
 
-<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="Toonflow 首次啟動與快速設定" width="80%" /></a><br /><sub>首次啟動與快速設定</sub>
+<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="chat2movie 首次啟動與快速設定" width="80%" /></a><br /><sub>首次啟動與快速設定</sub>
 
-<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="Toonflow 深色主題畫布與 AI 助手" width="80%" /></a><br /><sub>創作畫布 · 深色主題</sub>
+<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="chat2movie 深色主題畫布與 AI 助手" width="80%" /></a><br /><sub>創作畫布 · 深色主題</sub>
 
-<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="Toonflow 淺色主題畫布與 AI 助手" width="80%" /></a><br /><sub>創作畫布 · 淺色主題</sub>
+<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="chat2movie 淺色主題畫布與 AI 助手" width="80%" /></a><br /><sub>創作畫布 · 淺色主題</sub>
 
-<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="Toonflow 角色、場景與道具素材畫布" width="80%" /></a><br /><sub>角色、場景與道具素材</sub>
+<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="chat2movie 角色、場景與道具素材畫布" width="80%" /></a><br /><sub>角色、場景與道具素材</sub>
 
-<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="Toonflow 3D 導演台與鏡頭預演" width="80%" /></a><br /><sub>3D 導演台與鏡頭預演</sub>
+<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="chat2movie 3D 導演台與鏡頭預演" width="80%" /></a><br /><sub>3D 導演台與鏡頭預演</sub>
 
-<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="Toonflow 角色三視圖圖片生成" width="80%" /></a><br /><sub>角色三視圖與圖片生成</sub>
+<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="chat2movie 角色三視圖圖片生成" width="80%" /></a><br /><sub>角色三視圖與圖片生成</sub>
 
-<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="Toonflow 多參考素材影片生成" width="80%" /></a><br /><sub>多參考素材影片生成</sub>
+<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="chat2movie 多參考素材影片生成" width="80%" /></a><br /><sub>多參考素材影片生成</sub>
 
-<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="Toonflow 節點選單與群組操作" width="80%" /></a><br /><sub>節點選單與群組操作</sub>
+<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="chat2movie 節點選單與群組操作" width="80%" /></a><br /><sub>節點選單與群組操作</sub>
 
-<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="Toonflow 外掛市集" width="80%" /></a><br /><sub>外掛市集</sub>
+<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="chat2movie 外掛市集" width="80%" /></a><br /><sub>外掛市集</sub>
 
 </div>
 
@@ -254,22 +243,22 @@ Toonflow 是面向短劇、動態漫畫與短影片製作的開源 AI 創作平�
 
 | 作業系統 | GitHub |
 | --- | --- |
-| Windows | [發行版本](https://github.com/HBAI-Ltd/Toonflow-app/releases) |
-| macOS | [發行版本](https://github.com/HBAI-Ltd/Toonflow-app/releases) |
-| Android ARM64 | [下載 APK](https://github.com/HBAI-Ltd/Toonflow-app/releases/latest) |
+| Windows | [發行版本](https://github.com/kandeng/chat2movie/releases) |
+| macOS | [發行版本](https://github.com/kandeng/chat2movie/releases) |
+| Android ARM64 | [下載 APK](https://github.com/kandeng/chat2movie/releases/latest) |
 
 Android 版僅支援 ARM64 裝置，下載發行頁面的 `toonflow-版本號-android-arm64.apk` 安裝。手機內建本機 Bun 後端，可獨立執行；也可從首頁「裝置互聯」掃描 QR Code 或手動連接已開啟共享的電腦或遠端後端（支援區域網路與公開網路）。
 
 Windows 安裝程式會自動偵測並安裝 WebView2；如果安裝後開啟時閃退，請前往 [WebView2 下載頁面](https://developer.microsoft.com/microsoft-edge/webview2/) 手動安裝執行階段。
 
-macOS（Apple Silicon）將 Toonflow 拖入「應用程式」後直接開啟即可，無需事先執行終端機指令。若遇到系統安全提示，請依以下順序處理。
+macOS（Apple Silicon）將 chat2movie 拖入「應用程式」後直接開啟即可，無需事先執行終端機指令。若遇到系統安全提示，請依以下順序處理。
 
 <details>
 <summary><strong>macOS 無法安裝或開啟時的處理方式</strong></summary>
 
-**1. 在「隱私權與安全性」中允許 Toonflow**
+**1. 在「隱私權與安全性」中允許 chat2movie**
 
-如果提示「無法驗證開發者」或「Apple 無法檢查 App 是否包含惡意軟體」，先嘗試開啟 Toonflow，再前往「系統設定 → 隱私權與安全性」，找到 Toonflow 被阻擋的提示，按一下「強制打開」，並依提示確認。詳見 [Apple 官方說明](https://support.apple.com/zh-cn/102445)。
+如果提示「無法驗證開發者」或「Apple 無法檢查 App 是否包含惡意軟體」，先嘗試開啟 chat2movie，再前往「系統設定 → 隱私權與安全性」，找到 chat2movie 被阻擋的提示，按一下「強制打開」，並依提示確認。詳見 [Apple 官方說明](https://support.apple.com/zh-cn/102445)。
 
 **2. 仍因系統隔離限制無法開啟時，再嘗試移除隔離屬性**
 
@@ -307,8 +296,8 @@ sudo spctl --master-disable
 複製原始碼後，在儲存庫根目錄執行：
 
 ```sh
-git clone https://github.com/HBAI-Ltd/Toonflow-app.git
-cd Toonflow-app
+git clone https://github.com/kandeng/chat2movie.git
+cd chat2movie
 docker compose up -d --build
 ```
 
@@ -361,8 +350,8 @@ bun --version
 複製原始碼並啟動：
 
 ```sh
-git clone https://github.com/HBAI-Ltd/Toonflow-app.git
-cd Toonflow-app
+git clone https://github.com/kandeng/chat2movie.git
+cd chat2movie
 bun install --frozen-lockfile
 
 # 建置內建節點、工具、Web 與 Server
@@ -388,7 +377,7 @@ bun run start:server
 
 ### 4.5 雲端平台部署
 
-合作平台[智星雲](https://www.ai-galaxy.com/)提供官方授權的 Toonflow 商用映像檔，可直接使用預先安裝的環境。具體步驟請參閱[映像檔部署圖文教學](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1)。
+合作平台[智星雲](https://www.ai-galaxy.com/)提供官方授權的 chat2movie 商用映像檔，可直接使用預先安裝的環境。具體步驟請參閱[映像檔部署圖文教學](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1)。
 
 ---
 
@@ -418,19 +407,19 @@ https://github.com/user-attachments/assets/2d9fddac-dfdf-4640-b030-b09d7f7287e9
   </a>
 </p>
 
-TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台原始碼已完全開源，可自行部署與稽核：[HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router)。
+TF-Router 是 chat2movie 自營的官方模型中轉平台，歡迎使用。平台原始碼已完全開源，可自行部署與稽核：[HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router)。
 
 <details>
-<summary><strong>致 Toonflow 社群的一封信（發於 2026-06-08）</strong></summary>
+<summary><strong>致 chat2movie 社群的一封信（發於 2026-06-08）</strong></summary>
 
-> ### 致 Toonflow 社群的一封信
+> ### 致 chat2movie 社群的一封信
 > 130 天。
 > 不長，但足夠讓我們看清楚一些事情。
 > 從第一行程式碼提交到今天，我們走過了 130 天，發布了 20 個版本，留下了 800+ 次 Commit，寫下了 213,765 行程式碼、640,810 個字元。
 > 兩次重構，一套供應商系統，一個我們引以為傲的工作流程。
 > 我們以為這已經足夠了。
 > 但它不夠。
-> 有人跟我們說，想在 Toonflow 裡加一個自己的模組，改了半天還是看不懂。
+> 有人跟我們說，想在 chat2movie 裡加一個自己的模組，改了半天還是看不懂。
 > 有人跟我們說，社群太小，遇到問題找不到人。
 > 有人跟我們說，商業條款讓他們的專案無法落實。
 > 我們聽到了。
@@ -438,7 +427,7 @@ TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台
 > 不是因為我們有多少錢。
 > 是因為我們相信這件事值得做。
 > 所以，我們決定進行第三次重構。
-> Toonflow 的每一次重構，都朝更開源、更開放的方向發展。
+> chat2movie 的每一次重構，都朝更開源、更開放的方向發展。
 > 這一次重構，我們選擇：徹底開放。
 > 　
 > 一、MIT License
@@ -473,9 +462,9 @@ TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台
 > 重構需要時間。這段時間裡，伺服器在運作，網域要續費，團隊在熬夜，咖啡在漲價。
 > 我們沒有募資，沒有廣告，也沒有任何隱藏的商業計畫。
 > 但我們需要活下去，才能繼續把這件事做完。
-> 所以我們推出了「Toonflow 官方模型中轉平台」TF-Router。
+> 所以我們推出了「chat2movie 官方模型中轉平台」TF-Router。
 > 說實話，這個平台讓我們猶豫了很久。
-> 這個平台並不是我們原本想做的，我們不想因為一個中轉平台，讓人覺得 Toonflow 開始只顧著賺錢了。
+> 這個平台並不是我們原本想做的，我們不想因為一個中轉平台，讓人覺得 chat2movie 開始只顧著賺錢了。
 > 這個包袱，我們背了很久。
 > 但很多使用者沒有取得白名單資格，用不上 Seedance 2.0，反覆問我們有沒有辦法。
 > 我們想了很久，最後沒有其他辦法，只能決定架設一個平台，並自行與火山簽訂 Seedance 年度框架合約。
@@ -485,11 +474,11 @@ TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台
 > 你不信任我們？沒關係，你可以自己看程式碼、自己部署、自己執行。
 > 這就是我們的態度。
 > 如果你願意試用，就是對我們目前唯一能繼續支撐下去的方式，投下一票信任。
-> 如果你不願意，也沒關係，繼續使用 Toonflow，繼續罵我們，繼續提出需求。
+> 如果你不願意，也沒關係，繼續使用 chat2movie，繼續罵我們，繼續提出需求。
 > 我們都在。
 > 最後說一句真心話。
 > 我們只是一群相信「創作工具應該屬於每個人」的普通人。
-> Toonflow 從來不是我們的產品。
+> chat2movie 從來不是我們的產品。
 > 它是我們一起寫的故事。
 > 第三次重構，不是終點。
 > 是我們重新出發的地方。
@@ -505,7 +494,7 @@ TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台
 
 入群小幫手：
 
-<img src="../images/qr.png" alt="Toonflow 入群 QR Code" height="400"/>
+<img src="../images/qr.png" alt="chat2movie 入群 QR Code" height="400"/>
 
 也可以點擊圖示加入 Discord：
 
@@ -517,15 +506,15 @@ TF-Router 是 Toonflow 自營的官方模型中轉平台，歡迎使用。平台
 
 ## 8. 💌 聯絡我們
 
-📧 電子郵件：[ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=Toonflow咨询)
+📧 電子郵件：[ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=chat2movie咨询)
 
 ---
 
 ## 9. 📜 開源授權
 
-Toonflow 採用 [MIT 授權條款](../../LICENSE)。第三方相依套件與素材遵循各自的授權及著作權聲明。
+chat2movie 採用 [MIT 授權條款](../../LICENSE)。第三方相依套件與素材遵循各自的授權及著作權聲明。
 
-[![Toonflow 星標歷史](https://api.star-history.com/svg?repos=HBAI-Ltd/Toonflow-app&type=Date)](https://www.star-history.com/#HBAI-Ltd/Toonflow-app&Date)
+[![chat2movie 星標歷史](https://api.star-history.com/svg?repos=kandeng/chat2movie&type=Date)](https://www.star-history.com/#kandeng/chat2movie&Date)
 
 > **不溯及既往條款**：在 v1.0.8 發布前依 AGPL-3.0 使用的使用者，繼續適用 AGPL-3.0；v1.0.8 ~ v1.1.8 繼續適用 Apache-2.0 與附加協議，不受本次授權變更影響。
 
@@ -546,4 +535,4 @@ Copyright © 2026 北京爱阿科技有限公司
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="Toonflow 頁尾" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="chat2movie 頁尾" width="100%" />

@@ -1,4 +1,4 @@
-# Toonflow 文档目录
+# chat2movie 文档目录
 
 [返回项目首页](../README.md)
 
@@ -6,7 +6,7 @@
 
 | README 语言 | 入口 |
 | --- | --- |
-| 简体中文 | [README](../README.md) |
+| 简体中文 | [README](../README_toonflow.md) |
 | 繁體中文 | [README](./readme/readmeZhTw.md) |
 | English | [README](./readme/readmeEn.md) |
 | 日本語 | [README](./readme/readmeJa.md) |

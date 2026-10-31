@@ -7,12 +7,12 @@
           <button
             class="settingsItem"
             type="button"
-            :aria-label="item.id === 'about' && hasDesktopUpdate ? `${item.label}，有新版本可用` : item.label"
+            :aria-label="item.label"
             :aria-pressed="activePanel.id === item.id"
             @click="activePanel = item">
-            <el-badge class="panelIcon" isDot :hidden="item.id !== 'about' || !hasDesktopUpdate">
+            <span class="panelIcon">
               <component :is="item.icon" :size="18" aria-hidden="true" />
-            </el-badge>
+            </span>
             <span>{{ item.label }}</span>
           </button>
         </template>
@@ -25,7 +25,7 @@
               <component
                 :is="activePanel.component"
                 v-bind="
-                  ['pluginMarket', 'languageModel', 'mediaModel', 'personalization', 'deviceLink'].includes(activePanel.id) ? { visible } : {}
+                  ['pluginMarket', 'languageModel', 'mediaModel', 'personalization'].includes(activePanel.id) ? { visible } : {}
                 " />
             </keep-alive>
           </transition>
@@ -37,8 +37,6 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent, shallowRef } from "vue";
-import { hasDesktopUpdate } from "@/stores/desktopUpdate";
-import { isMobile } from "@/lib/platform";
 import {
   IconPalette,
   IconSettings,
@@ -50,7 +48,6 @@ import {
   IconPlugConnected,
   IconUserCog,
   IconSubtitlesAi,
-  IconDevices,
   IconNetwork,
 } from "@tabler/icons-vue";
 
@@ -74,9 +71,6 @@ const settingsPanels = [
   },
   { id: "mcp", label: "MCP", icon: IconPlugConnected, groupLabel: "通讯", component: defineAsyncComponent(() => import("./panels/mcp/index.vue")) },
   { id: "network", label: "网络设置", icon: IconNetwork, component: defineAsyncComponent(() => import("./panels/network.vue")) },
-  ...(!isMobile
-    ? [{ id: "deviceLink", label: "设备互联", icon: IconDevices, component: defineAsyncComponent(() => import("./panels/deviceLink.vue")) }]
-    : []),
   {
     id: "personalization",
     label: "个性化",

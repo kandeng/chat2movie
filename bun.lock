@@ -13,32 +13,6 @@
         "typescript": "^7.0.2",
       },
     },
-    "apps/desktop": {
-      "name": "@toonflow/desktop",
-      "dependencies": {
-        "@toonflow/file": "workspace:*",
-        "@toonflow/i18n": "workspace:*",
-        "@toonflow/server": "workspace:*",
-        "@toonflow/startup": "workspace:*",
-        "express": "^5.2.1",
-      },
-      "devDependencies": {
-        "@types/express": "^5.0.6",
-        "electrobun": "2.0.1",
-      },
-    },
-    "apps/mobile": {
-      "name": "@toonflow/mobile",
-      "dependencies": {
-        "@toonflow/file": "workspace:*",
-        "@toonflow/server": "workspace:*",
-        "@toonflow/web": "workspace:*",
-        "express": "^5.2.1",
-      },
-      "devDependencies": {
-        "@types/express": "^5.0.6",
-      },
-    },
     "apps/server": {
       "name": "@toonflow/server",
       "dependencies": {
@@ -74,18 +48,6 @@
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
         "@types/morgan": "^1.9.10",
-      },
-    },
-    "apps/updateServer": {
-      "name": "@toonflow/updateServer",
-      "dependencies": {
-        "@toonflow/file": "workspace:*",
-        "express": "^5.2.1",
-      },
-      "devDependencies": {
-        "@types/bun": "^1.4.2",
-        "@types/express": "^5.0.6",
-        "typescript": "^7.0.2",
       },
     },
     "apps/web": {
@@ -607,13 +569,6 @@
       "version": "2.0.0",
       "dependencies": {
         "@toonflow/ffmpeg": "workspace:*",
-      },
-    },
-    "packages/startup": {
-      "name": "@toonflow/startup",
-      "version": "0.0.0",
-      "dependencies": {
-        "@toonflow/file": "workspace:*",
       },
     },
     "packages/teamScaffold": {
@@ -1390,8 +1345,6 @@
 
     "@toonflow/assets": ["@toonflow/assets@workspace:packages/assets"],
 
-    "@toonflow/desktop": ["@toonflow/desktop@workspace:apps/desktop"],
-
     "@toonflow/ext-canvas-node": ["@toonflow/ext-canvas-node@workspace:packages/ext/canvasNode"],
 
     "@toonflow/ext-image": ["@toonflow/ext-image@workspace:packages/ext/image"],
@@ -1411,8 +1364,6 @@
     "@toonflow/i18n": ["@toonflow/i18n@workspace:packages/i18n"],
 
     "@toonflow/mcp": ["@toonflow/mcp@workspace:packages/mcp"],
-
-    "@toonflow/mobile": ["@toonflow/mobile@workspace:apps/mobile"],
 
     "@toonflow/model-icons": ["@toonflow/model-icons@workspace:packages/modelIcons"],
 
@@ -1442,8 +1393,6 @@
 
     "@toonflow/server": ["@toonflow/server@workspace:apps/server"],
 
-    "@toonflow/startup": ["@toonflow/startup@workspace:packages/startup"],
-
     "@toonflow/team-storyboard": ["@toonflow/team-storyboard@workspace:packages/teams/storyboardTeam"],
 
     "@toonflow/teams-scaffold": ["@toonflow/teams-scaffold@workspace:packages/teamScaffold"],
@@ -1471,8 +1420,6 @@
     "@toonflow/tool-workspace": ["@toonflow/tool-workspace@workspace:packages/tools/workspace"],
 
     "@toonflow/tools-scaffold": ["@toonflow/tools-scaffold@workspace:packages/toolScaffold"],
-
-    "@toonflow/updateServer": ["@toonflow/updateServer@workspace:apps/updateServer"],
 
     "@toonflow/web": ["@toonflow/web@workspace:apps/web"],
 
@@ -1979,8 +1926,6 @@
     "ecdsa-sig-formatter": ["ecdsa-sig-formatter@1.0.11", "https://registry.npmmirror.com/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz", { "dependencies": { "safe-buffer": "^5.0.1" } }, "sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ=="],
 
     "ee-first": ["ee-first@1.1.1", "https://registry.npmmirror.com/ee-first/-/ee-first-1.1.1.tgz", {}, "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="],
-
-    "electrobun": ["electrobun@2.0.1", "https://registry.npmmirror.com/electrobun/-/electrobun-2.0.1.tgz", { "bin": { "electrobun": "bin/electrobun.cjs" } }, "sha512-1+OjJ0tMemjVrUEsh/AhmxnqUNpyCfJslCbcWOvkogFJuNVMmTlWMzyZem/Ts/7lg8f7ULWu8uuQBsKeGQsu7A=="],
 
     "element-plus": ["element-plus@2.14.5", "https://registry.npmmirror.com/element-plus/-/element-plus-2.14.5.tgz", { "dependencies": { "@ctrl/tinycolor": "^4.2.0", "@element-plus/icons-vue": "^2.3.2", "@floating-ui/dom": "^1.8.0", "@popperjs/core": "npm:@sxzz/popperjs-es@^2.11.8", "@types/lodash": "^4.17.24", "@types/lodash-es": "^4.17.12", "@vueuse/core": "14.4.0", "async-validator": "^4.2.5", "dayjs": "^1.11.20", "lodash": "^4.18.1", "lodash-es": "^4.18.1", "lodash-unified": "^1.0.3", "memoize-one": "^6.0.0", "normalize-wheel-es": "^1.2.0", "vue-component-type-helpers": "^3.3.9" }, "peerDependencies": { "vue": "^3.3.7" } }, "sha512-bghYy/S+qg87enHPXELirhEdDqsVAUGcGpbGIeG8dz0kwpIkGz7gYsifulBshXX74iRtHib85XWQj0uSH2A1Yg=="],
 

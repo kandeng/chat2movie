@@ -1,5 +1,13 @@
 import axios from "axios";
 
+// ACT: 该全局事件类型原本声明在已删除的 lib/desktopProtocol.ts 中；插件安装事件与桌面端无关，
+// 现迁移到插件安装的统一入口继续声明，供 canvas / mediaModel / providerBilling 等消费方读取 event.detail。
+declare global {
+  interface WindowEventMap {
+    "toonflow:plugin-installed": CustomEvent<{ type: "node" | "ext" | "tool" | "skill" | "provider" | "agent"; name: string }>;
+  }
+}
+
 export async function installPluginFile(type: "node" | "tool" | "skill" | "agent" | "ext", file: File, force = false) {
   if (!file.size || file.size > 20 * 1024 * 1024) throw new Error("请选择非空且不超过 20 MB 的插件文件");
   const payload = type === "skill" || type === "agent"

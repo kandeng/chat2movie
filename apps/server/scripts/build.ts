@@ -1,7 +1,8 @@
 import { $ } from "bun";
 import { cp, mkdir, realpath, rm } from "@toonflow/file";
 import { dirname, resolve } from "node:path";
-import config from "../../../electrobun.config";
+// ACT: 应用版本号改为读取仓库根 package.json，不再依赖已移除的 electrobun 配置。
+import rootPackage from "../../../package.json";
 import copyDocumentPackages from "./copyDocumentPackages";
 import copySandboxPackages from "./copySandboxPackages";
 
@@ -14,7 +15,7 @@ const photonDirectory = dirname(Bun.resolveSync("@silvia-odwyer/photon-node", ag
 await $`${process.execPath} run build`.cwd(resolve(projectDir, "packages/mcp"));
 await mkdir(outputDirectory, { recursive: true });
 // ACT: Photon、anydoc 与沙盒依赖保留运行时目录，WASM/Worker 不依赖源码目录或启动位置。
-await $`${process.execPath} build src/index.ts --target=bun --minify --external @silvia-odwyer/photon-node --external @firecrawl/anydoc --external @firecrawl/anydoc-wasm --external just-bash --define ${`process.env.appVersion:${JSON.stringify(config.app.version)}`} --outdir ${outputDirectory}`.cwd(resolve(projectDir, "apps/server"));
+await $`${process.execPath} build src/index.ts --target=bun --minify --external @silvia-odwyer/photon-node --external @firecrawl/anydoc --external @firecrawl/anydoc-wasm --external just-bash --define ${`process.env.appVersion:${JSON.stringify(rootPackage.version)}`} --outdir ${outputDirectory}`.cwd(resolve(projectDir, "apps/server"));
 await $`${process.execPath} build packages/ffmpeg/src/ffmpegWorker.ts --target=bun --minify --outdir ${outputDirectory}`.cwd(projectDir);
 await $`${process.execPath} build packages/tools/sandbox/src/sandboxProcess.ts --target=bun --minify --external just-bash --outdir ${outputDirectory}`.cwd(projectDir);
 const photonOutput = resolve(projectDir, "build/server/node_modules/@silvia-odwyer/photon-node");

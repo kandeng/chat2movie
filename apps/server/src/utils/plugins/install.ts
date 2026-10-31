@@ -4,7 +4,6 @@ import { dirname, join, resolve } from "node:path";
 import { createRequire } from "node:module";
 import { crc32, inflateRawSync } from "node:zlib";
 import { parseFrontmatter } from "@earendil-works/pi-coding-agent";
-import type { PluginInstallType } from "@/types/desktop";
 import conf from "@/utils/conf";
 import { parseTool, toolsDirectory } from "@/utils/plugins/tools";
 import { extDirectory, parseExt } from "@/utils/plugins/ext";
@@ -14,6 +13,9 @@ import { isWithin, lockWorkspaceFiles, writeWorkspaceFile } from "@/utils/worksp
 
 const maxBytes = 20 * 1024 * 1024;
 const require = createRequire(import.meta.url);
+
+// ACT: 桌面端类型文件（types/desktop.ts）已随客户端移除；插件安装类型在此内联定义并导出，供服务端安装逻辑复用。
+export type PluginInstallType = "node" | "tool" | "skill" | "provider" | "agent" | "ext";
 
 export function recordInstalledAt(type: PluginInstallType, name: string) {
   // ACT: 记录最近一次成功安装（含更新）；卸载后重装会覆盖旧时间，配置和内容编辑不修改此记录。
@@ -123,7 +125,7 @@ export async function installNode(fileName: string, source: string, force = fals
     invalid("节点文件实际是 HTML 网页，不是节点脚本，请重新上传构建生成的 .umd.js 文件");
   }
   // ACT: 仅静态检查脚手架约定和语法，确认安装后由画布加载执行。
-  if (!source.includes("toonflowNodeHost")) invalid("文件不是兼容的 Toonflow 节点，请使用节点脚手架构建生成的 .umd.js 文件");
+  if (!source.includes("toonflowNodeHost")) invalid("文件不是兼容的 chat2movie 节点，请使用节点脚手架构建生成的 .umd.js 文件");
   if (!source.includes(`toonflowNodes.${name}`)) invalid(t`文件名与节点导出名不一致：${fileName} 需要导出 toonflowNodes.${name}，请按实际节点名修改文件名`);
   try { new Bun.Transpiler({ loader: "js" }).scan(source); }
   catch { invalid("节点脚本语法无效，请重新构建并上传完整的 .umd.js 文件"); }
@@ -149,7 +151,7 @@ export async function installExt(fileName: string, source: string, force = false
   const name = fileName.slice(0, -7);
   const metadata = parseExt(source, name);
   if (!source.includes("toonflowExtHost") || !new RegExp(`toonflowExts\\s*\\[\\s*["']${name}["']\\s*\\]`).test(source)) {
-    invalid("文件不是兼容的 Toonflow 文件扩展，请使用扩展脚手架构建并保留原文件名");
+    invalid("文件不是兼容的 chat2movie 文件扩展，请使用扩展脚手架构建并保留原文件名");
   }
   try { new Bun.Transpiler({ loader: "js" }).scan(source); }
   catch { invalid("文件扩展脚本语法无效，请重新构建完整的 .umd.js 文件"); }

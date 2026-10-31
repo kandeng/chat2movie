@@ -7,7 +7,6 @@ import { readFile, readdir } from "@toonflow/file";
 import type { Request, Response, NextFunction } from "express";
 import buildRoute from "@/core";
 import { errorFromCause } from "@/lib/responseFormat";
-import desktopRequest from "@/lib/desktop";
 import { getRuntimePlatform } from "@/lib/platform";
 import initializePlugins from "@/utils/plugins/initialize";
 import { languageRequest, resolveRequestLocale, runWithLocale, setLocaleFallback, translateError, translateMessage } from "@/lib/i18n";
@@ -98,7 +97,6 @@ export async function createApp({
   app.use(["/api/workspaces/files/write", "/api/assets/save"], express.raw({ type: "application/octet-stream", limit: "100mb" }));
   app.use(express.json({ limit: "100mb" }));
   app.use(express.urlencoded({ extended: true, limit: "100mb" }));
-  app.use("/api/desktop", desktopRequest);
 
   const { default: initializeProviderModels } = await import("@/utils/ai/initialize");
   // ACT: 启动先使用已有模型，远程刷新不阻塞服务监听。
@@ -128,7 +126,5 @@ export async function createApp({
     response.status(body.code).json(body);
   });
 
-  const { initializeMobileLinkRuntime } = await import("@/utils/mobileLink");
-  initializeMobileLinkRuntime(app);
   return app;
 }

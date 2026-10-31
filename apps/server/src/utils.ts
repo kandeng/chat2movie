@@ -1,7 +1,6 @@
 import * as assets from "@/utils/assets";
 import * as browser from "@/utils/browser";
 import * as singleAgent from "@/utils/singleAgent";
-import * as desktop from "@/utils/desktop";
 import * as providerDebug from "@/utils/media/debug";
 import * as mediaGeneration from "@/utils/media/generation";
 import * as mediaTasks from "@/utils/media/tasks";
@@ -26,7 +25,6 @@ import * as mcpControl from "@/utils/mcp/control";
 import * as mcpRuntime from "@/utils/mcp/runtime";
 import * as mcpServers from "@/utils/mcp/servers";
 import * as mcpDxt from "@/utils/mcp/dxt";
-import * as mobileLink from "@/utils/mobileLink";
 import * as teams from "@/utils/teams";
 import * as a2aSettings from "@/agent/a2a/settings";
 import * as personalization from "@/utils/personalization";
@@ -37,7 +35,6 @@ export default {
   assets,
   browser,
   singleAgent,
-  desktop,
   providerDebug,
   mediaGeneration,
   mediaTasks,
@@ -64,7 +61,6 @@ export default {
   mcpRuntime,
   mcpServers,
   mcpDxt,
-  mobileLink,
   teams,
   a2aSettings,
   personalization,

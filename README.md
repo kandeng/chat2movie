@@ -74,9 +74,86 @@ graph TB
 
 ---
 
-## 2. AI models
+## 2. Start up and shut down
 
-### 2.1 What AI models do we need?
+Day-to-day operating guide for running the whole stack **locally**. Everything
+here is local-only — no Caddy, systemd, or remote deployment.
+
+### 2.1 What runs
+
+Three services, started in dependency order:
+
+| # | Service | Role | URL |
+| --- | --- | --- | --- |
+| 1 | **Synapse** (Matrix homeserver) | Group-chat backend for the chat-to-video prototype | `http://127.0.0.1:8008` |
+| 2 | **chat2movie server** (Bun + Express) | API + media generation; hosts `@chat2movie_bot`, which listens for `!video` | `http://localhost:3000` |
+| 3 | **Web** (Vue 3 + Vite dev server) | The site UI; proxies `/api` and `/_matrix` to the two services above | `http://localhost:5173/chat` |
+
+### 2.2 One-time prerequisites
+
+1. **Install dependencies** (Bun workspaces):
+   ```bash
+   bun install
+   ```
+2. **Create the key store** — copy the template, then fill in the real secrets
+   (`config.json` is git-ignored; keep it `chmod 600`):
+   ```bash
+   cp config_sample.json config.json   # then edit: bailian apiKey + synapse block
+   ```
+3. **Provision local Synapse** (only needed for the chat-to-video bot): a
+   homeserver venv at `/home/robot/synapse-venv`, config at
+   `/home/robot/synapse-data/homeserver.yaml`, and the bot/room accounts. If
+   Synapse is absent the server still boots — the bot simply stays dormant.
+
+### 2.3 Start up
+
+**One command (recommended)** — brings up Synapse → server → web in order and
+streams logs to `/tmp/chat2movie-dev/`:
+
+```bash
+bash scripts/dev-local.sh        # equivalently: bun run dev:local
+```
+
+- If Synapse is **already running**, the script **reuses** it instead of
+  starting a second instance.
+- When the startup banner prints, open **http://localhost:5173/chat**.
+- Logs: `/tmp/chat2movie-dev/{synapse,server,web}.log`.
+
+> **Note:** the root `bun run dev` uses `bun run --filter`, which is **broken on
+> Linux**. Always use `scripts/dev-local.sh` / `bun run dev:local` (they call
+> `bun run --cwd` internally).
+
+**Or start services individually** (when you only need part of the stack):
+
+```bash
+( cd apps/server && NODE_ENV=dev bun run dev )   # API + bot -> :3000
+( cd apps/web    && bun run dev )                # Vite UI   -> :5173
+```
+
+### 2.4 Shut down
+
+- **Normal stop:** press **Ctrl+C** in the terminal running `dev-local.sh`. Its
+  trap kills the web and server processes, and Synapse **only if the script
+  started it** — a reused Synapse is left running.
+- **Stop a reused Synapse:**
+  ```bash
+  pkill -f synapse.app.homeserver
+  ```
+- **Stop stray dev processes** (e.g. after a detached run):
+  ```bash
+  pkill -f 'bun --watch src/index.ts'   # server
+  pkill -f vite                          # web
+  ```
+- **Confirm a port is free** (`000` = nothing listening):
+  ```bash
+  curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8008/_matrix/client/versions
+  ```
+
+---
+
+## 3. AI models
+
+### 3.1 What AI models do we need?
 
 | # | Capability | Role in the pipeline | Modality |
 | --- | --- | --- | --- |
@@ -87,7 +164,7 @@ graph TB
 | 5 | **Music / BGM** | Background score for the final mix | text (+ lyrics) → audio |
 | 6 | *ASR (optional)* | Auto-subtitles / captions for the voiceover | audio → text |
 
-### 2.2 Candidate models — Bailian vs other platforms
+### 3.2 Candidate models — Bailian vs other platforms
 
 Almost everything is available on **Alibaba Bailian (Model Studio / DashScope)**.
 **Only music/BGM must come from other platforms.**
@@ -111,7 +188,7 @@ Almost everything is available on **Alibaba Bailian (Model Studio / DashScope)**
 > `adapter` per model. Each capability can hold **multiple candidates**; the
 > primary is tried first and the engine **auto-falls-back** on failure.
 
-### 2.3 How to call each model — and access status
+### 3.3 How to call each model — and access status
 
 Host: **Token Plan keys (`sk-sp-…`)** use
 `https://token-plan.cn-beijing.maas.aliyuncs.com`; **standard keys (`sk-…`)** use
@@ -136,9 +213,9 @@ Suno).
 
 ---
 
-## 3. Where configuration lives
+## 4. Where configuration lives
 
-### 3.1 API keys — repo-root `config.json` (central key store)
+### 4.1 API keys — repo-root `config.json` (central key store)
 
 Provider keys can be stored centrally in a **repo-root `config.json`** that is
 **git-ignored** (`chmod 600`). Template: [`config_sample.json`](./config_sample.json).
@@ -164,7 +241,7 @@ Provider keys can be stored centrally in a **repo-root `config.json`** that is
   `configuredProvider` (generation.ts). *Chat/custom providers still read
   `settings.customProviders[].apiKey` only.*
 
-### 3.2 Provider config — 3 tiers (models vs secrets; **do not merge**)
+### 4.2 Provider config — 3 tiers (models vs secrets; **do not merge**)
 
 **Conclusion: do not merge.** Models and secrets live in different tiers and never
 overlap, so there is no conflict.
@@ -177,7 +254,7 @@ overlap, so there is no conflict.
 
 - **At call time:** `loadMediaProviderSource` builds config as
   `{ ...rulesDefaults, ...settings.json values }` (with `config.json` overriding
-  per §3.1) and reads `models` from the source file.
+  per §4.1) and reads `models` from the source file.
 - **UI (Layer 3) = single editor:** *Settings → Media Models* edits both models
   (written back to tier B) and `apiKey`/`baseUrl` (written to tier C).
 - **Drift caveat:** tier B is a *fork* of tier A — editing the package seed does
@@ -188,7 +265,7 @@ overlap, so there is no conflict.
 
 ---
 
-## 4. Toonflow commercial platform (TF-Router) — integration investigation
+## 5. Toonflow commercial platform (TF-Router) — integration investigation
 
 > **Scope:** read-only investigation. Per product decision the links and the
 > integration are **kept as-is** (the ~90 `api.toonflow.net` references remain).
@@ -196,19 +273,19 @@ overlap, so there is no conflict.
 > connect/login, pay/recharge, account & balance, and fetching assets — so the
 > coupling is fully understood before any future removal.
 
-### 4.1 What TF-Router is
+### 5.1 What TF-Router is
 
 **TF-Router** (`https://api.toonflow.net`) is the upstream vendor's **hosted
 commercial platform**: an account/billing service, a paid AI-model gateway
 (image / video / audio generation), a community gallery (“explore”), and a
 plugin market. The rebranded app is **functionally tied** to it for those
 features. A **live probe confirms it is reachable** (landing/login pages return
-`200`; the JSON API responds and `401`-gates the auth-only routes — see §4.9).
+`200`; the JSON API responds and `401`-gates the auth-only routes — see §5.9).
 The *authenticated* flows (pay / balance / generation) still need a valid key to
 verify end-to-end. The app also runs on **private/local providers** (`bailian`,
 `music`, custom), which never touch `api.toonflow.net`.
 
-### 4.2 The single client & auth contract
+### 5.2 The single client & auth contract
 
 All *direct* browser→vendor calls live in one module:
 [`apps/web/src/lib/tf.ts`](./apps/web/src/lib/tf.ts).
@@ -219,7 +296,7 @@ All *direct* browser→vendor calls live in one module:
   download) and **sponsors** run **anonymously**; a key adds per-user state
   (like/collect). The **plugin market, recharge/billing, balance, and model
   generation** endpoints are **auth-gated** (`401` without a Bearer key) — see
-  the verified access matrix in §4.9.
+  the verified access matrix in §5.9.
 - **Response contract:** every endpoint returns `{ code, data, message? }`;
   `code === 200` is success. `tf.ts` strictly validates each payload shape and
   throws Chinese error strings otherwise.
@@ -229,9 +306,9 @@ All *direct* browser→vendor calls live in one module:
   **and** `apiUrl` origin `=== https://api.toonflow.net`.
 
 Balance and *model generation* do **not** go browser→vendor directly; they are
-proxied by the **local chat2movie server** (see §4.5–4.6).
+proxied by the **local chat2movie server** (see §5.5–5.6).
 
-### 4.3 Connect / login (how the platform is wired in)
+### 5.3 Connect / login (how the platform is wired in)
 
 Two entry points install the API key:
 
@@ -258,7 +335,7 @@ There is **no in-app registration, profile, or password management** — those
 live only on the vendor website. “Modify account” in-app == **set/replace the
 API key** and **recharge the balance**.
 
-### 4.4 Pay / recharge (how money flows)
+### 5.4 Pay / recharge (how money flows)
 
 Driver: [`tfRechargeDialog.vue`](./apps/web/src/components/settings/tfRechargeDialog.vue)
 (lazy-loaded from `tfAccount.vue` → “充值”), using `tf.ts`:
@@ -273,9 +350,9 @@ Driver: [`tfRechargeDialog.vue`](./apps/web/src/components/settings/tfRechargeDi
   - **WeChat:** `payUrl` is rendered as a **QR image** (`el-image`) → scan to pay.
   - **Alipay:** `window.open(payUrl)` (also shown as an external-link button).
 - Currency is **CNY**; payment rails are **China-domestic** (WeChat Pay / Alipay).
-- After paying, closing the dialog triggers a **balance refresh** (§4.5).
+- After paying, closing the dialog triggers a **balance refresh** (§5.5).
 
-### 4.5 Account & balance (read + live updates)
+### 5.5 Account & balance (read + live updates)
 
 Balance is fetched **through the local server**, not directly from the vendor:
 
@@ -296,7 +373,7 @@ Balance is fetched **through the local server**, not directly from the vendor:
 - `tfAccount.vue` displays **account balance, key balance (`null` = unlimited),
   total consumption, total recharge**, with refresh + recharge buttons.
 
-### 4.6 Get assets (generation, community, plugins, sponsors)
+### 5.6 Get assets (generation, community, plugins, sponsors)
 
 **Four asset channels**, all backed by `api.toonflow.net`:
 
@@ -329,7 +406,7 @@ Balance is fetched **through the local server**, not directly from the vendor:
 **Telemetry (side channel):** [`anonymousData.ts`](./apps/web/src/lib/anonymousData.ts)
 posts usage to `https://api.toonflow.net/web/telemetry/report`.
 
-### 4.7 Server-side “reference provider” coupling
+### 5.7 Server-side “reference provider” coupling
 
 `tfRouter` is hard-wired as the **default/reference provider** on the server,
 so removing it later is *surgical*, not a delete:
@@ -349,7 +426,7 @@ so removing it later is *surgical*, not a delete:
 - Sort pinning to keep TF first: [`nodeShared/groupNodeModels.ts`](./packages/nodeShared/src/groupNodeModels.ts)
   and [`modelPopover.vue`](./apps/web/src/components/modelPopover.vue).
 
-### 4.8 Endpoint inventory (base `https://api.toonflow.net`)
+### 5.8 Endpoint inventory (base `https://api.toonflow.net`)
 
 | Purpose | Method · path | Caller | Auth |
 | --- | --- | --- | --- |
@@ -372,7 +449,7 @@ so removing it later is *surgical*, not a delete:
 `POST /api/providers/media/add`, `POST /api/ai/media/balance`,
 `GET /api/ai/media/balanceEvents` (SSE), and the media-generation route.
 
-### 4.9 Anonymous vs authenticated access (verified live)
+### 5.9 Anonymous vs authenticated access (verified live)
 
 Probed directly against `api.toonflow.net` **without any API key**. `✅` =
 returns data anonymously; `❌ 401` = auth-gated (needs a Bearer key).
@@ -401,11 +478,11 @@ returns data anonymously; `❌ 401` = auth-gated (needs a Bearer key).
   recharge, reactions) **refuses to send** without a key. So the plugin market
   is unreachable in-app until a TF-Router API key is configured.
 
-### 4.10 Bottom line (the “brand vs reality” gap)
+### 5.10 Bottom line (the “brand vs reality” gap)
 
 The app is **rebranded** but the *connect → pay → balance → assets* lifecycle is
 still **owned by the vendor's platform**. The platform is **reachable**
-(§4.9): public explore browsing works anonymously, while the plugin market,
+(§5.9): public explore browsing works anonymously, while the plugin market,
 billing, balance and generation all require a TF-Router account/key.
 **Local/private providers** (`bailian`, `music`, custom) keep the product usable
 independently of the vendor. Fully severing this coupling is the paused **B2
@@ -414,7 +491,7 @@ deliberately **not** done here.
 
 ---
 
-## 5. Open problems / decisions needed
+## 6. Open problems / decisions needed
 
 1. **Image + TTS blocked by the `sk-sp-` Token Plan tier** (video/chat only).
    Code paths are complete and dormant. *Decision: provision a standard `sk-`

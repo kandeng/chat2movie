@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import("@/pages/home/index.vue"),
     },
     {
+      // ACT: 聊天转视频原型的群聊页面（单一演示房间，身份固定为 host，无网站登录态）。
+      path: "/chat",
+      component: () => import("@/pages/chat/index.vue"),
+    },
+    {
       path: "/canvas",
       redirect: "/workspace",
     },

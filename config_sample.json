@@ -5,7 +5,8 @@
     "precedence": "config.json 中的 apiKey / baseUrl 优先级高于 data/settings.json；未在此配置的供应商会自动回退到「设置」界面中保存的值。",
     "apiKey": "必填。可直接粘贴，也可带 'Bearer ' 前缀（代码会自动去除）。",
     "baseUrl": "可选。留空或删除该项则使用供应商内置默认地址。百炼 Token Plan 密钥(sk-sp-)用 https://token-plan.cn-beijing.maas.aliyuncs.com ；标准密钥(sk-)用 https://dashscope.aliyuncs.com 。",
-    "env": "如需自定义 config.json 路径，可设置环境变量 TOONFLOW_CONFIG_FILE 指向该文件。"
+    "env": "如需自定义 config.json 路径，可设置环境变量 TOONFLOW_CONFIG_FILE 指向该文件。",
+    "synapse": "可选。启用聊天转视频原型时填写本地 Synapse（Matrix）homeserver 的连接信息；adminAccessToken 用于通过 Admin API 创建账号并代为签发令牌。"
   },
   "providers": {
     "bailian": {
@@ -16,5 +17,12 @@
       "apiKey": "sk-your-toonflow-router-key",
       "baseUrl": "https://api.toonflow.net/v1"
     }
+  },
+  "synapse": {
+    "baseUrl": "http://127.0.0.1:8008",
+    "serverName": "localhost",
+    "adminAccessToken": "syt_your-synapse-admin-access-token",
+    "botUserId": "@chat2movie_bot:localhost",
+    "roomId": "!your-room-id:localhost"
   }
 }

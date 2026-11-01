@@ -12,7 +12,8 @@ import initializePlugins from "@/utils/plugins/initialize";
 import { languageRequest, resolveRequestLocale, runWithLocale, setLocaleFallback, translateError, translateMessage } from "@/lib/i18n";
 import { detectLocale, normalizeLocale } from "@toonflow/i18n";
 
-const autoInstallProviders = ["tfRouter.ts", "apiMart.ts", "metaso.ts", "compshare.ts"];
+// ACT: 原型需要开箱即用的视频生成——bailian 的密钥已托管在 config.json，故把 bailian.ts 一并纳入内置自动安装，使「设置 → 媒体模型」出现其视频模型且生成时自动取用该密钥。
+const autoInstallProviders = ["tfRouter.ts", "apiMart.ts", "metaso.ts", "compshare.ts", "bailian.ts"];
 
 export async function createApp({
   webRoot,

@@ -46,6 +46,7 @@ import {
   IconCode,
   IconShieldLock,
   IconPlugConnected,
+  IconMovie,
   IconUserCog,
   IconSubtitlesAi,
   IconNetwork,
@@ -70,6 +71,7 @@ const settingsPanels = [
     component: defineAsyncComponent(() => import("./panels/pluginMarket/index.vue")),
   },
   { id: "mcp", label: "MCP", icon: IconPlugConnected, groupLabel: "通讯", component: defineAsyncComponent(() => import("./panels/mcp/index.vue")) },
+  { id: "chatToVideo", label: "聊天转视频", icon: IconMovie, component: defineAsyncComponent(() => import("./panels/chatToVideo/index.vue")) },
   { id: "network", label: "网络设置", icon: IconNetwork, component: defineAsyncComponent(() => import("./panels/network.vue")) },
   {
     id: "personalization",

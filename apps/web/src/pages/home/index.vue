@@ -24,6 +24,12 @@
         </button>
       </nav>
       <div class="sidebarFooter">
+        <button class="sidebarItem" type="button" aria-label="群聊" title="群聊" @click="router.push('/chat')">
+          <span class="sidebarIcon">
+            <icon-message-circle :size="18" aria-hidden="true" />
+          </span>
+          <span class="sidebarText">群聊</span>
+        </button>
         <button class="sidebarItem" type="button" aria-label="设置" title="设置" @click="settingsVisible = true">
           <span class="sidebarIcon">
             <icon-settings :size="18" aria-hidden="true" />

@@ -7,7 +7,15 @@ import { resolve } from "node:path";
 const configPath = process.env.TOONFLOW_CONFIG_FILE ?? resolve(import.meta.dirname, "../../../../config.json");
 
 export type ProviderKeyConfig = { apiKey?: string; baseUrl?: string };
-export type AppConfig = { providers?: Record<string, ProviderKeyConfig> };
+// ACT: Synapse（Matrix）homeserver 连接信息，供聊天转视频原型使用；未配置时相关功能自动降级为不可用。
+export type SynapseConfig = {
+  baseUrl?: string;
+  serverName?: string;
+  adminAccessToken?: string;
+  botUserId?: string;
+  roomId?: string;
+};
+export type AppConfig = { providers?: Record<string, ProviderKeyConfig>; synapse?: SynapseConfig };
 
 // ACT: 按文件 mtime 做轻量缓存，避免每次生成都重复读盘；文件变更后自动失效。
 let cache: { mtimeMs: number; config: AppConfig } | null = null;
@@ -37,4 +45,16 @@ export function getConfigApiKey(id: string): string {
 export function getConfigBaseUrl(id: string): string {
   const value = readAppConfig().providers?.[id]?.baseUrl;
   return typeof value === "string" ? value.trim() : "";
+}
+
+// ACT: 读取 Synapse 配置并做基础归一化（去除 baseUrl 末尾斜杠、去除令牌可能误填的 Bearer 前缀）。
+export function getSynapseConfig(): SynapseConfig {
+  const synapse = readAppConfig().synapse ?? {};
+  return {
+    baseUrl: (synapse.baseUrl ?? "").trim().replace(/\/+$/, ""),
+    serverName: (synapse.serverName ?? "").trim(),
+    adminAccessToken: normalizeKey(synapse.adminAccessToken),
+    botUserId: (synapse.botUserId ?? "").trim(),
+    roomId: (synapse.roomId ?? "").trim(),
+  };
 }

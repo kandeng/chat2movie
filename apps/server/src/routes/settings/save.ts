@@ -15,6 +15,16 @@ export default router.put("/", validateFields({ settings: z.record(z.string(), z
   customProviders: z.array(providerSchema.extend({ id: z.string().min(1), label: z.string() })).optional(),
   network: u.network.networkSchema.optional(),
   mcp: z.object({ enabled: z.boolean().optional(), token: z.string().optional(), port: z.number().int().min(1).max(65535).optional() }).optional(),
+  // ACT: 聊天转视频原型设置（Task 5 面板写入）；schedule 仅存配置，定时生成尚未实现。
+  chatToVideo: z.object({
+    enabled: z.boolean().optional(),
+    providerId: z.string().max(128).optional(),
+    modelId: z.string().max(128).optional(),
+    command: z.string().max(64).optional(),
+    recentMessageLimit: z.number().int().min(1).max(100).optional(),
+    outputDirectory: z.string().max(256).optional(),
+    schedule: z.object({ enabled: z.boolean().optional(), time: z.string().max(16).optional(), timezone: z.string().max(64).optional() }).optional(),
+  }).optional(),
 })) }), async (req, res) => {
   u.mcpControl.assertAppRequest(req);
   const { settings } = req.body;

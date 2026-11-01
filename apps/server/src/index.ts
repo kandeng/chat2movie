@@ -26,6 +26,9 @@ const { initializeMcpRuntime } = await import("./utils/mcp/runtime");
 app.listen(realPort, async (error?: Error) => {
   if (error) throw error;
   await initializeMcpRuntime(app, `http://127.0.0.1:${realPort}`, resolve(appDirectory, fromSource ? "packages/mcp/src/stdio.ts" : "build/mcp/stdio.js"));
+  // ACT: 聊天转视频机器人（Task 3）随主服务启动；未配置 Synapse 或未启用时内部静默降级，不阻塞监听。
+  const { startMatrixBot } = await import("./matrix/bot");
+  await startMatrixBot().catch(botError => console.warn("启动聊天转视频机器人失败：", botError));
   console.log(`[服务启动成功]: http://localhost:${realPort}`);
   console.log(`[启动耗时]: ${(Date.now() - startTime).toFixed(2)}ms`);
 });

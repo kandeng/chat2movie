@@ -17,6 +17,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // ACT: 同源访问本地 Synapse homeserver —— 聊天页面只通过 /_matrix 代理与 Matrix 通信（生产环境由 Caddy 承担同样职责）。
+      "/_matrix": { target: "http://127.0.0.1:8008", changeOrigin: true },
       "/mcp": { target: serverOrigin, changeOrigin: false },
       "/a2a": { target: serverOrigin, changeOrigin: false },
       "/api": {

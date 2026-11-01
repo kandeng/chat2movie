@@ -9,6 +9,27 @@
 
 ## 1. Objective
 
+### 1.1 The big picture — collaborative chat-to-video
+
+A social, iterative **chat → video → chat** loop built on **Matrix / Synapse**
+(peer-to-peer or group chat):
+
+1. The **host (“me”)** posts a **video of a real daily-life situation** and asks
+   the group for advice. *Example: a student shows how he was bullied at school
+   and asks how to handle it.*
+2. **Friends discuss** and propose reactions — *fight back, report to a teacher,
+   …*
+3. From those suggestions the host **generates a follow-up video** that advances
+   the story with new events. *Example: he fights back, but a teacher happens to
+   see it and mistakes it for his own misbehavior — so he asks how to defend
+   himself and avoid being misjudged.*
+4. **Discussion and videos continue**, round after round.
+
+Video generation can be **triggered manually by the host**, or **scheduled
+automatically** (e.g. every day at **03:00**) when so configured.
+
+### 1.2 The video generator — prompt-to-video pipeline
+
 Turn a short user prompt into a **3–5 minute composite video** assembled from
 multiple generated clips, with **voiceover (TTS)** and **background music (BGM)**
 mixed over the clips' native sound.
@@ -22,7 +43,7 @@ mixed over the clips' native sound.
   **BGM**. Each clip also carries **native SFX/ambient audio** generated together
   with its frames.
 
-### Two operating modes
+#### Two operating modes
 
 **(1) One-shot, fully automatic**
 - The system generates the **full finished video end-to-end** with no user

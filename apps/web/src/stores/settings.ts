@@ -28,7 +28,8 @@ export const settingsStorage = {
   },
 };
 
-export const defaultUiSettings = { theme: "dark", language: "system", primaryColor: "#409eff", fontScale: 100, mobileScale: 75, radius: 8, startupAnimation: true };
+// ACT: 默认外观对齐 drone-navigation-v2 的白-灰-黑浅色主题与蓝色强调色。
+export const defaultUiSettings = { theme: "light", language: "system", primaryColor: "#007aff", fontScale: 100, mobileScale: 75, radius: 8, startupAnimation: true };
 export const uiSettings = computed(() => {
   const raw = settings.value.ui;
   const ui = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : {};

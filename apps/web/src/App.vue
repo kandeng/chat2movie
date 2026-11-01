@@ -2,7 +2,12 @@
   <el-config-provider :locale="elementLocale">
     <config-provider :globalConfig="tdesignLocale">
       <router-view v-slot="{ Component: currentComponent }">
-        <transition name="el-fade-in" mode="out-in">
+        <appShell v-if="shellRoute">
+          <transition name="el-fade-in" mode="out-in">
+            <component :is="currentComponent" />
+          </transition>
+        </appShell>
+        <transition v-else name="el-fade-in" mode="out-in">
           <component :is="currentComponent" />
         </transition>
       </router-view>
@@ -14,6 +19,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watchEffect } from "vue";
+import { useRoute } from "vue-router";
 import { useZIndex } from "element-plus";
 import { elementLocales } from "@toonflow/i18n/elementPlus";
 import { ConfigProvider, type GlobalConfigProvider } from "tdesign-vue-next";
@@ -29,12 +35,16 @@ import { chatLocale } from "@/lib/i18n";
 import { uiSettings } from "@/stores/settings";
 import { useWorkspaceStore } from "@/stores/workspace";
 import loadingPage from "@/components/loadingPage.vue";
+import appShell from "@/components/appShell.vue";
 import { useMcpControl } from "@/lib/mcpControl";
 import ffmpegRequired from "@/components/settings/ffmpegRequired.vue";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
 useMcpControl();
 const workspaceStore = useWorkspaceStore();
+const route = useRoute();
+// ACT: 仅带 shell 元信息的路由套用全局外壳（左栏 + 顶栏）；/hello 引导页保持全屏。
+const shellRoute = computed(() => route.meta.shell === true);
 
 // ACT: TDesign 缺少的语言使用英语基底，聊天控件由应用字典补齐。
 const tdesignLocales = {
@@ -95,6 +105,12 @@ watchEffect(() => {
 html {
   background-color: var(--el-bg-color);
   color: var(--el-text-color-primary);
+  // ACT: 字体对齐 drone-navigation-v2 的全局字体栈。
+  font-family: Calibri, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+  --el-font-family: Calibri, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .vue-flow,

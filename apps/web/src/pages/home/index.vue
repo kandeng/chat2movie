@@ -1,47 +1,6 @@
 <template>
-  <div class="home" :class="{ sidebarCollapsed }" :inert="creating || opening || workspaceStore.projectLoadingVisible">
+  <div class="home" :inert="creating || opening || workspaceStore.projectLoadingVisible">
     <bg class="pageBackground" :scrollTop="backgroundScrollTop" />
-    <aside id="homeSidebar" class="homeSidebar" aria-label="首页侧栏">
-      <div class="sidebarHeader">
-        <div class="sidebarBrand">
-          <el-image class="sidebarLogo" :src="logoUrl" fit="contain" alt="chat2movie" />
-          <span class="brandName">chat2movie</span>
-        </div>
-        <button class="sidebarToggle" type="button" :aria-label="sidebarCollapsed ? '展开侧栏' : '收起侧栏'" :title="sidebarCollapsed ? '展开侧栏' : '收起侧栏'" :aria-expanded="!sidebarCollapsed" aria-controls="homeSidebar" @click="sidebarCollapsed = !sidebarCollapsed">
-          <icon-layout-sidebar-left-expand v-if="sidebarCollapsed" :size="18" aria-hidden="true" />
-          <icon-layout-sidebar-left-collapse v-else :size="18" aria-hidden="true" />
-        </button>
-      </div>
-      <nav class="sidebarNav" aria-label="首页导航">
-        <button v-for="section in homeSections" :key="section.id" class="sidebarItem" :class="{ active: activeSection === section.id }" type="button" :aria-current="activeSection === section.id ? 'location' : undefined" :aria-label="translate(section.label)" :title="translate(section.label)" @click="scrollToSection(section.id)">
-          <component :is="section.icon" :size="18" aria-hidden="true" />
-          <span class="sidebarText">{{ translate(section.label) }}</span>
-        </button>
-        <hr class="sidebarDivider" />
-        <button class="sidebarItem" :class="{ active: assetsVisible }" type="button" aria-label="素材库" title="素材库" aria-haspopup="dialog" :aria-expanded="assetsVisible" @click="assetsVisible = true">
-          <icon-library-photo :size="18" aria-hidden="true" />
-          <span class="sidebarText">素材库</span>
-        </button>
-      </nav>
-      <div class="sidebarFooter">
-        <button class="sidebarItem" type="button" aria-label="群聊" title="群聊" @click="router.push('/chat')">
-          <span class="sidebarIcon">
-            <icon-message-circle :size="18" aria-hidden="true" />
-          </span>
-          <span class="sidebarText">群聊</span>
-        </button>
-        <button class="sidebarItem" type="button" aria-label="设置" title="设置" @click="settingsVisible = true">
-          <span class="sidebarIcon">
-            <icon-settings :size="18" aria-hidden="true" />
-          </span>
-          <span class="sidebarText">设置</span>
-        </button>
-        <a class="sidebarItem githubLink" href="https://github.com/kandeng/chat2movie" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
-          <icon-brand-github :size="18" aria-hidden="true" />
-          <span class="sidebarText">GitHub</span>
-        </a>
-      </div>
-    </aside>
     <el-scrollbar ref="pageScroll" class="pageScroll" @scroll="updateActiveSection">
       <div class="pageBody">
         <el-main class="pageContent">
@@ -79,7 +38,12 @@
             </div>
           </section>
           <section class="projectList" data-home-section="projects" aria-labelledby="projectListTitle">
-            <h2 id="projectListTitle">项目</h2>
+            <div class="projectListHeader">
+              <h2 id="projectListTitle">项目</h2>
+              <el-button class="assetLibraryButton" text circle :aria-label="translate('素材库')" :title="translate('素材库')" @click="assetsVisible = true">
+                <icon-library-photo :size="18" aria-hidden="true" />
+              </el-button>
+            </div>
             <div class="projectItems">
               <el-card class="projectCard" shadow="never" :bodyStyle="{ padding: '0', height: '100%' }">
                 <button class="projectLaunch" type="button" :disabled="creating || opening || relocationPicker?.selecting" :aria-busy="creating || relocationPicker?.selecting" title="选择空文件夹新建，或打开已有项目" @click="createProject(false)">
@@ -114,7 +78,6 @@
       </div>
     </el-scrollbar>
     <assetLibraryDialog v-model="assetsVisible" />
-    <settings v-model="settingsVisible" />
     <workspacePicker ref="relocationPicker" hideTrigger />
   </div>
 </template>
@@ -128,7 +91,6 @@ import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox, type InputInstance, type ScrollbarInstance } from "element-plus";
 import { getReadableFileMimeType, readableFileAccept } from "@toonflow/server/documentFormats";
 import {
-  IconHome, IconCompass,
   IconArrowUp, IconPlus, IconLoader2,
   IconFolder, IconEdit, IconFileZip,
   IconTrash, IconPaperclip,
@@ -142,24 +104,16 @@ import { useWorkspaceStore, type Project } from "@/stores/workspace";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 import saveFile from "@/lib/saveFile";
 import { waitForControlValue } from "@/lib/mcpControl";
-import settings from "@/components/settings/index.vue";
 import assetLibraryDialog from "./assetLibraryDialog.vue";
 import bg from "./bg.vue";
 import explore from "./explore.vue";
 import projectCover from "./projectCover.vue";
 import workspacePicker from "./workspacePicker.vue";
 
-const settingsVisible = ref(false);
 const assetsVisible = ref(false);
-const sidebarCollapsed = ref(false);
 const pageScroll = ref<ScrollbarInstance>();
 const backgroundScrollTop = ref(0);
 const activeSection = ref("home");
-const homeSections = [
-  { id: "home", label: "首页", icon: IconHome },
-  { id: "projects", label: "项目", icon: IconFolder },
-  { id: "explore", label: "探索", icon: IconCompass },
-];
 const router = useRouter();
 const pageLifetime = new AbortController();
 const creating = ref(false);
@@ -251,17 +205,6 @@ watch([creating, opening], ([creating, opening]) => {
 const selectedModel = ref("");
 const reasoningEffort = ref("");
 const sortedProjects = computed(() => [...projectList.value].sort((left, right) => right.lastOpenedAt - left.lastOpenedAt));
-
-function scrollToSection(section: string) {
-  const wrap = pageScroll.value?.wrapRef;
-  const target = wrap?.querySelector<HTMLElement>(`[data-home-section="${section}"]`);
-  if (!wrap || !target) return;
-  activeSection.value = section;
-  pageScroll.value?.scrollTo({
-    top: section === "home" ? 0 : wrap.scrollTop + target.getBoundingClientRect().top - wrap.getBoundingClientRect().top - 32,
-    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
-  });
-}
 
 function updateActiveSection() {
   const wrap = pageScroll.value?.wrapRef;
@@ -472,24 +415,16 @@ async function createProject(fromPrompt = true) {
 
 <style lang="scss" scoped>
 .home {
-  --sidebarWidth: 240px;
-  --sidebarMotion: 220ms;
-  --sidebarFade: 140ms;
   position: relative;
   display: flex;
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
   color: var(--el-text-color-primary);
   background: color-mix(in srgb, var(--el-bg-color) 96%, var(--el-text-color-primary));
 
   .pageBackground {
     position: absolute;
-    inset-block: 0;
-    inset-inline-start: var(--sidebarWidth);
-    width: calc(100% - var(--sidebarWidth));
-    transition: inset-inline-start var(--sidebarMotion) ease, width var(--sidebarMotion) ease;
-
-    @media (prefers-reduced-motion: reduce) { transition: none; }
+    inset: 0;
   }
 
   &.sidebarCollapsed {
@@ -847,8 +782,23 @@ async function createProject(fromPrompt = true) {
           max-width: 1280px;
           margin: 0 auto;
 
+          .projectListHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+
+            .assetLibraryButton {
+              width: 36px;
+              height: 36px;
+              margin: 0;
+              color: var(--el-text-color-regular);
+            }
+          }
+
           h2 {
-            margin: 0 0 20px;
+            margin: 0;
             font-size: 22px;
             font-weight: 600;
             line-height: 1.5;

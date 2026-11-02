@@ -59,7 +59,7 @@ echo
 echo "[dev-local] 全部启动命令已发出："
 echo "  - Synapse : $SYNAPSE_URL"
 echo "  - 服务端  : http://localhost:${TOONFLOW_SERVER_PORT:-3000}"
-echo "  - 前端    : http://localhost:5173/chat"
+echo "  - 前端    : http://localhost:5173/#/chat"
 echo "  日志目录  : $LOG_DIR"
 echo "  按 Ctrl+C 停止本脚本启动的进程。"
 

@@ -427,163 +427,6 @@ async function createProject(fromPrompt = true) {
     inset: 0;
   }
 
-  &.sidebarCollapsed {
-    --sidebarWidth: 72px;
-
-    .homeSidebar {
-      .sidebarHeader {
-        .sidebarBrand {
-          gap: 0;
-
-          .brandName { max-width: 0; opacity: 0; }
-        }
-
-        .sidebarToggle { inset-inline-start: 9px; opacity: 0; }
-
-        @media (min-width: 901px) {
-          &:hover, &:has(.sidebarToggle:focus-visible) {
-            .sidebarLogo { opacity: 0; }
-            .sidebarToggle { opacity: 1; }
-          }
-        }
-      }
-
-      .sidebarItem {
-        gap: 0;
-        padding-inline: 14px;
-
-        .sidebarText { max-width: 0; opacity: 0; }
-      }
-    }
-  }
-
-  .homeSidebar {
-    display: flex;
-    flex: 0 0 var(--sidebarWidth);
-    flex-direction: column;
-    width: var(--sidebarWidth);
-    padding: 20px 12px 16px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    border-inline-end: 1px solid var(--el-border-color-lighter);
-    background: inherit;
-    transition: flex-basis var(--sidebarMotion) ease, width var(--sidebarMotion) ease;
-
-    .sidebarHeader {
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      height: 30px;
-      gap: 8px;
-      margin-bottom: 24px;
-      padding: 0 8px;
-
-      .sidebarBrand {
-        display: flex;
-        align-items: center;
-        min-width: 0;
-        gap: 9px;
-        overflow: hidden;
-        transition: gap var(--sidebarMotion) ease;
-
-        .sidebarLogo {
-          flex-shrink: 0;
-          width: 30px;
-          height: 30px;
-          transition: opacity var(--sidebarFade) ease;
-
-          .dark & { filter: invert(1); }
-        }
-
-        .brandName {
-          max-width: 150px;
-          overflow: hidden;
-          font-size: 20px;
-          font-weight: 600;
-          letter-spacing: -0.5px;
-          white-space: nowrap;
-          transition: max-width var(--sidebarMotion) ease, opacity var(--sidebarFade) ease;
-        }
-      }
-
-      .sidebarToggle {
-        position: absolute;
-        top: 1px;
-        inset-inline-start: calc(100% - 32px);
-        display: grid;
-        flex-shrink: 0;
-        place-items: center;
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        border: 0;
-        border-radius: var(--ui-radius);
-        background: transparent;
-        color: var(--el-text-color-secondary);
-        cursor: pointer;
-        transition: inset-inline-start var(--sidebarMotion) ease, opacity var(--sidebarFade) ease;
-
-        &:hover { background: var(--el-fill-color); color: var(--el-text-color-primary); }
-        &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: 2px; }
-        &:dir(rtl) svg { transform: scaleX(-1); }
-      }
-    }
-
-    .sidebarItem {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      min-height: 42px;
-      width: 100%;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 0;
-      border-radius: var(--ui-radius);
-      background: transparent;
-      color: var(--el-text-color-regular);
-      font: inherit;
-      font-size: 14px;
-      line-height: 1.5;
-      text-align: start;
-      text-decoration: none;
-      cursor: pointer;
-      transition: gap var(--sidebarMotion) ease, padding var(--sidebarMotion) ease;
-
-      > svg { flex-shrink: 0; }
-      .sidebarText {
-        min-width: 0;
-        max-width: 180px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        transition: max-width var(--sidebarMotion) ease, opacity var(--sidebarFade) ease;
-      }
-
-      .sidebarIcon {
-        position: relative;
-        display: inline-flex;
-        flex-shrink: 0;
-      }
-
-      &:hover:not(:disabled) { background: var(--el-fill-color); color: var(--el-text-color-primary); }
-      &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: 2px; }
-      &:disabled { cursor: wait; opacity: 0.6; }
-      &.active { background: var(--el-fill-color-darker); color: var(--el-text-color-primary); font-weight: 500; }
-    }
-
-    .sidebarNav, .sidebarFooter { display: flex; flex-direction: column; gap: 4px; }
-    .sidebarNav {
-      .sidebarDivider { margin: 12px 8px; border: 0; border-top: 1px solid var(--el-border-color-lighter); }
-    }
-    .sidebarFooter { margin-top: auto; padding-top: 24px; }
-
-    @media (prefers-reduced-motion: reduce) {
-      --sidebarMotion: 0ms;
-      --sidebarFade: 0ms;
-    }
-  }
-
   .pageScroll {
     position: relative;
     flex: 1;
@@ -594,7 +437,8 @@ async function createProject(fromPrompt = true) {
 
     .pageBody {
       position: relative;
-      min-height: 100dvh;
+      // ACT: 套用全局外壳后页面已不再占满视口，改用 100% 避免多出一条滚动条。
+      min-height: 100%;
 
       .pageContent {
         padding: 24px clamp(20px, 4vw, 56px) 56px;
@@ -936,32 +780,8 @@ async function createProject(fromPrompt = true) {
     }
   }
 
-  @media (max-width: 900px) {
-    --sidebarWidth: 72px;
-
-    .homeSidebar {
-      .sidebarHeader {
-        .sidebarBrand {
-          gap: 0;
-
-          .brandName { max-width: 0; opacity: 0; }
-        }
-
-        .sidebarToggle { display: none; }
-      }
-
-      .sidebarItem {
-        gap: 0;
-        padding-inline: 14px;
-
-        .sidebarText { max-width: 0; opacity: 0; }
-      }
-    }
-  }
-
   @media (max-width: 560px) {
     .pageScroll .pageBody .pageContent { padding: 24px 16px 40px; }
-    .homeSidebar .sidebarItem { min-height: 44px; }
   }
 }
 @keyframes launchSpin {

@@ -2,22 +2,30 @@
 import { onBeforeUnmount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { translate } from "@toonflow/i18n/vue";
-// ACT: 品牌 Logo 改用本仓库绘制的 chat2movie.svg（双气泡+相机），替换原 Toonflow 图标。
-import logoUrl from "@/assets/chat2movie.svg";
+// ACT: 品牌 Logo 使用本仓库绘制的 logo_chat2movie.svg（双气泡+相机），替换原 Toonflow 图标。
+import logoUrl from "@/assets/logo_chat2movie.svg";
+// ACT: 左栏与顶栏图标统一取自 src/icons（以 CSS mask 着色，跟随 currentColor）。
+import iconPlaza from "@/icons/photo.svg";
+import iconChat from "@/icons/chat.svg";
+import iconStudio from "@/icons/recorder.svg";
+import iconAccount from "@/icons/user.svg";
+import iconTool from "@/icons/tool.svg";
+import iconFoldLeft from "@/icons/arrow_left.svg";
+import iconFoldRight from "@/icons/arrow_right.svg";
 import languageSelect from "@/components/languageSelect.vue";
 import settings from "@/components/settings/index.vue";
 
 const route = useRoute();
 const router = useRouter();
 
-// ACT: 上组为内容页（广场/群聊/我的工作室），下组为账户；左栏为纯文本（对齐 drone），设置入口在下组并直接打开设置弹窗。
+// ACT: 上组为内容页（广场/群聊/我的工作室），下组为账户；左栏改为图标导航（悬停显示文字），设置入口在下组并直接打开设置弹窗。
 const topNav = [
-  { path: "/home", label: "广场" },
-  { path: "/chat", label: "群聊" },
-  { path: "/workspace", label: "我的工作室" },
+  { path: "/home", label: "广场", icon: iconPlaza },
+  { path: "/chat", label: "群聊", icon: iconChat },
+  { path: "/workspace", label: "我的工作室", icon: iconStudio },
 ];
 const bottomNav = [
-  { path: "/account", label: "账户" },
+  { path: "/account", label: "账户", icon: iconAccount },
 ];
 
 function isActive(path: string) { return route.path === path; }
@@ -65,35 +73,45 @@ onBeforeUnmount(onDividerPointerUp);
       </div>
 
       <nav class="shellNav" :aria-label="translate('主导航')">
-        <button
+        <!-- ACT: 导航项图标化，仅悬停时通过 el-tooltip 显示文字。 -->
+        <el-tooltip
           v-for="item in topNav" :key="item.path"
-          class="shellNavItem" :class="{ active: isActive(item.path) }"
-          type="button" :aria-current="isActive(item.path) ? 'page' : undefined"
-          :aria-label="translate(item.label)" :title="translate(item.label)"
-          @click="go(item.path)">
-          <span class="shellNavText">{{ translate(item.label) }}</span>
-        </button>
+          :content="translate(item.label)" placement="right" :show-after="100">
+          <button
+            class="shellNavItem" :class="{ active: isActive(item.path) }"
+            type="button" :aria-current="isActive(item.path) ? 'page' : undefined"
+            :aria-label="translate(item.label)"
+            @click="go(item.path)">
+            <!-- ACT: Vite 将小体积 svg 内联为 data URI（内含单引号），url() 必须加双引号否则整条 mask-image 失效。 -->
+            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${item.icon}&quot;)` }" aria-hidden="true" />
+          </button>
+        </el-tooltip>
       </nav>
 
       <div class="shellSpacer" />
       <div class="shellDivider" />
 
       <nav class="shellNav" :aria-label="translate('账户导航')">
-        <button
+        <el-tooltip
           v-for="item in bottomNav" :key="item.path"
-          class="shellNavItem" :class="{ active: isActive(item.path) }"
-          type="button" :aria-current="isActive(item.path) ? 'page' : undefined"
-          :aria-label="translate(item.label)" :title="translate(item.label)"
-          @click="go(item.path)">
-          <span class="shellNavText">{{ translate(item.label) }}</span>
-        </button>
-        <button
-          class="shellNavItem"
-          type="button"
-          :aria-label="translate('设置')" :title="translate('设置')"
-          @click="settingsVisible = true">
-          <span class="shellNavText">{{ translate('设置') }}</span>
-        </button>
+          :content="translate(item.label)" placement="right" :show-after="100">
+          <button
+            class="shellNavItem" :class="{ active: isActive(item.path) }"
+            type="button" :aria-current="isActive(item.path) ? 'page' : undefined"
+            :aria-label="translate(item.label)"
+            @click="go(item.path)">
+            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${item.icon}&quot;)` }" aria-hidden="true" />
+          </button>
+        </el-tooltip>
+        <el-tooltip :content="translate('设置')" placement="right" :show-after="100">
+          <button
+            class="shellNavItem"
+            type="button"
+            :aria-label="translate('设置')"
+            @click="settingsVisible = true">
+            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${iconTool}&quot;)` }" aria-hidden="true" />
+          </button>
+        </el-tooltip>
       </nav>
     </aside>
 
@@ -105,8 +123,8 @@ onBeforeUnmount(onDividerPointerUp);
       <header class="shellTopbar">
         <div class="shellTopbarLeft">
           <button class="shellToggle" type="button" :aria-label="open ? translate('收起') : translate('展开')" @click="open = !open">
-            <icon-layout-sidebar-left-collapse v-if="open" :size="18" aria-hidden="true" />
-            <icon-layout-sidebar-left-expand v-else :size="18" aria-hidden="true" />
+            <!-- ACT: 折叠按钮改用 arrow_left/arrow_right（无圆圈）；展开态显示向左箭头（点击收起），收起态切为向右箭头。 -->
+            <span class="navIcon toggleIcon" :style="{ '--nav-icon': `url(&quot;${open ? iconFoldLeft : iconFoldRight}&quot;)` }" aria-hidden="true" />
           </button>
         </div>
 
@@ -117,7 +135,8 @@ onBeforeUnmount(onDividerPointerUp);
 
         <div class="shellTopbarRight">
           <button class="shellRound" type="button" :aria-label="translate('账户')" :title="translate('账户')" @click="go('/account')">
-            <icon-user :size="20" aria-hidden="true" />
+            <!-- ACT: 顶栏账户按钮与左栏账户项共用同一个 icons/user.svg。 -->
+            <span class="navIcon roundIcon" :style="{ '--nav-icon': `url(&quot;${iconAccount}&quot;)` }" aria-hidden="true" />
           </button>
           <languageSelect popover />
         </div>
@@ -190,33 +209,41 @@ onBeforeUnmount(onDividerPointerUp);
 .shellNavItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 42px;
-  width: 100%;
-  padding: 10px 12px;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  padding: 0;
   border: 0;
   border-radius: var(--ui-radius);
   background: transparent;
   color: var(--el-text-color-regular);
-  font: inherit;
-  font-size: 14px;
-  line-height: 1.5;
-  text-align: start;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 
-  > svg { flex-shrink: 0; }
-
-  .shellNavText {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
   &:hover { background: var(--el-fill-color); color: var(--el-text-color-primary); }
   &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: 2px; }
-  &.active { background: var(--el-color-primary-light-9); color: var(--el-color-primary); font-weight: 500; }
+  &.active { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
+}
+
+// ACT: 图标统一用 mask + currentColor 着色，兼容内置固定色的 svg（chat/user）并随主题与激活态变色。
+.navIcon {
+  display: block;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background-color: currentColor;
+  mask-image: var(--nav-icon);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: var(--nav-icon);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+
+  &.toggleIcon { width: 18px; height: 18px; }
+  &.roundIcon { width: 20px; height: 20px; }
 }
 
 .shellSpacer { flex: 1 1 auto; }
@@ -296,11 +323,12 @@ onBeforeUnmount(onDividerPointerUp);
   border: 1px solid var(--el-border-color);
   border-radius: 50%;
   background: transparent;
-  color: var(--el-text-color-primary);
+  // ACT: 顶栏图标按钮与左栏导航同色（--el-text-color-regular）；图标 SVG 均为 currentColor，颜色差异仅来自 CSS 上下文，悬停时再加深。
+  color: var(--el-text-color-regular);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 
-  &:hover { background: var(--el-fill-color); }
+  &:hover { background: var(--el-fill-color); color: var(--el-text-color-primary); }
   &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: 2px; }
 }
 

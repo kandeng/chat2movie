@@ -12,10 +12,10 @@
     :popperStyle="{ maxWidth: 'calc(100vw - 32px)', padding: '12px', borderRadius: '14px' }"
     @after-enter="popoverPanel?.focusSelected()">
     <template #reference>
-      <button ref="triggerButton" class="languageTrigger" type="button" :aria-label="translate('语言')" @keydown.esc.stop.prevent="closePopover">
+      <!-- ACT: 顶栏语言按钮仅显示国旗（跟随系统时为地球图标），不再显示语言名称文字。 -->
+      <button ref="triggerButton" class="languageTrigger" type="button" :aria-label="translate('语言')" :title="selectedName" @keydown.esc.stop.prevent="closePopover">
         <icon-world v-if="uiSettings.language === 'system'" :size="20" aria-hidden="true" />
         <svg v-else class="languageFlag" viewBox="0 0 32 24" aria-hidden="true"><use :href="`${languageFlags}#${flagIds[locale]}`" /></svg>
-        <span class="triggerName" :lang="locale" dir="auto">{{ selectedName }}</span>
         <icon-chevron-down class="triggerChevron" :class="{ opened: visible }" :size="15" aria-hidden="true" />
       </button>
     </template>
@@ -139,10 +139,10 @@ defineExpose({ focusSelected });
 .languageTrigger {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   max-width: 100%;
   min-height: 40px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--el-border-color-light);
   border-radius: 12px;
   background: var(--el-bg-color-overlay);
@@ -152,7 +152,6 @@ defineExpose({ focusSelected });
   cursor: pointer;
   transition: border-color 0.18s, box-shadow 0.18s;
 
-  .triggerName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .triggerChevron {
     flex-shrink: 0;
     color: var(--el-text-color-secondary);

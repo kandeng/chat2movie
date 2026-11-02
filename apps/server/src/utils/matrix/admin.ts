@@ -175,3 +175,49 @@ export async function joinRoomAs(mxid: string, roomId: string): Promise<boolean>
     return false;
   }
 }
+
+// ACT: 把本地账号的昵称/头像同步到隐藏 Matrix 账号的 profile（端口自 drone 的 PATCH /users/me 行为）。
+// 头像以 data URI 传入：先上传到 Matrix 媒体库换 mxc:// 地址，再写入 avatar_url；
+// 任一环节失败只记日志不抛错（聊天降级，主服务不受影响）。
+export async function syncMatrixProfile(mxid: string, displayName?: string, avatarDataUri?: string): Promise<boolean> {
+  const synapse = requireConfig();
+  const creds = await brokerToken(mxid);
+  if (!creds) return false;
+  const headers = adminHeaders(creds.access_token);
+  const encoded = encodeURIComponent(mxid);
+  try {
+    if (displayName) {
+      const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/profile/${encoded}/displayname`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ displayname: displayName }),
+      });
+      if (!resp.ok) console.error(`[matrix] syncMatrixProfile displayname ${mxid} -> HTTP ${resp.status}`);
+    }
+    const match = avatarDataUri ? /^data:(image\/[a-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)$/i.exec(avatarDataUri) : null;
+    if (match) {
+      const upload = await fetch(`${synapse.baseUrl}/_matrix/media/v3/upload?filename=avatar`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${creds.access_token}`, "Content-Type": match[1] },
+        body: Buffer.from(match[2], "base64"),
+      });
+      if (upload.ok) {
+        const { content_uri } = (await upload.json()) as { content_uri?: string };
+        if (content_uri) {
+          const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/profile/${encoded}/avatar_url`, {
+            method: "PUT",
+            headers,
+            body: JSON.stringify({ avatar_url: content_uri }),
+          });
+          if (!resp.ok) console.error(`[matrix] syncMatrixProfile avatar ${mxid} -> HTTP ${resp.status}`);
+        }
+      } else {
+        console.error(`[matrix] syncMatrixProfile 上传头像 ${mxid} -> HTTP ${upload.status}`);
+      }
+    }
+    return true;
+  } catch (err) {
+    console.error(`[matrix] syncMatrixProfile ${mxid} 失败:`, err);
+    return false;
+  }
+}

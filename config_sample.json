@@ -6,7 +6,8 @@
     "apiKey": "必填。可直接粘贴，也可带 'Bearer ' 前缀（代码会自动去除）。",
     "baseUrl": "可选。留空或删除该项则使用供应商内置默认地址。百炼 Token Plan 密钥(sk-sp-)用 https://token-plan.cn-beijing.maas.aliyuncs.com ；标准密钥(sk-)用 https://dashscope.aliyuncs.com 。",
     "env": "如需自定义 config.json 路径，可设置环境变量 TOONFLOW_CONFIG_FILE 指向该文件。",
-    "synapse": "可选。启用聊天转视频原型时填写本地 Synapse（Matrix）homeserver 的连接信息；adminAccessToken 用于通过 Admin API 创建账号并代为签发令牌。"
+    "synapse": "可选。启用聊天转视频原型时填写本地 Synapse（Matrix）homeserver 的连接信息；adminAccessToken 用于通过 Admin API 创建账号并代为签发令牌。",
+    "auth": "可选。本地账号系统（注册/登录/邮箱验证/重置密码）配置：baseUrl 留空时自动从请求 Host 推导（经 Vite 代理也能工作）；sessionSecret 缺省时自动生成并持久化到 data/auth-secret.key；smtp 缺省时验证码只打印到服务端日志（本地开发可用）；google 缺省时隐藏 Google 登录入口。"
   },
   "providers": {
     "bailian": {
@@ -24,5 +25,21 @@
     "adminAccessToken": "syt_your-synapse-admin-access-token",
     "botUserId": "@chat2movie_bot:localhost",
     "roomId": "!your-room-id:localhost"
+  },
+  "auth": {
+    "baseUrl": "",
+    "sessionSecret": "",
+    "smtp": {
+      "host": "",
+      "port": 465,
+      "secure": true,
+      "user": "",
+      "pass": "",
+      "from": "chat2movie <noreply@example.com>"
+    },
+    "google": {
+      "clientId": "",
+      "clientSecret": ""
+    }
   }
 }

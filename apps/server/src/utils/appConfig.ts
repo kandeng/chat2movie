@@ -15,7 +15,16 @@ export type SynapseConfig = {
   botUserId?: string;
   roomId?: string;
 };
-export type AppConfig = { providers?: Record<string, ProviderKeyConfig>; synapse?: SynapseConfig };
+// ACT: 本地账号系统（better-auth）配置，端口自 drone-navigation-v2 的 config 块：
+// smtp 供验证码/重置邮件使用（缺省降级为控制台打印）；google 缺省时 OAuth 自动禁用。
+export type SmtpConfig = { host?: string; port?: number; secure?: boolean; user?: string; pass?: string; from?: string };
+export type AuthConfig = {
+  baseUrl?: string;
+  sessionSecret?: string;
+  smtp?: SmtpConfig;
+  google?: { clientId?: string; clientSecret?: string };
+};
+export type AppConfig = { providers?: Record<string, ProviderKeyConfig>; synapse?: SynapseConfig; auth?: AuthConfig };
 
 // ACT: 按文件 mtime 做轻量缓存，避免每次生成都重复读盘；文件变更后自动失效。
 let cache: { mtimeMs: number; config: AppConfig } | null = null;
@@ -56,5 +65,28 @@ export function getSynapseConfig(): SynapseConfig {
     adminAccessToken: normalizeKey(synapse.adminAccessToken),
     botUserId: (synapse.botUserId ?? "").trim(),
     roomId: (synapse.roomId ?? "").trim(),
+  };
+}
+
+// ACT: 读取账号系统配置并做基础归一化；字段缺省时返回空值，由调用方决定降级行为。
+export function getAuthConfig(): AuthConfig {
+  const auth = readAppConfig().auth ?? {};
+  const smtp = auth.smtp && typeof auth.smtp === "object" ? auth.smtp : undefined;
+  const google = auth.google && typeof auth.google === "object" ? auth.google : undefined;
+  return {
+    baseUrl: (auth.baseUrl ?? "").trim().replace(/\/+$/, ""),
+    sessionSecret: (auth.sessionSecret ?? "").trim(),
+    smtp: smtp ? {
+      host: (smtp.host ?? "").trim(),
+      port: smtp.port,
+      secure: smtp.secure,
+      user: (smtp.user ?? "").trim(),
+      pass: smtp.pass ?? "",
+      from: (smtp.from ?? "").trim(),
+    } : undefined,
+    google: google ? {
+      clientId: (google.clientId ?? "").trim(),
+      clientSecret: (google.clientSecret ?? "").trim(),
+    } : undefined,
   };
 }

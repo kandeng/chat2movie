@@ -491,7 +491,108 @@ deliberately **not** done here.
 
 ---
 
-## 6. Open problems / decisions needed
+## 6. Toonflow cloud account system — inferred capabilities
+
+> **Scope:** read-only inference exercise complementing §5. The client
+> integration surface (endpoints, response shapes, UI flows) acts as a
+> *fingerprint* of the vendor's server-side account system. Below is what the
+> evidence in this repo supports, grouped by inferred capability.
+
+### 6.1 Registration, login, and API-key issuance
+
+- The onboarding iframe contract in
+  [`hello/index.vue`](./apps/web/src/pages/hello/index.vue) accepts
+  `type: "register" | "login"` postMessage events — so the cloud hosts **both
+  signup and signin**, and a successful login **returns an API Key**
+  (`data.key`) as the session artifact. Registration alone issues no key
+  (“注册成功，请继续登录”): **keys are minted at login, not at signup**.
+- The login page accepts theming params (`bgcolor`, `txtcolor`) → an
+  **embeddable, brandable auth widget**, designed to be iframed by third-party
+  clients like this app.
+- The plugin market links to `https://api.toonflow.net/console/plugIn` → a full
+  **web console** with per-account management pages exists beyond the login
+  widget.
+
+### 6.2 Key lifecycle with per-key quotas (multi-key accounts)
+
+- The balance shape in
+  [`tfRouter.ts` → `getBalance`](./packages/providers/src/media/tfRouter.ts)
+  distinguishes `balance` (account wallet) from `keyBalance`, where **`null`
+  means “unlimited”** and a number means a spending cap. That is only coherent
+  if an account can hold **multiple keys, each with its own quota** — implying
+  key creation with limits, plus listing/revocation in the console.
+- Keys are bearer-style strings, tolerated with or without a `Bearer ` prefix,
+  up to 8192 chars.
+
+### 6.3 Unified wallet, metering, and payments (RMB → credits)
+
+- `GET /v1/recharge/getRechargeData` returns SKUs as `{price, integral}`:
+  money buys **credits/points (“integral”)**, the account's spendable currency.
+- `POST /v1/recharge/pay` (`payType: wechat | alipay`, fixed `comboId` or
+  custom amount ¥0.01–50000) returns `{orderNumber, payUrl}`; the recharge
+  dialog renders `payUrl` as a **WeChat QR code** or opens it as an **Alipay
+  redirect**, then `GET /v1/recharge/queryOrder` polls for settlement → an
+  **async payment flow backed by an order ledger**.
+- The balance response carries `totalConsumption` / `totalRecharge` → the cloud
+  keeps a **per-account consumption/recharge ledger**.
+- `POST /v1/price` returns `{price, tips}` *before* generation →
+  **per-request price quoting**: model calls are metered, pre-costed, and
+  deducted from the wallet.
+
+### 6.4 Account-gated model gateway (TF-Router)
+
+- The language provider points at `apiUrl: https://api.toonflow.net/v1` with
+  `protocol: "openai-completions"`; the media provider uses
+  `modelsUrl: …/v1/models?type=video` and describes itself as the “官方中转平台”
+  for text/image/video/audio models. So the account key authenticates an
+  **OpenAI-compatible relay for text + image + video + audio models** with a
+  **dynamic, per-type model catalog**. In short: *“account” == “billing
+  identity for a model gateway”* (OpenRouter-style).
+
+### 6.5 User profile and social identity
+
+- Explore projects carry `author: {id, name, avatarUrl}` plus per-key
+  `liked` / `collected` flags ([`tf.ts`](./apps/web/src/lib/tf.ts)) → the cloud
+  stores **profiles (id / name / avatar)** and **per-account reaction state**,
+  with `likeCount` / `collectionCount` aggregated server-side.
+- `POST /v1/explore/getProcess` (full canvas: nodes/edges/groups) and
+  `POST /v1/explore/getDownload` (short-lived signed HTTPS URLs) → accounts can
+  **publish works with transparent process**, backed by **signed asset
+  delivery** and per-account download authorization.
+
+### 6.6 Publisher marketplace with review workflow
+
+- `TfPlugin` includes `userId` (publisher), `supplier`, `state` (an approval
+  state machine), `version`, install/download counters, and `isCollected`;
+  `getPlugin` supports `type: "my" | "collection"` → accounts hold **publisher
+  identities**: submit plugins (node/skill/tool/agent/ext), pass review,
+  accumulate install stats, and curate collections; while
+  `POST /v1/plugin/toggleCollection` stores per-account collections.
+
+### 6.7 Platform operations endpoints
+
+- `POST /web/sponsor/getSponsorList` (sponsor program) and
+  `POST /web/telemetry/report` (usage telemetry ingestion) — account-adjacent
+  platform services.
+
+### 6.8 What can NOT be inferred (no client-side evidence)
+
+Nothing in the client hints at: password reset, OAuth/SSO, teams/organizations
+or roles, email verification, session/device management, or per-account
+settings sync (settings here are purely local). The app never calls
+whoami/logout against the cloud — **key presence is the only session state** —
+so key revocation/rotation must live entirely in the web console.
+
+**One-line summary:** the Toonflow cloud account is a *prepaid
+developer-consumer identity* for a model-relay platform: signup/login → API
+keys (multi-key, per-key quotas) → RMB top-up via WeChat/Alipay into a credits
+wallet → metered, price-quoted, OpenAI-compatible text/multimodal model calls
+with ledgers → plus a social layer (profile, likes, collections, published
+workflows) and a reviewed plugin marketplace, all under the same identity.
+
+---
+
+## 7. Open problems / decisions needed
 
 1. **Image + TTS blocked by the `sk-sp-` Token Plan tier** (video/chat only).
    Code paths are complete and dormant. *Decision: provision a standard `sk-`

@@ -1,6 +1,6 @@
 import * as sdk from "matrix-js-sdk";
 import { getSynapseConfig } from "@/utils/appConfig";
-import { adminJoinRoom, brokerToken, isConfigured } from "@/utils/matrix/admin";
+import { brokerToken, isConfigured } from "@/utils/matrix/admin";
 import { createVideoTrigger, type VideoTrigger } from "./trigger";
 import { startScheduler } from "./scheduler";
 import { getChatToVideoSettings } from "./settings";
@@ -68,8 +68,9 @@ export async function startMatrixBot(): Promise<(() => void) | null> {
   });
 
   await client.startClient({ initialSyncLimit: 30 });
-  // 确保机器人已加入目标房间（管理员强制拉入，免去手动接受邀请）。
-  if (synapse.roomId) await adminJoinRoom(synapse.roomId, botUserId).catch(() => {});
+  // ACT: 确保机器人已在目标房间。用机器人自己的令牌走标准 /join（已加入时是空操作），
+  // 不再用 Admin 强制拉人：演示房间由 host 创建，管理员并不在房内，那个接口会 403。
+  if (synapse.roomId) await client.joinRoom(synapse.roomId).catch(() => {});
   const stopScheduler = startScheduler(trigger, { ...settings.schedule, roomId: synapse.roomId });
 
   const stopFn = () => {

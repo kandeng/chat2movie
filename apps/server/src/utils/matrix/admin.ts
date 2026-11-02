@@ -79,14 +79,23 @@ export async function brokerToken(mxid: string): Promise<BrokeredCredentials | n
   }
 }
 
-// 用管理员客户端令牌创建一个房间，返回 roomId（失败返回 null）。
-export async function createRoom(name: string): Promise<string | null> {
+// 创建一个房间，返回 roomId（失败返回 null）。
+// ACT: 传入 creatorMxid 时改用该账号的代签令牌建房，让它成为 m.room.create 的发送者，
+// 也就是前端的「主持人」——演示房间必须由 host 创建，host 登录后才看得到生成视频入口。
+// 未指定（或代签失败）时回落到管理员令牌。
+export async function createRoom(name: string, creatorMxid?: string, invite?: string[]): Promise<string | null> {
   const synapse = requireConfig();
+  let token = synapse.adminAccessToken;
+  if (creatorMxid) {
+    const creds = await brokerToken(creatorMxid);
+    if (creds) token = creds.access_token;
+    else console.error(`[matrix] createRoom 无法代签 ${creatorMxid}，回落为管理员建房`);
+  }
   try {
     const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/createRoom`, {
       method: "POST",
-      headers: adminHeaders(synapse.adminAccessToken),
-      body: JSON.stringify({ name, visibility: "private", preset: "private_chat" }),
+      headers: adminHeaders(token),
+      body: JSON.stringify({ name, visibility: "private", preset: "private_chat", invite: invite ?? [] }),
     });
     if (!resp.ok) {
       console.error(`[matrix] createRoom -> HTTP ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
@@ -100,22 +109,69 @@ export async function createRoom(name: string): Promise<string | null> {
   }
 }
 
-// 管理员强制把某用户拉进房间（POST /_synapse/admin/v1/join/<roomId>），免去手动接受邀请。
-export async function adminJoinRoom(roomId: string, mxid: string): Promise<boolean> {
+// 读取房间的创建者 mxid（GET /_synapse/admin/v1/rooms/<roomId>）；不可用时返回空串。
+export async function roomCreator(roomId: string): Promise<string> {
   const synapse = requireConfig();
   try {
-    const resp = await fetch(`${synapse.baseUrl}/_synapse/admin/v1/join/${roomId}`, {
-      method: "POST",
+    const resp = await fetch(`${synapse.baseUrl}/_synapse/admin/v1/rooms/${encodeURIComponent(roomId)}`, {
       headers: adminHeaders(synapse.adminAccessToken),
-      body: JSON.stringify({ user_id: mxid }),
+    });
+    if (!resp.ok) return "";
+    const data = (await resp.json()) as { creator?: unknown };
+    return typeof data.creator === "string" ? data.creator : "";
+  } catch (err) {
+    console.error(`[matrix] roomCreator 失败:`, err);
+    return "";
+  }
+}
+
+/* ACT: 下面两个函数取代旧的「管理员强制拉人」（POST /_synapse/admin/v1/join）。
+ * 那个接口在私有房间里会先让「管理员本人」发邀请，管理员不在房内就直接 403
+ * （"@chat2admin:localhost not in room"）；房间改为由 host 创建后管理员已不是成员，
+ * 所以改成「host 邀请 + 本人接受邀请」两步，都不依赖管理员的房籍。 */
+
+// 以 inviterMxid 的身份邀请 targetMxid 进房；对方已在房里时视为成功（幂等）。
+export async function inviteToRoom(inviterMxid: string, roomId: string, targetMxid: string): Promise<boolean> {
+  const synapse = requireConfig();
+  const creds = await brokerToken(inviterMxid);
+  if (!creds) return false;
+  try {
+    const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/invite`, {
+      method: "POST",
+      headers: adminHeaders(creds.access_token),
+      body: JSON.stringify({ user_id: targetMxid }),
     });
     if (!resp.ok) {
-      console.error(`[matrix] adminJoinRoom ${mxid} -> HTTP ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+      const detail = (await resp.text()).slice(0, 200);
+      if (detail.includes("is already in the room")) return true;
+      console.error(`[matrix] inviteToRoom ${targetMxid} -> HTTP ${resp.status}: ${detail}`);
       return false;
     }
     return true;
   } catch (err) {
-    console.error(`[matrix] adminJoinRoom ${mxid} 失败:`, err);
+    console.error(`[matrix] inviteToRoom ${targetMxid} 失败:`, err);
+    return false;
+  }
+}
+
+// 代签 mxid 的客户端令牌后，以它自己的身份加入房间（已加入时 Synapse 返回 200 空操作）。
+export async function joinRoomAs(mxid: string, roomId: string): Promise<boolean> {
+  const synapse = requireConfig();
+  const creds = await brokerToken(mxid);
+  if (!creds) return false;
+  try {
+    const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/join/${encodeURIComponent(roomId)}`, {
+      method: "POST",
+      headers: adminHeaders(creds.access_token),
+      body: "{}",
+    });
+    if (!resp.ok) {
+      console.error(`[matrix] joinRoomAs ${mxid} -> HTTP ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(`[matrix] joinRoomAs ${mxid} 失败:`, err);
     return false;
   }
 }

@@ -34,6 +34,16 @@ export type RoomSummary = {
   invited: boolean;
 };
 
+// 广场卡片：聚合自已加入房间的 m.video 消息，新者在前。
+export type VideoCard = {
+  id: string; // 事件 ID，群聊页靠它定位到具体消息
+  roomId: string;
+  roomName: string;
+  description: string; // 生成时写入事件的 description，老事件回落到文件名
+  videoUrl: string; // 已解析的 blob 地址；解析中为空串（卡片先占位）
+  ts: number;
+};
+
 /* 模块级单例：所有组件实例共享同一份响应式状态。 */
 const ready = ref(false);
 const connecting = ref(false);
@@ -42,6 +52,7 @@ const myUserId = ref("");
 const activeRoomId = ref("");
 const rooms = ref<RoomSummary[]>([]);
 const timeline = ref<ChatMessage[]>([]);
+const videos = ref<VideoCard[]>([]);
 const typingNames = ref<string[]>([]);
 
 let client: sdk.MatrixClient | null = null;
@@ -83,7 +94,7 @@ function resolveMedia(mxc: string) {
     .then(resp => { if (!resp.ok) throw new Error(`media HTTP ${resp.status}`); return resp.blob(); })
     .then(blob => { const objectUrl = URL.createObjectURL(blob); objectUrls.add(objectUrl); mediaCache.set(mxc, objectUrl); })
     .catch(err => { console.warn("[matrix] 媒体解析失败:", mxc, err); mediaCache.set(mxc, ""); })
-    .finally(() => { mediaPending.delete(mxc); safe(() => refreshTimeline()); });
+    .finally(() => { mediaPending.delete(mxc); safe(() => { refreshTimeline(); refreshVideos(); }); });
 }
 
 /* ─── 房间与时间线映射 ─── */
@@ -182,6 +193,38 @@ function refreshTimeline() {
   updateTyping(room);
 }
 
+/* ─── 广场视频聚合 ───
+ * ACT: 扫描所有已加入房间的实时时间线，把 m.video 消息汇成卡片（新者在前）。
+ * 服务端不上传缩略图，封面由卡片端用 <video src="blob#t=0.5"> 取首帧；
+ * 这里只负责把视频本体解析成 blob，解析完成后会再跑一次本函数填上 videoUrl。
+ * 注意：live timeline 只含 initialSyncLimit 内的近期事件，更早的视频不会出现在广场。
+ */
+function refreshVideos() {
+  if (!client) { videos.value = []; return; }
+  const cards: VideoCard[] = [];
+  for (const room of client.getRooms()) {
+    if (room.getMyMembership() !== "join") continue;
+    for (const ev of room.getLiveTimeline().getEvents()) {
+      if (ev.getType() !== "m.room.message") continue;
+      const content = ev.getContent() ?? {};
+      if (content.msgtype !== "m.video") continue;
+      const mxc = typeof content.url === "string" && content.url.startsWith("mxc://") ? content.url : "";
+      if (mxc && !mediaCache.has(mxc)) resolveMedia(mxc);
+      const rawDescription = typeof content.description === "string" && content.description.trim() ? content.description.trim() : "";
+      cards.push({
+        id: ev.getId() ?? `${ev.getTs()}-${ev.getSender()}`,
+        roomId: room.roomId,
+        roomName: room.name || room.roomId,
+        description: rawDescription || (typeof content.body === "string" ? content.body : ""),
+        videoUrl: cachedMediaUrl(mxc),
+        ts: ev.getTs(),
+      });
+    }
+  }
+  cards.sort((a, b) => b.ts - a.ts);
+  videos.value = cards;
+}
+
 /* ─── 事件绑定 ───
  * 每个处理函数都经过 safe()：UI 映射异常绝不能回灌进 SDK —— Room.timeline 处理内抛错
  * 会破坏 sendTextMessage（pending-event 路径）并中断 /sync 的房间处理。
@@ -193,6 +236,7 @@ function safe(fn: () => void) {
 function wireEvents(c: sdk.MatrixClient) {
   c.on(sdk.RoomEvent.Timeline, (event, room) => safe(() => {
     refreshRooms();
+    refreshVideos();
     if (room?.roomId === activeRoomId.value) {
       refreshTimeline();
       if (event.getSender() && event.getSender() !== c.getUserId()) markRead();
@@ -210,6 +254,7 @@ function wireEvents(c: sdk.MatrixClient) {
     refreshRooms();
     pickInitialRoom();
     refreshTimeline();
+    refreshVideos();
   }));
 }
 
@@ -269,6 +314,7 @@ async function bootstrap(): Promise<boolean> {
       refreshRooms();
       pickInitialRoom();
       refreshTimeline();
+      refreshVideos();
       return true;
     } catch (err) {
       console.error("[matrix] bootstrap failed:", err);
@@ -300,6 +346,7 @@ function teardown() {
   activeRoomId.value = "";
   rooms.value = [];
   timeline.value = [];
+  videos.value = [];
   typingNames.value = [];
 }
 
@@ -407,7 +454,7 @@ export function useMatrixChat() {
   return {
     ready, connecting, error, myUserId,
     rooms, joinedRooms, invites, activeRoomId, roomName, isHost,
-    timeline, typingNames,
+    timeline, videos, typingNames,
     bootstrap, teardown, refreshRooms,
     setActiveRoom, createRoom, joinRoom, acceptInvite,
     sendText, noteTyping, markRead,

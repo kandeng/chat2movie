@@ -81,13 +81,22 @@ export function createVideoTrigger(client: sdk.MatrixClient, botUserId: string):
         const filename = basename(file.path);
         signal?.throwIfAborted();
         const uploaded = await client.uploadContent(bytes, { name: filename, type: file.mimeType });
+        // ACT: 描述随 m.video 事件一起入库：显式 prompt 优先，否则用本次讨论原文；
+        // 广场卡片的「视频描述」读该字段，老事件没有时回落到文件名。
+        const description = (prompt?.trim() || discussion.join("\n") || "根据本次群聊讨论生成的示意视频。").slice(0, 600);
         // ACT: 视频是 msgtype=m.video 的 m.room.message 事件（并非独立事件类型）。
-        await client.sendEvent(roomId, sdk.EventType.RoomMessage, {
+        // matrix-js-sdk v42 按 msgtype 严格约束 content 形状（且 sendEvent 多重载），
+        // 自定义 description 字段只能把 sendEvent 断言成宽松签名后传入。
+        const sendRoomMessage = client.sendEvent as unknown as (
+          roomId: string, eventType: string, content: Record<string, unknown>,
+        ) => Promise<unknown>;
+        await sendRoomMessage(roomId, sdk.EventType.RoomMessage, {
           msgtype: sdk.MsgType.Video,
           body: filename,
           filename,
           url: uploaded.content_uri,
           info: { mimetype: file.mimeType, size: bytes.length },
+          description,
         });
         await client.sendNotice(roomId, "视频已生成完成。").catch(() => {});
       } catch (err) {

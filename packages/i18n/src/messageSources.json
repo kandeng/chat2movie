@@ -37,6 +37,7 @@
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue",
     "apps/web/src/components/settings/tfRechargeDialog.vue",
     "apps/web/src/components/modelPopover.vue",
+    "apps/web/src/components/loginDialog.vue",
     "apps/web/src/pages/workspace/panels/document/components/editorTab.vue",
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
@@ -530,7 +531,6 @@
     "apps/web/src/components/settings/panels/developer/systemPromptDialog.vue",
     "apps/web/src/components/settings/panels/developer/index.vue",
     "apps/web/src/components/settings/tfRechargeDialog.vue",
-    "apps/web/src/components/loginDialog.vue",
     "apps/web/src/pages/chat/index.vue",
     "apps/web/src/pages/workspace/panels/document/components/openWithDialog.vue",
     "apps/web/src/pages/workspace/panels/document/components/extView.vue",
@@ -1006,7 +1006,8 @@
     "apps/web/src/components/loginDialog.vue",
     "apps/web/src/pages/account/index.vue",
     "apps/web/src/pages/chat/index.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/pages/home/index.vue",
+    "apps/server/src/utils/auth/email.ts"
   ],
   "广场": [
     "apps/web/src/components/appShell.vue"
@@ -2936,7 +2937,8 @@
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
   ],
   "保存修改": [
-    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
+    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue",
+    "apps/web/src/pages/account/index.vue"
   ],
   "选择要添加的模型": [
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
@@ -3639,8 +3641,7 @@
     "apps/web/src/components/settings/panels/network.vue"
   ],
   "用户名": [
-    "apps/web/src/components/settings/panels/network.vue",
-    "apps/web/src/components/loginDialog.vue"
+    "apps/web/src/components/settings/panels/network.vue"
   ],
   "密码": [
     "apps/web/src/components/settings/panels/network.vue",
@@ -3890,18 +3891,70 @@
   "默认由模型决定": [
     "apps/web/src/components/modelPopover.vue"
   ],
-  "例如 host": [
+  "邮箱": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "注册": [
     "apps/web/src/components/loginDialog.vue"
   ],
-  "演示账号由 provision-matrix 脚本创建，可使用 host、friend1、friend2 登录。": [
+  "昵称": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "群聊中展示的名字": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "至少 8 位": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "邮箱验证码": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "6 位数字": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "验证并登录": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "忘记密码": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "发送重置验证码": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "新密码": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "重置密码": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/server/src/utils/auth/email.ts"
+  ],
+  "或": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/hello/index.vue"
+  ],
+  "使用 Google 登录": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "重发验证码": [
     "apps/web/src/components/loginDialog.vue"
   ],
   "登录成功": [
     "apps/web/src/components/loginDialog.vue"
   ],
-  "登录失败，请稍后重试": [
-    "apps/web/src/components/loginDialog.vue",
-    "apps/web/src/stores/auth.ts"
+  "验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "验证码已重新发送": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "重置验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。": [
+    "apps/web/src/components/loginDialog.vue"
+  ],
+  "密码已重置，请用新密码登录": [
+    "apps/web/src/components/loginDialog.vue"
   ],
   "Agent 对话": [
     "apps/web/src/components/singleAgentDialog.vue"
@@ -3985,9 +4038,6 @@
   "添加私有提供商": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "或": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
   "稍后配置": [
     "apps/web/src/pages/hello/index.vue"
   ],
@@ -4021,7 +4071,19 @@
   "自动配置失败，请重试": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "昵称": [
+  "更换头像": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "保存后生效": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "未知": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "已验证": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "未验证": [
     "apps/web/src/pages/account/index.vue"
   ],
   "用户 ID": [
@@ -4030,10 +4092,16 @@
   "设备 ID": [
     "apps/web/src/pages/account/index.vue"
   ],
-  "未知": [
+  "登录后即可创建群聊、邀请成员，并作为主持人生成视频。": [
     "apps/web/src/pages/account/index.vue"
   ],
-  "登录后即可创建群聊、邀请成员，并作为主持人生成视频。": [
+  "图片读取失败，请换一张试试": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "资料已更新": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "资料更新失败，请稍后重试": [
     "apps/web/src/pages/account/index.vue"
   ],
   "登录后即可参与群聊": [
@@ -6174,22 +6242,25 @@
   "工作目录校验失败": [
     "apps/web/src/stores/workspace.ts"
   ],
-  "用户名或密码错误": [
+  "邮箱尚未验证，请先输入验证码激活": [
     "apps/web/src/stores/auth.ts"
   ],
-  "该账号已被停用": [
+  "邮箱或密码错误": [
     "apps/web/src/stores/auth.ts"
   ],
-  "登录过于频繁，请稍后再试": [
+  "该邮箱已被注册": [
     "apps/web/src/stores/auth.ts"
   ],
-  "登录状态已失效，请重新登录": [
+  "验证码无效或已过期": [
     "apps/web/src/stores/auth.ts"
   ],
-  "无法连接 Matrix 服务，请确认本地 Synapse 已启动": [
+  "密码至少需要 8 位": [
     "apps/web/src/stores/auth.ts"
   ],
-  "请输入用户名": [
+  "操作过于频繁，请稍后再试": [
+    "apps/web/src/stores/auth.ts"
+  ],
+  "请输入邮箱": [
     "apps/web/src/stores/auth.ts"
   ],
   "请输入密码": [
@@ -6203,6 +6274,9 @@
   ],
   "请输入房间 ID 或别名": [
     "apps/web/src/composables/useMatrixChat.ts"
+  ],
+  "[auth] 账号数据库初始化失败：": [
+    "apps/server/src/app.ts"
   ],
   "启动时刷新供应商模型失败：": [
     "apps/server/src/app.ts"
@@ -6799,6 +6873,18 @@
   ],
   "请选择节点输出": [
     "apps/server/src/routes/agent/mentionSource.ts"
+  ],
+  "请先登录网站账号": [
+    "apps/server/src/routes/matrix/token.ts"
+  ],
+  "未配置 Synapse，无法代签 Matrix 令牌": [
+    "apps/server/src/routes/matrix/token.ts"
+  ],
+  "该账号缺少 Matrix 身份，请联系管理员": [
+    "apps/server/src/routes/matrix/token.ts"
+  ],
+  "Synapse 暂时不可用，请稍后再试": [
+    "apps/server/src/routes/matrix/token.ts"
   ],
   "未配置 Synapse，请先在 config.json 的 synapse 块填写 baseUrl 与 adminAccessToken": [
     "apps/server/src/routes/matrix/generate.ts"
@@ -8676,6 +8762,12 @@
   ],
   "不支持此文档的实际格式": [
     "apps/server/src/utils/documents.ts"
+  ],
+  "注册邮箱验证": [
+    "apps/server/src/utils/auth/email.ts"
+  ],
+  "更换邮箱": [
+    "apps/server/src/utils/auth/email.ts"
   ],
   "当前操作需要 FFmpeg，请在插件市场下载安装或配置可用版本后重试。": [
     "apps/server/src/utils/ffmpeg/index.ts"

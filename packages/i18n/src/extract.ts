@@ -1,4 +1,5 @@
 import { readdir, readFile, writeAtomic, mkdir } from "@toonflow/file";
+import { existsSync } from "node:fs";
 import { resolve, relative } from "node:path";
 import { parse } from "@babel/parser";
 import type { Node } from "@babel/types";
@@ -56,7 +57,11 @@ async function scan(directory: string) {
     }
   }
 }
-for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src"]) await scan(resolve(root, path));
+// ACT: 桌面/移动客户端已随精简移除；这里只扫描实际存在的目录，避免整个提取流程因 ENOENT 中断。
+for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src"]) {
+  const target = resolve(root, path);
+  if (existsSync(target)) await scan(target);
+}
 const messages = Object.fromEntries([...catalog].sort(([left], [right]) => left.localeCompare(right, "zh-CN")).map(([message]) => [message, message]));
 await mkdir(resolve(import.meta.dirname, "locales"), { recursive: true });
 await writeAtomic(resolve(import.meta.dirname, "locales/zhCn.json"), JSON.stringify(messages, null, 2) + "\n");

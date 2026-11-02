@@ -7,6 +7,16 @@ export type Project = {
   directory: string;
   name: string;
   lastOpenedAt: number;
+  // ACT: 归属的工作室账号（Matrix 用户 ID）；服务端按用户隔离目录在后续任务实现，这里先落地归属关系。
+  ownerId?: string;
+};
+
+// 群聊主持人点「自动生成视频 / 分步生成视频」带过来的生成意图。
+export type PipelineIntent = {
+  mode: "auto" | "step";
+  roomId: string;
+  ownerId: string;
+  createdAt: number;
 };
 
 export const useWorkspaceStore = defineStore("workspace", () => {
@@ -16,6 +26,8 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const projectLoadingDrawn = ref(false);
   const projectLoadingVisible = ref(false);
   const pendingAgentMessage = ref<{ directory: string; prompt: string; attachments?: AgentAttachment[]; model: string; reasoningEffort: string } | null>(null);
+  // ACT: 计划 Task 4 —— 由群聊跳转带入的生成意图；真正的流水线接入后由它驱动，消费完可清空。
+  const pipeline = ref<PipelineIntent | null>(null);
 
   async function addProject(path: string, name?: string, signal?: AbortSignal, previousDirectory = path) {
     const { data } = await axios.get<{ code: number; data?: { directory: string }; message?: string }>("/api/workspaces/check", {
@@ -51,10 +63,28 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     if (project.value?.directory === path) project.value = null;
   }
 
-  return { project, projectList, projectLoading, projectLoadingDrawn, projectLoadingVisible, pendingAgentMessage, addProject, openProject, renameProject, removeProject };
+  // 记录项目归属账号（已归属同一账号时不做任何事，避免无谓的持久化写入）。
+  function markProjectOwner(path: string, ownerId: string) {
+    if (!ownerId) return;
+    for (const item of projectList.value) {
+      if (item.directory === path && item.ownerId !== ownerId) {
+        item.ownerId = ownerId;
+        if (project.value?.directory === path) project.value = item;
+      }
+    }
+  }
+
+  function setPipeline(intent: PipelineIntent | null) {
+    pipeline.value = intent;
+  }
+
+  return {
+    project, projectList, projectLoading, projectLoadingDrawn, projectLoadingVisible, pendingAgentMessage, pipeline,
+    addProject, openProject, renameProject, removeProject, markProjectOwner, setPipeline,
+  };
 }, {
   persist: {
     key: "toonflow.projectList",
-    pick: ["project", "projectList"],
+    pick: ["project", "projectList", "pipeline"],
   },
 });

@@ -132,13 +132,14 @@
 <script setup lang="ts">
 import { translate } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, provide, ref, shallowRef, watch, type ComponentPublicInstance } from "vue";
-import { onBeforeRouteLeave } from "vue-router";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import axios from "axios";
 import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase } from "@tabler/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { QRCode } from "tdesign-vue-next";
 import settings from "@/components/settings/index.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
+import { useAuthStore } from "@/stores/auth";
 import { registerWorkspaceControl, waitForControlValue } from "@/lib/mcpControl";
 import anonymousData from "@/lib/anonymousData";
 import { useProviderBalances } from "@/lib/providerBilling";
@@ -164,6 +165,22 @@ onScopeDispose(() => {
   for (const eventName of sideButtonEvents) window.removeEventListener(eventName, preventSideButtonNavigation, true);
 });
 const workspaceStore = useWorkspaceStore();
+const auth = useAuthStore();
+const route = useRoute();
+
+// ACT: 计划 Task 4 —— 从群聊主持人的「自动生成视频 / 分步生成视频」按钮跳转过来时，
+// 把生成意图与归属账号落到 workspace store，并标记当前项目的归属。
+// 真正的自动/分步流水线属于后续任务，这里只负责意图落地与归属记录。
+function seedPipelineFromQuery() {
+  const mode = route.query.mode;
+  if (mode !== "auto" && mode !== "step") return;
+  const roomId = typeof route.query.room === "string" ? route.query.room : "";
+  workspaceStore.setPipeline({ mode, roomId, ownerId: auth.myUserId, createdAt: Date.now() });
+  if (workspaceStore.project && auth.myUserId) workspaceStore.markProjectOwner(workspaceStore.project.directory, auth.myUserId);
+  ElMessage.success(mode === "auto" ? "已按自动生成模式准备工作室" : "已按分步生成模式准备工作室");
+}
+watch(() => [route.query.mode, route.query.room], seedPipelineFromQuery, { immediate: true });
+
 useProviderBalances();
 const panelOptions = [
   { label: "画布", value: "canvas", icon: IconVector },

@@ -1,5 +1,5 @@
 <template>
-  <main class="chat">
+  <main class="chat" :style="{ '--room-w': roomWidth + 'px' }">
     <!-- ACT: 未登录时整页只给出登录引导；登录态由顶栏/账户页共用的 loginDialog 提供。 -->
     <section v-if="!auth.signedIn" class="signedOut">
       <el-empty :description="translate('登录后即可参与群聊')">
@@ -18,8 +18,8 @@
                 <icon-plus :size="18" aria-hidden="true" />
               </button>
             </el-tooltip>
-            <el-tooltip :content="translate('加入房间')" placement="bottom" :show-after="100">
-              <button class="roomAction" type="button" :disabled="!ready" :aria-label="translate('加入房间')" @click="joinVisible = true">
+            <el-tooltip :content="translate('加入群聊')" placement="bottom" :show-after="100">
+              <button class="roomAction" type="button" :disabled="!ready" :aria-label="translate('加入群聊')" @click="joinVisible = true">
                 <icon-link :size="18" aria-hidden="true" />
               </button>
             </el-tooltip>
@@ -55,6 +55,9 @@
         </el-scrollbar>
       </aside>
 
+      <!-- ACT: 可拖拽竖直分隔条：按住左右移动实时改左栏（群聊列表）宽度。 -->
+      <div class="chatResize" :class="{ dragging: resizing }" @pointerdown="onResizeDown" />
+
       <!-- 右栏：当前房间的消息流与输入区 -->
       <section class="chatPanel">
         <header class="chatHeader">
@@ -75,7 +78,7 @@
           <div class="messageList">
             <p v-if="!activeRoomId" class="emptyHint">{{ translate("从左侧选择一个群聊开始。") }}</p>
             <p v-else-if="!timeline.length" class="emptyHint">{{ translate("还没有消息，发送第一条开始讨论吧。") }}</p>
-            <div v-for="msg in timeline" :key="msg.id" class="messageRow" :class="{ mine: msg.mine }">
+            <div v-for="msg in timeline" :key="msg.id" class="messageRow" :class="{ mine: msg.mine, anchored: anchoredId === msg.id }" :data-event-id="msg.id">
               <div class="bubble">
                 <div class="meta">
                   <span class="sender">{{ msg.senderName }}</span>
@@ -156,8 +159,8 @@
       </template>
     </el-dialog>
 
-    <!-- 加入房间：房间 ID 或别名 -->
-    <el-dialog v-model="joinVisible" :title="translate('加入房间')" width="min(420px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false">
+    <!-- 加入群聊：房间 ID 或别名 -->
+    <el-dialog v-model="joinVisible" :title="translate('加入群聊')" width="min(420px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false">
       <el-form class="roomForm" label-position="top" @submit.prevent="submitJoin">
         <el-form-item :label="translate('房间 ID 或别名')">
           <el-input v-model="joinTarget" :disabled="actionBusy" placeholder="!xxxx:localhost / #name:localhost" @keydown.enter="submitJoin" />
@@ -174,8 +177,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { ElMessage, type ScrollbarInstance } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import loginDialog from "@/components/loginDialog.vue";
@@ -185,6 +188,7 @@ import { useMatrixChat } from "@/composables/useMatrixChat";
 // ACT: 群聊页（计划 Task 3）——左栏房间列表 + 右栏会话。
 // 客户端是模块级单例：离开本页不再 teardown，登录态消失时由 useMatrixChat 内部的 auth 监听负责断开。
 const router = useRouter();
+const route = useRoute();
 const auth = useAuthStore();
 const {
   ready, connecting, error: chatError, rooms, joinedRooms, invites,
@@ -205,11 +209,75 @@ const joinTarget = ref("");
 const busyRoom = ref("");
 const actionBusy = ref(false);
 
+// ── 房间列表与会话区之间的分隔条拖拽 ──
+// ACT: pointerdown 记下起始宽度与起始 X，pointermove 用增量实时夹紧到 [ROOM_MIN, ROOM_MAX]，
+// pointerup（含组件卸载）统一摘掉全局监听，避免残留。
+const ROOM_MIN = 200;
+const ROOM_MAX = 420;
+const roomWidth = ref(260);
+const resizing = ref(false);
+let resizeStartX = 0;
+let resizeStartW = 0;
+
+function onResizeDown(event: PointerEvent) {
+  event.preventDefault();
+  resizing.value = true;
+  resizeStartX = event.clientX;
+  resizeStartW = roomWidth.value;
+  document.addEventListener("pointermove", onResizeMove);
+  document.addEventListener("pointerup", onResizeUp);
+}
+function onResizeMove(event: PointerEvent) {
+  if (!resizing.value) return;
+  roomWidth.value = Math.min(ROOM_MAX, Math.max(ROOM_MIN, resizeStartW + event.clientX - resizeStartX));
+}
+function onResizeUp() {
+  if (!resizing.value) return;
+  resizing.value = false;
+  document.removeEventListener("pointermove", onResizeMove);
+  document.removeEventListener("pointerup", onResizeUp);
+}
+onBeforeUnmount(onResizeUp);
+
+// ── 广场深链：切到指定房间并滚动到指定消息 ──
+// ACT: 广场卡片点击带 ?room=&event= 进来：先切房间，再轮询等事件出现在时间线里，
+// 然后 scrollIntoView 到该消息并短暂高亮。锚定期间抑制自动滚底，
+// 否则视图会被 scrollToBottom 抢回最新一条，用户看不到视频所在位置。
+const anchoredId = ref("");
+let suppressAutoScroll = false;
+let anchorTimer: ReturnType<typeof setTimeout> | null = null;
+
+async function anchorFromQuery() {
+  const roomId = typeof route.query.room === "string" ? route.query.room : "";
+  const eventId = typeof route.query.event === "string" ? route.query.event : "";
+  if (!roomId || !auth.signedIn || !ready.value) return;
+  suppressAutoScroll = !!eventId;
+  if (activeRoomId.value !== roomId) setActiveRoom(roomId);
+  if (!eventId) { suppressAutoScroll = false; return; }
+  const deadline = Date.now() + 5000;
+  while (!timeline.value.some(msg => msg.id === eventId) && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+  await nextTick();
+  suppressAutoScroll = false;
+  const wrap = scroller.value?.wrapRef;
+  const target = wrap?.querySelector<HTMLElement>(`[data-event-id="${CSS.escape(eventId)}"]`) ?? null;
+  // ACT: 同步窗口之外的事件不在本地时间线里：只切房间，不强制定位。
+  if (!target) return;
+  target.scrollIntoView({ block: "center", behavior: "smooth" });
+  anchoredId.value = eventId;
+  if (anchorTimer) clearTimeout(anchorTimer);
+  anchorTimer = setTimeout(() => { anchoredId.value = ""; }, 2600);
+}
+watch([() => route.query.room, () => route.query.event, ready, () => auth.signedIn], () => { void anchorFromQuery(); }, { immediate: true });
+onBeforeUnmount(() => { if (anchorTimer) clearTimeout(anchorTimer); });
+
 function formatTime(ts: number) {
   return new Date(ts).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
 async function scrollToBottom() {
+  if (suppressAutoScroll) return;
   await nextTick();
   const wrap = scroller.value?.wrapRef;
   if (wrap) wrap.scrollTop = wrap.scrollHeight;
@@ -266,7 +334,7 @@ async function submitJoin() {
     joinTarget.value = "";
     await scrollToBottom();
   } catch (err) {
-    ElMessage.error(err instanceof Error ? err.message : "加入房间失败");
+    ElMessage.error(err instanceof Error ? err.message : "加入群聊失败");
   } finally {
     actionBusy.value = false;
   }
@@ -279,7 +347,7 @@ async function accept(roomId: string) {
     await acceptInvite(roomId);
     await scrollToBottom();
   } catch (err) {
-    ElMessage.error(err instanceof Error ? err.message : "加入房间失败");
+    ElMessage.error(err instanceof Error ? err.message : "加入群聊失败");
   } finally {
     busyRoom.value = "";
   }
@@ -320,7 +388,8 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .chat {
   display: grid;
-  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  // ACT: 三列：房间列表（宽度由拖拽变量 --room-w 决定）+ 4px 分隔条 + 会话区。
+  grid-template-columns: var(--room-w, 260px) 4px minmax(0, 1fr);
   height: 100%;
   background: var(--el-bg-color);
   color: var(--el-text-color-primary);
@@ -340,6 +409,16 @@ onMounted(async () => {
   min-width: 0;
   min-height: 0;
   border-inline-end: 1px solid var(--el-border-color-lighter);
+}
+
+// ACT: 分隔条平时透明（视觉上是 roomPanel 的 1px 边框），悬停/拖拽时亮主色给出反馈。
+.chatResize {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background 0.15s ease;
+
+  &:hover, &.dragging { background: var(--el-color-primary); }
 }
 
 .roomPanelHeader {
@@ -473,7 +552,9 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  // ACT: 固定为与顶栏同高（shell 的 --shell-page-header-h），左栏首枚图标靠同一变量与这里的群聊名称垂直居中对齐。
+  height: var(--shell-page-header-h, 56px);
+  padding: 0 16px;
   border-bottom: 1px solid var(--el-border-color-lighter);
 
   .chatTitle {
@@ -530,6 +611,13 @@ onMounted(async () => {
       .bubble {
         background: var(--el-color-primary-light-9);
       }
+    }
+
+    // ACT: 广场深链定位到的目标消息：主色描边 + 淡底高亮，约 2.6 秒后自动清除。
+    &.anchored .bubble {
+      background: var(--el-color-primary-light-9);
+      outline: 2px solid var(--el-color-primary);
+      outline-offset: 2px;
     }
   }
 

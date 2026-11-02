@@ -1,85 +1,274 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="translate('登录')"
-    width="min(420px, calc(100vw - 32px))"
+    :title="dialogTitle"
+    width="min(440px, calc(100vw - 32px))"
     alignCenter
     appendToBody
     :closeOnClickModal="false"
     :closeOnPressEscape="!auth.busy"
     :showClose="!auth.busy">
-    <el-form class="loginForm" label-position="top" @submit.prevent="submit">
-      <el-form-item :label="translate('用户名')">
-        <el-input
-          v-model="username"
-          :disabled="auth.busy"
-          autocomplete="username"
-          :placeholder="translate('例如 host')"
-          :aria-label="translate('用户名')"
-          @keydown.enter="submit" />
-      </el-form-item>
-      <el-form-item :label="translate('密码')">
-        <el-input
-          v-model="password"
-          type="password"
-          show-password
-          :disabled="auth.busy"
-          autocomplete="current-password"
-          :aria-label="translate('密码')"
-          @keydown.enter="submit" />
-      </el-form-item>
-      <el-text v-if="errorMessage" class="loginError" type="danger" role="alert">{{ errorMessage }}</el-text>
-      <p class="loginHint">{{ translate("演示账号由 provision-matrix 脚本创建，可使用 host、friend1、friend2 登录。") }}</p>
-    </el-form>
+    <el-tabs v-model="activeTab" class="authTabs" @tab-change="onTabChange">
+      <!-- ACT: 登录——邮箱 + 密码（网站账号即主身份，Matrix 令牌由服务端代签）。 -->
+      <el-tab-pane :label="translate('登录')" name="login">
+        <el-form class="authForm" label-position="top" @submit.prevent="submitLogin">
+          <el-form-item :label="translate('邮箱')">
+            <el-input
+              v-model="loginEmail"
+              :disabled="auth.busy"
+              autocomplete="email"
+              placeholder="you@example.com"
+              :aria-label="translate('邮箱')"
+              @keydown.enter="submitLogin" />
+          </el-form-item>
+          <el-form-item :label="translate('密码')">
+            <el-input
+              v-model="loginPassword"
+              type="password"
+              show-password
+              :disabled="auth.busy"
+              autocomplete="current-password"
+              :aria-label="translate('密码')"
+              @keydown.enter="submitLogin" />
+          </el-form-item>
+          <el-button class="submitBtn" type="primary" :loading="auth.busy" :disabled="!loginEmail.trim() || !loginPassword" @click="submitLogin">{{ translate("登录") }}</el-button>
+        </el-form>
+      </el-tab-pane>
+
+      <!-- ACT: 注册——第一步填邮箱/昵称/密码，第二步输入 6 位邮箱验证码激活并登录。 -->
+      <el-tab-pane :label="translate('注册')" name="register">
+        <el-form v-if="regStep === 'form'" class="authForm" label-position="top" @submit.prevent="submitRegister">
+          <el-form-item :label="translate('邮箱')">
+            <el-input v-model="regEmail" :disabled="auth.busy" autocomplete="email" placeholder="you@example.com" :aria-label="translate('邮箱')" />
+          </el-form-item>
+          <el-form-item :label="translate('昵称')">
+            <el-input v-model="regName" :disabled="auth.busy" :placeholder="translate('群聊中展示的名字')" :aria-label="translate('昵称')" />
+          </el-form-item>
+          <el-form-item :label="translate('密码')">
+            <el-input v-model="regPassword" type="password" show-password :disabled="auth.busy" autocomplete="new-password" :placeholder="translate('至少 8 位')" :aria-label="translate('密码')" />
+          </el-form-item>
+          <el-button class="submitBtn" type="primary" :loading="auth.busy" :disabled="!regEmail.trim() || !regPassword" @click="submitRegister">{{ translate("注册") }}</el-button>
+        </el-form>
+        <el-form v-else class="authForm" label-position="top" @submit.prevent="submitVerify">
+          <p class="authNotice">{{ noticeMessage }}</p>
+          <el-form-item :label="translate('邮箱验证码')">
+            <el-input v-model="regOtp" :disabled="auth.busy" maxlength="6" inputmode="numeric" :placeholder="translate('6 位数字')" :aria-label="translate('邮箱验证码')" @keydown.enter="submitVerify" />
+          </el-form-item>
+          <div class="btnRow">
+            <el-button :disabled="auth.busy || cooldown > 0" @click="resendRegOtp">{{ resendLabel }}</el-button>
+            <el-button type="primary" :loading="auth.busy" :disabled="regOtp.trim().length < 6" @click="submitVerify">{{ translate("验证并登录") }}</el-button>
+          </div>
+        </el-form>
+      </el-tab-pane>
+
+      <!-- ACT: 忘记密码——第一步发重置验证码，第二步填验证码 + 新密码完成重置。 -->
+      <el-tab-pane :label="translate('忘记密码')" name="reset">
+        <el-form v-if="resetStep === 'email'" class="authForm" label-position="top" @submit.prevent="submitResetRequest">
+          <el-form-item :label="translate('邮箱')">
+            <el-input v-model="resetEmail" :disabled="auth.busy" autocomplete="email" placeholder="you@example.com" :aria-label="translate('邮箱')" @keydown.enter="submitResetRequest" />
+          </el-form-item>
+          <el-button class="submitBtn" type="primary" :loading="auth.busy" :disabled="!resetEmail.trim()" @click="submitResetRequest">{{ translate("发送重置验证码") }}</el-button>
+        </el-form>
+        <el-form v-else class="authForm" label-position="top" @submit.prevent="submitResetConfirm">
+          <p class="authNotice">{{ noticeMessage }}</p>
+          <el-form-item :label="translate('邮箱验证码')">
+            <el-input v-model="resetOtp" :disabled="auth.busy" maxlength="6" inputmode="numeric" :placeholder="translate('6 位数字')" :aria-label="translate('邮箱验证码')" />
+          </el-form-item>
+          <el-form-item :label="translate('新密码')">
+            <el-input v-model="resetNewPassword" type="password" show-password :disabled="auth.busy" autocomplete="new-password" :placeholder="translate('至少 8 位')" :aria-label="translate('新密码')" @keydown.enter="submitResetConfirm" />
+          </el-form-item>
+          <div class="btnRow">
+            <el-button :disabled="auth.busy || cooldown > 0" @click="resendResetOtp">{{ resendLabel }}</el-button>
+            <el-button type="primary" :loading="auth.busy" :disabled="resetOtp.trim().length < 6 || !resetNewPassword" @click="submitResetConfirm">{{ translate("重置密码") }}</el-button>
+          </div>
+        </el-form>
+      </el-tab-pane>
+    </el-tabs>
+
+    <el-text v-if="errorMessage" class="authError" type="danger" role="alert">{{ errorMessage }}</el-text>
+
+    <!-- ACT: Google 登录仅在服务端配置了 OAuth 凭据时出现（GET /api/account/config 的 googleEnabled）。 -->
+    <template v-if="auth.googleEnabled && activeTab !== 'reset'">
+      <el-divider class="authDivider">{{ translate("或") }}</el-divider>
+      <el-button class="googleBtn" :disabled="auth.busy" @click="submitGoogle">{{ translate("使用 Google 登录") }}</el-button>
+    </template>
+
     <template #footer>
-      <div class="loginFooter">
-        <el-button :disabled="auth.busy" @click="visible = false">{{ translate("取消") }}</el-button>
-        <el-button type="primary" :loading="auth.busy" :disabled="!username.trim() || !password" @click="submit">{{ translate("登录") }}</el-button>
+      <div class="authFooter">
+        <el-button :disabled="auth.busy" @click="visible = false">{{ translate("关闭") }}</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import { useAuthStore } from "@/stores/auth";
 
-// ACT: 统一登录弹窗（计划 Task 2）。顶栏账户按钮、账户页与 /workspace 路由守卫共用这一个入口，
-// 登录成功后由调用方通过 success 事件决定后续跳转（例如回到被打断的工作室页面）。
+// ACT: 统一登录弹窗（计划 Task 5）：登录 / 注册 / 忘记密码 三个标签页 + 可选的 Google 登录。
+// 顶栏账户按钮、账户页、群聊页与 /workspace 路由守卫共用这一个入口，登录成功后由调用方通过 success 事件决定后续跳转。
 const visible = defineModel<boolean>({ default: false });
 const emit = defineEmits<{ success: [] }>();
 const auth = useAuthStore();
-const username = ref("");
-const password = ref("");
-const errorMessage = ref("");
 
-// ACT: 每次打开都清掉上一次的错误与密码，用户名保留以便重试。
+type Tab = "login" | "register" | "reset";
+const activeTab = ref<Tab>("login");
+const errorMessage = ref("");
+const noticeMessage = ref("");
+
+// 登录
+const loginEmail = ref("");
+const loginPassword = ref("");
+
+// 注册（两步：表单 -> 验证码）
+const regStep = ref<"form" | "otp">("form");
+const regEmail = ref("");
+const regName = ref("");
+const regPassword = ref("");
+const regOtp = ref("");
+
+// 重置密码（两步：邮箱 -> 验证码 + 新密码）
+const resetStep = ref<"email" | "otp">("email");
+const resetEmail = ref("");
+const resetOtp = ref("");
+const resetNewPassword = ref("");
+
+// ACT: 验证码重发冷却（drone RESEND_COOLDOWN_SECONDS = 60 秒），注册与重置共用一个计时器。
+const cooldown = ref(0);
+let cooldownTimer: ReturnType<typeof setInterval> | null = null;
+function startCooldown(seconds = 60) {
+  cooldown.value = seconds;
+  if (cooldownTimer) clearInterval(cooldownTimer);
+  cooldownTimer = setInterval(() => {
+    cooldown.value -= 1;
+    if (cooldown.value <= 0 && cooldownTimer) { clearInterval(cooldownTimer); cooldownTimer = null; }
+  }, 1000);
+}
+onBeforeUnmount(() => { if (cooldownTimer) clearInterval(cooldownTimer); });
+
+const dialogTitle = computed(() =>
+  activeTab.value === "register" ? translate("注册") : activeTab.value === "reset" ? translate("重置密码") : translate("登录"));
+const resendLabel = computed(() => cooldown.value > 0 ? `${translate("重发验证码")} (${cooldown.value}s)` : translate("重发验证码"));
+
+// ACT: 每次打开都回到登录页并清空上一次的输入/错误；顺带拉取 googleEnabled 决定是否显示 Google 按钮。
 watch(visible, value => {
   if (!value) return;
   errorMessage.value = "";
-  password.value = "";
+  noticeMessage.value = "";
+  activeTab.value = "login";
+  loginPassword.value = "";
+  regStep.value = "form"; regOtp.value = "";
+  resetStep.value = "email"; resetOtp.value = ""; resetNewPassword.value = "";
+  void auth.loadConfig();
 });
 
-async function submit() {
-  if (auth.busy || !username.value.trim() || !password.value) return;
+function onTabChange() { errorMessage.value = ""; noticeMessage.value = ""; }
+
+function fail(error: unknown, fallback: string) {
+  errorMessage.value = error instanceof Error ? error.message : translate(fallback);
+}
+
+async function succeed() {
+  loginPassword.value = "";
+  regPassword.value = "";
+  visible.value = false;
+  ElMessage.success(translate("登录成功"));
+  emit("success");
+}
+
+async function submitLogin() {
+  if (auth.busy) return;
   errorMessage.value = "";
   try {
-    await auth.login(username.value, password.value);
-    password.value = "";
-    visible.value = false;
-    ElMessage.success(translate("登录成功"));
-    emit("success");
-  } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : translate("登录失败，请稍后重试");
-    password.value = "";
-  }
+    await auth.login(loginEmail.value, loginPassword.value);
+    await succeed();
+  } catch (error) { fail(error, "登录失败，请稍后重试"); loginPassword.value = ""; }
+}
+
+async function submitRegister() {
+  if (auth.busy) return;
+  errorMessage.value = "";
+  try {
+    await auth.register(regEmail.value, regPassword.value, regName.value);
+    regStep.value = "otp";
+    startCooldown(60);
+    noticeMessage.value = translate("验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。");
+  } catch (error) { fail(error, "注册失败，请稍后重试"); }
+}
+
+async function resendRegOtp() {
+  if (auth.busy || cooldown.value > 0) return;
+  errorMessage.value = "";
+  try {
+    await auth.sendVerificationOtp(regEmail.value, "email-verification");
+    startCooldown(60);
+    noticeMessage.value = translate("验证码已重新发送");
+  } catch (error) { fail(error, "验证码发送失败，请稍后再试"); }
+}
+
+async function submitVerify() {
+  if (auth.busy) return;
+  errorMessage.value = "";
+  try {
+    // ACT: 先激活邮箱，再用注册时的邮箱/密码登录（服务端 autoSignIn=false，需显式登录一次）。
+    await auth.verifyOtp(regEmail.value, regOtp.value);
+    loginEmail.value = regEmail.value;
+    await auth.login(regEmail.value, regPassword.value);
+    await succeed();
+  } catch (error) { fail(error, "验证失败，请稍后重试"); }
+}
+
+async function submitResetRequest() {
+  if (auth.busy) return;
+  errorMessage.value = "";
+  try {
+    await auth.requestPasswordReset(resetEmail.value);
+    resetStep.value = "otp";
+    startCooldown(60);
+    noticeMessage.value = translate("重置验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。");
+  } catch (error) { fail(error, "重置邮件发送失败，请稍后再试"); }
+}
+
+async function resendResetOtp() {
+  if (auth.busy || cooldown.value > 0) return;
+  errorMessage.value = "";
+  try {
+    await auth.requestPasswordReset(resetEmail.value);
+    startCooldown(60);
+    noticeMessage.value = translate("验证码已重新发送");
+  } catch (error) { fail(error, "验证码发送失败，请稍后再试"); }
+}
+
+async function submitResetConfirm() {
+  if (auth.busy) return;
+  errorMessage.value = "";
+  try {
+    await auth.resetPassword(resetEmail.value, resetOtp.value, resetNewPassword.value);
+    ElMessage.success(translate("密码已重置，请用新密码登录"));
+    loginEmail.value = resetEmail.value;
+    activeTab.value = "login";
+    resetStep.value = "email"; resetOtp.value = ""; resetNewPassword.value = "";
+    noticeMessage.value = "";
+  } catch (error) { fail(error, "重置密码失败，请稍后重试"); }
+}
+
+async function submitGoogle() {
+  if (auth.busy) return;
+  errorMessage.value = "";
+  try {
+    await auth.signInGoogle(); // ACT: 触发跳转到 Google 授权页，回调后由 restore() 续接会话。
+  } catch (error) { fail(error, "Google 登录失败，请稍后重试"); }
 }
 </script>
 
 <style scoped lang="scss">
-.loginForm {
+.authTabs {
+  :deep(.el-tabs__header) { margin-bottom: 12px; }
+}
+
+.authForm {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -87,20 +276,39 @@ async function submit() {
   :deep(.el-form-item) { margin-bottom: 16px; }
 }
 
-.loginError {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 13px;
+.submitBtn {
+  width: 100%;
 }
 
-.loginHint {
-  margin: 0;
+.btnRow {
+  display: flex;
+  gap: 8px;
+
+  .el-button { flex: 1; }
+}
+
+.authNotice {
+  margin: 0 0 12px;
   color: var(--el-text-color-secondary);
   font-size: 12px;
   line-height: 1.7;
 }
 
-.loginFooter {
+.authError {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.authDivider {
+  margin: 16px 0 12px;
+}
+
+.googleBtn {
+  width: 100%;
+}
+
+.authFooter {
   display: flex;
   justify-content: flex-end;
   gap: 8px;

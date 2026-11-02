@@ -500,12 +500,10 @@
     "apps/web/src/components/agent/conversation/contextUsage.vue"
   ],
   "松开添加附件": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "图片、视频、文档或代码文件": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "编辑消息": [
     "apps/web/src/components/agent/conversation/messageInput.vue",
@@ -543,7 +541,6 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/workspace/components/workspaceMenu.vue",
-    "apps/web/src/pages/home/index.vue",
     "apps/web/src/pages/home/workspacePicker.vue",
     "apps/web/src/lib/i18n.ts"
   ],
@@ -563,8 +560,7 @@
     "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "添加附件": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "生成期间仅支持发送文字": [
     "apps/web/src/components/agent/conversation/messageInput.vue"
@@ -620,21 +616,17 @@
     "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "只支持图片、视频和受支持的文本或文档文件": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "附件不能为空且不能超过 100 MB": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。": [
     "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/components/agent/textAttachments.ts",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/textAttachments.ts"
   ],
   "每条消息最多添加 20 个附件": [
-    "apps/web/src/components/agent/conversation/messageInput.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/components/agent/conversation/messageInput.vue"
   ],
   "对话消息": [
     "apps/web/src/components/agent/conversation/messageList.vue",
@@ -817,7 +809,6 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
-    "apps/web/src/pages/home/index.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "请输入 1–80 个字符的对话名称": [
@@ -1002,12 +993,6 @@
     "apps/web/src/components/settings/index.vue",
     "apps/web/src/pages/workspace/components/workspaceMenu.vue"
   ],
-  "收起": [
-    "apps/web/src/components/appShell.vue"
-  ],
-  "展开": [
-    "apps/web/src/components/appShell.vue"
-  ],
   "账户": [
     "apps/web/src/components/appShell.vue",
     "apps/web/src/pages/account/index.vue"
@@ -1020,7 +1005,8 @@
     "apps/web/src/components/appShell.vue",
     "apps/web/src/components/loginDialog.vue",
     "apps/web/src/pages/account/index.vue",
-    "apps/web/src/pages/chat/index.vue"
+    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/pages/home/index.vue"
   ],
   "广场": [
     "apps/web/src/components/appShell.vue"
@@ -2143,7 +2129,8 @@
   ],
   "连接中…": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue",
-    "apps/web/src/pages/chat/index.vue"
+    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/pages/home/index.vue"
   ],
   "测试连接": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
@@ -4055,7 +4042,7 @@
   "新建群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
-  "加入房间": [
+  "加入群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
   "还没有群聊，点右上角新建一个。": [
@@ -4098,8 +4085,7 @@
     "apps/web/src/pages/chat/index.vue"
   ],
   "发送": [
-    "apps/web/src/pages/chat/index.vue",
-    "apps/web/src/pages/home/index.vue"
+    "apps/web/src/pages/chat/index.vue"
   ],
   "自动生成视频": [
     "apps/web/src/pages/chat/index.vue"
@@ -4138,7 +4124,7 @@
   "创建群聊失败": [
     "apps/web/src/pages/chat/index.vue"
   ],
-  "加入房间失败": [
+  "加入群聊失败": [
     "apps/web/src/pages/chat/index.vue"
   ],
   "团队功能将在后续任务接入": [
@@ -4148,7 +4134,8 @@
     "apps/web/src/pages/chat/index.vue"
   ],
   "无法连接 Matrix/Synapse，请确认本地 Synapse 已启动且已配置 config.json 的 synapse 块": [
-    "apps/web/src/pages/chat/index.vue"
+    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/pages/home/index.vue"
   ],
   "所选扩展未启用或不支持此文件类型": [
     "apps/web/src/pages/workspace/panels/document/extensions.ts"
@@ -4352,7 +4339,6 @@
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
-    "apps/web/src/pages/home/index.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "工作区": [
@@ -4691,7 +4677,6 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/web/src/pages/home/index.vue",
     "apps/web/src/pages/home/assetLibraryDialog.vue"
   ],
   "关闭素材库": [
@@ -5713,121 +5698,14 @@
   "加载作品失败，请重试": [
     "apps/web/src/pages/home/explore.vue"
   ],
-  "创建项目": [
+  "登录后即可浏览各群聊生成的视频。": [
     "apps/web/src/pages/home/index.vue"
   ],
-  "今天要做点什么？": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "创作描述": [
+  "还没有视频，去群聊里让主持人生成一段吧。": [
     "apps/web/src/pages/home/index.vue"
   ],
   "选择工作目录": [
-    "apps/web/src/pages/home/index.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
-  ],
-  "请先选择一个空文件夹作为工作目录，画布和素材会保存在这里。": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "项目": [
-    "apps/web/src/pages/home/index.vue",
-    "apps/server/src/routes/workspaces/files/export.ts"
-  ],
-  "选择空文件夹新建，或打开已有项目": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "新建项目": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "或打开已有项目": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "打开项目 {0}": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "最近打开 {0}": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "打包导出项目 {0}": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "打包导出 ZIP": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "重命名项目 {0}": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "移除项目 {0}": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "从列表移除，不删除文件": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "描述你想创作的内容，让灵感从这里开始…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "把一个故事灵感，变成一段精彩的短片…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "为你的主角设计独特的外形和性格…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "创作一段雨夜街头的电影感镜头…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "把这段文字拆解成连贯的分镜画面…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "为一场奇幻冒险生成场景和角色…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "为你的画面配上一段合适的音乐…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "写一段温暖的旁白，讲述这个故事…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "设计一支富有想象力的产品宣传片…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "从一句话开始，搭建你的创作工作流…": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "添加附件失败，请重试": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "取回文本失败，请重试": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "项目“{0}”的文件夹不存在，是否重新选择文件夹？": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "工作目录不存在": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "重新选择": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "无法打开项目，请重试": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "导出项目失败，请重试": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "请输入项目名称": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "重命名项目": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "项目名称不能为空": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "该文件夹不为空，请重新选择空文件夹；已有项目请使用“新建项目”入口或点击项目列表打开。": [
-    "apps/web/src/pages/home/index.vue"
-  ],
-  "无法打开或创建项目，请重试": [
-    "apps/web/src/pages/home/index.vue"
   ],
   "工作目录": [
     "apps/web/src/pages/home/workspacePicker.vue"
@@ -6834,6 +6712,9 @@
   "生成的视频文件为空": [
     "apps/server/src/matrix/trigger.ts"
   ],
+  "根据本次群聊讨论生成的示意视频。": [
+    "apps/server/src/matrix/trigger.ts"
+  ],
   "视频已生成完成。": [
     "apps/server/src/matrix/trigger.ts"
   ],
@@ -7104,6 +6985,9 @@
     "apps/server/src/routes/workspaces/files/export.ts"
   ],
   "项目 ZIP 文件不能超过 1 GB": [
+    "apps/server/src/routes/workspaces/files/export.ts"
+  ],
+  "项目": [
     "apps/server/src/routes/workspaces/files/export.ts"
   ],
   "文件超过本次文本读取的大小限制": [

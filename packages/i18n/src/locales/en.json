@@ -3253,7 +3253,7 @@
   "登录后即可参与群聊": "Sign in to join group chats",
   "尚未连接到聊天服务": "Not connected to the chat service yet",
   "新建群聊": "New group",
-  "加入房间": "Join room",
+  "加入群聊": "Join group",
   "还没有群聊，点右上角新建一个。": "No groups yet. Use the button in the top-right corner to create one.",
   "待接受邀请": "Pending invites",
   "邀请你加入": "Invited you to join",
@@ -3280,5 +3280,7 @@
   "创建群聊失败": "Failed to create the group",
   "房间 ID 或别名": "Room ID or alias",
   "请输入房间 ID 或别名": "Enter a room ID or alias",
-  "加入房间失败": "Failed to join the room"
+  "加入群聊失败": "Failed to join the group",
+  "登录后即可浏览各群聊生成的视频。": "Sign in to browse the videos generated in your group chats.",
+  "还没有视频，去群聊里让主持人生成一段吧。": "No videos yet — ask the host in a group chat to generate one."
 }

@@ -93,6 +93,14 @@ export async function createApp({
     app.use(logger("dev"));
   }
   app.use(cors());
+  // ACT: 本地账号系统（better-auth）挂载：必须位于 express.json 等 body 解析中间件之前；
+  // 建表失败不阻塞启动（账号功能降级，其余服务照常）——对齐 Synapse 不可用时的降级原则。
+  const [{ getAuth, initializeAuth }, { toNodeHandler }] = await Promise.all([
+    import("@/utils/auth"),
+    import("better-auth/node"),
+  ]);
+  await initializeAuth().catch(err => console.error("[auth] 账号数据库初始化失败：", err));
+  app.use("/api/auth", toNodeHandler(getAuth()));
   app.use(languageRequest);
   app.use("/a2a", express.json({ limit: "2mb" }));
   app.use(["/api/workspaces/files/write", "/api/assets/save"], express.raw({ type: "application/octet-stream", limit: "100mb" }));

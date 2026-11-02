@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { translate } from "@toonflow/i18n/vue";
+import { locale, translate } from "@toonflow/i18n/vue";
 // ACT: 品牌 Logo 使用本仓库绘制的 logo_chat2movie.svg（双气泡+相机），替换原 Toonflow 图标。
 import logoUrl from "@/assets/logo_chat2movie.svg";
 // ACT: 左栏与顶栏图标统一取自 src/icons（以 CSS mask 着色，跟随 currentColor）。
@@ -11,8 +11,6 @@ import iconChat from "@/icons/chat.svg";
 import iconStudio from "@/icons/recorder.svg";
 import iconAccount from "@/icons/user.svg";
 import iconTool from "@/icons/tool.svg";
-import iconFoldLeft from "@/icons/arrow_left.svg";
-import iconFoldRight from "@/icons/arrow_right.svg";
 import languageSelect from "@/components/languageSelect.vue";
 import loginDialog from "@/components/loginDialog.vue";
 import settings from "@/components/settings/index.vue";
@@ -46,47 +44,47 @@ async function onAccountCommand(command: string) {
   if (route.meta.requiresAuth === true) void router.replace({ path: "/account", query: { login: "1" } });
 }
 
-// ACT: 默认展开左栏，便于直接看到整体外观；顶栏圆形按钮可折叠/展开。
-const open = ref(true);
+// ACT: 左栏已是固定窄栏、不再提供折叠，顶栏只保留账户/语言入口与品牌区。
 const settingsVisible = ref(false);
+// ACT: 左栏改为固定窄栏（图标水平居中、左右留白相等），分隔条不再可拖拽，宽度完全由 CSS 决定。
 
-// ── 左栏宽度拖拽（沿用 drone AppShell 的分隔条模式）──
-const LEFT_MIN = 180;
-const LEFT_MAX = 420;
-const LEFT_DEFAULT = 260;
-const leftWidth = ref(LEFT_DEFAULT);
-const isDragging = ref(false);
-const leftPanel = ref<HTMLElement>();
+// ACT: 品牌区不再取顶栏正中，而是取「主面板左边界 ↔ host 账户图标最左缘」的中点：
+// host 图标位置随语言按钮宽度变化，用 ResizeObserver 实测后写入 --brand-x（绝对定位 + translateX(-50%) 落点）。
+// 注意只能观测顶栏与右侧区：若观测品牌自身，定位→尺寸变化→重算会形成反馈环。
+const topbarRef = ref<HTMLElement>();
+const topbarRightRef = ref<HTMLElement>();
+const brandX = ref<number | null>(null);
+let topbarObserver: ResizeObserver | null = null;
 
-function onDividerPointerDown(event: PointerEvent) {
-  event.preventDefault();
-  isDragging.value = true;
-  document.addEventListener("pointermove", onDividerPointerMove);
-  document.addEventListener("pointerup", onDividerPointerUp);
+function updateBrandX() {
+  const topbar = topbarRef.value;
+  // ACT: 登录态切换会替换账户按钮（v-if/v-else），每次实时查询而非缓存 ref。
+  const account = topbar?.querySelector<HTMLElement>("[data-account-button]");
+  if (!topbar || !account) return;
+  const topbarRect = topbar.getBoundingClientRect();
+  const accountRect = account.getBoundingClientRect();
+  // ACT: 中点 = (主面板左边界 + host 图标最左缘) / 2；顶栏左缘即主面板左边界，直接取视口坐标差的一半即为局部坐标。
+  brandX.value = (accountRect.left - topbarRect.left) / 2;
 }
-function onDividerPointerMove(event: PointerEvent) {
-  if (!isDragging.value || !leftPanel.value) return;
-  const rect = leftPanel.value.getBoundingClientRect();
-  leftWidth.value = Math.min(LEFT_MAX, Math.max(LEFT_MIN, event.clientX - rect.left));
-}
-function onDividerPointerUp() {
-  if (!isDragging.value) return;
-  isDragging.value = false;
-  document.removeEventListener("pointermove", onDividerPointerMove);
-  document.removeEventListener("pointerup", onDividerPointerUp);
-}
-onBeforeUnmount(onDividerPointerUp);
+
+onMounted(() => {
+  updateBrandX();
+  if (typeof ResizeObserver !== "undefined" && topbarRef.value) {
+    topbarObserver = new ResizeObserver(updateBrandX);
+    topbarObserver.observe(topbarRef.value);
+    // ACT: 右侧区宽度变化（语言按钮换图标/窗口变窄）会推移 host 图标，顶栏自身尺寸不变时需靠它触发重算。
+    if (topbarRightRef.value) topbarObserver.observe(topbarRightRef.value);
+  }
+});
+onBeforeUnmount(() => { topbarObserver?.disconnect(); topbarObserver = null; });
+// ACT: 登录/退出会替换账户按钮，头像异步加载也会改变右侧布局；顶栏自身尺寸不变时 ResizeObserver 不触发，需额外补算。
+watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick(updateBrandX); });
 </script>
 
 <template>
   <div class="appShell">
-    <!-- 左栏：品牌 + 上组导航 + 弹性间隔 + 分隔线 + 下组导航 -->
-    <aside v-if="open" ref="leftPanel" class="shellLeft" :style="{ width: leftWidth + 'px' }">
-      <div class="shellBrand">
-        <el-image class="brandLogo" :src="logoUrl" fit="contain" alt="chat2movie" />
-        <span class="brandName">chat2movie</span>
-      </div>
-
+    <!-- 左栏：上组导航 + 弹性间隔 + 分隔线 + 下组导航（品牌已移至顶栏居中） -->
+    <aside class="shellLeft">
       <nav class="shellNav" :aria-label="translate('主导航')">
         <!-- ACT: 导航项图标化，仅悬停时通过 el-tooltip 显示文字。 -->
         <el-tooltip
@@ -130,28 +128,27 @@ onBeforeUnmount(onDividerPointerUp);
       </nav>
     </aside>
 
-    <!-- 可拖拽的竖直分隔条 -->
-    <div v-if="open" class="shellResize" :class="{ dragging: isDragging }" @pointerdown="onDividerPointerDown" />
-
     <!-- 右列：顶栏 + 主面板 -->
     <div class="shellRight">
-      <header class="shellTopbar">
-        <div class="shellTopbarLeft">
-          <button class="shellToggle" type="button" :aria-label="open ? translate('收起') : translate('展开')" @click="open = !open">
-            <!-- ACT: 折叠按钮改用 arrow_left/arrow_right（无圆圈）；展开态显示向左箭头（点击收起），收起态切为向右箭头。 -->
-            <span class="navIcon toggleIcon" :style="{ '--nav-icon': `url(&quot;${open ? iconFoldLeft : iconFoldRight}&quot;)` }" aria-hidden="true" />
-          </button>
+      <header ref="topbarRef" class="shellTopbar">
+        <!-- ACT: 折叠/展开按钮已移除（左栏固定窄栏不再折叠）；左右两区各占一半弹性空间，品牌区改为绝对定位（见 --brand-x）。 -->
+        <div class="shellTopbarLeft" aria-hidden="true" />
+
+        <!-- ACT: 品牌标识（Logo + 名称）水平中心落在「主面板左边界 ↔ host 图标最左缘」的中点；页面提示槽位仍挂在其正下方。 -->
+        <div class="shellTopbarCenter" :style="brandX !== null ? { '--brand-x': `${brandX}px` } : undefined">
+          <div class="shellBrand">
+            <el-image class="brandLogo" :src="logoUrl" fit="contain" alt="chat2movie" />
+            <span class="brandName">chat2movie</span>
+          </div>
+          <div class="shellTopbarNotices">
+            <div id="shell-notices" style="display: contents" />
+          </div>
         </div>
 
-        <!-- 各页面通过 Teleport 投放提示的标准槽位（居中） -->
-        <div class="shellTopbarNotices">
-          <div id="shell-notices" style="display: contents" />
-        </div>
-
-        <div class="shellTopbarRight">
+        <div ref="topbarRightRef" class="shellTopbarRight">
           <!-- ACT: 已登录显示头像（无头像时回落 icons/user.svg）并挂下拉菜单；未登录则点击直接打开登录框。 -->
           <el-dropdown v-if="auth.signedIn" trigger="click" @command="onAccountCommand">
-            <button class="shellRound" type="button" :aria-label="translate('账户')" :title="auth.displayName">
+            <button class="shellRound" type="button" data-account-button :aria-label="translate('账户')" :title="auth.displayName">
               <img v-if="auth.avatarUrl" class="roundAvatar" :src="auth.avatarUrl" :alt="auth.displayName" />
               <span v-else class="navIcon roundIcon" :style="{ '--nav-icon': `url(&quot;${iconAccount}&quot;)` }" aria-hidden="true" />
             </button>
@@ -163,7 +160,7 @@ onBeforeUnmount(onDividerPointerUp);
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <button v-else class="shellRound" type="button" :aria-label="translate('登录')" :title="translate('登录')" @click="loginVisible = true">
+          <button v-else class="shellRound" type="button" data-account-button :aria-label="translate('登录')" :title="translate('登录')" @click="loginVisible = true">
             <span class="navIcon roundIcon" :style="{ '--nav-icon': `url(&quot;${iconAccount}&quot;)` }" aria-hidden="true" />
           </button>
           <languageSelect popover />
@@ -182,6 +179,11 @@ onBeforeUnmount(onDividerPointerUp);
 
 <style scoped lang="scss">
 .appShell {
+  // ACT: 顶栏与页面头部（如群聊标题行）的固定高度；左栏首枚图标要与页面头部里的标题垂直居中对齐，
+  // 两处共用同一组变量，避免各写死数值后错位。
+  --shell-topbar-h: 56px;
+  --shell-page-header-h: 56px;
+  --shell-nav-item: 42px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -195,7 +197,11 @@ onBeforeUnmount(onDividerPointerUp);
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  padding: 20px 12px 16px;
+  // ACT: 固定窄栏：42px 图标 + 两侧各 12px 留白 + 1px 分隔边框 = 67px，图标中心到左右边界等距。
+  width: 67px;
+  // ACT: 上组图标整体下移到顶栏之下：首枚图标的垂直中心 = 顶栏高 + 页面头部内容区高度的一半，
+  // 正好落在群聊页标题（h1）的水平线上；-1px 是页面头部的下边框。
+  padding: calc(var(--shell-topbar-h) + (var(--shell-page-header-h) - 1px - var(--shell-nav-item)) / 2) 0 16px;
   overflow-x: hidden;
   overflow-y: auto;
   border-inline-end: 1px solid var(--el-border-color-lighter);
@@ -207,9 +213,7 @@ onBeforeUnmount(onDividerPointerUp);
   align-items: center;
   gap: 9px;
   min-width: 0;
-  height: 30px;
-  margin-bottom: 24px;
-  padding: 0 8px;
+  height: 32px;
 
   .brandLogo {
     flex-shrink: 0;
@@ -232,6 +236,7 @@ onBeforeUnmount(onDividerPointerUp);
 .shellNav {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
 
@@ -240,8 +245,8 @@ onBeforeUnmount(onDividerPointerUp);
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: var(--shell-nav-item);
+  height: var(--shell-nav-item);
   padding: 0;
   border: 0;
   border-radius: var(--ui-radius);
@@ -271,7 +276,6 @@ onBeforeUnmount(onDividerPointerUp);
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
 
-  &.toggleIcon { width: 18px; height: 18px; }
   &.roundIcon { width: 20px; height: 20px; }
 }
 
@@ -288,18 +292,8 @@ onBeforeUnmount(onDividerPointerUp);
 .shellDivider {
   height: 1px;
   flex-shrink: 0;
-  margin: 12px 8px;
+  margin: 12px;
   background: var(--el-border-color-lighter);
-}
-
-.shellResize {
-  flex-shrink: 0;
-  width: 4px;
-  cursor: col-resize;
-  background: transparent;
-  transition: background 0.15s ease;
-
-  &:hover, &.dragging { background: var(--el-color-primary); }
 }
 
 .shellRight {
@@ -310,11 +304,12 @@ onBeforeUnmount(onDividerPointerUp);
 }
 
 .shellTopbar {
+  position: relative;
   display: flex;
   flex-shrink: 0;
   align-items: center;
   column-gap: 12px;
-  min-height: 56px;
+  min-height: var(--shell-topbar-h);
   padding: 8px 16px;
   box-sizing: border-box;
   border-bottom: 1px solid var(--el-border-color-lighter);
@@ -329,15 +324,34 @@ onBeforeUnmount(onDividerPointerUp);
   gap: 12px;
 }
 
-.shellTopbarNotices {
+// ACT: 品牌区绝对定位：水平中心落在 --brand-x（主面板左边界与 host 图标最左缘的中点，JS 实测）；
+// 未测得前回落 50%（顶栏正中）。脱离文档流后左右两区均分剩余空间，不再参与品牌定位。
+.shellTopbarCenter {
+  position: absolute;
+  top: 0;
+  bottom: 1px; // ACT: 避开顶栏下边框，保持垂直居中。
+  left: var(--brand-x, 50%);
+  transform: translateX(-50%);
   display: flex;
-  flex: 0 1 auto;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
   min-width: 0;
   max-width: 60%;
+  pointer-events: none; // ACT: 悬浮在左右两区之上，不拦截空白处的点击。
+
+  .shellBrand,
+  .shellTopbarNotices { pointer-events: auto; }
+}
+
+.shellTopbarNotices {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
 }
 
 .shellTopbarRight {
@@ -348,7 +362,6 @@ onBeforeUnmount(onDividerPointerUp);
   gap: 12px;
 }
 
-.shellToggle,
 .shellRound {
   display: flex;
   align-items: center;
@@ -379,8 +392,6 @@ onBeforeUnmount(onDividerPointerUp);
 
 @media (prefers-reduced-motion: reduce) {
   .shellNavItem,
-  .shellResize,
-  .shellToggle,
   .shellRound { transition: none; }
 }
 </style>

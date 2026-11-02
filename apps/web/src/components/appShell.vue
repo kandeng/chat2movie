@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 // ACT: 品牌 Logo 使用本仓库绘制的 logo_chat2movie.svg（双气泡+相机），替换原 Toonflow 图标。
 import logoUrl from "@/assets/logo_chat2movie.svg";
@@ -13,10 +14,15 @@ import iconTool from "@/icons/tool.svg";
 import iconFoldLeft from "@/icons/arrow_left.svg";
 import iconFoldRight from "@/icons/arrow_right.svg";
 import languageSelect from "@/components/languageSelect.vue";
+import loginDialog from "@/components/loginDialog.vue";
 import settings from "@/components/settings/index.vue";
+import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 const router = useRouter();
+// ACT: 顶栏账户入口统一走 auth store（计划 Task 2）：未登录弹登录框，已登录显示头像与下拉菜单。
+const auth = useAuthStore();
+const loginVisible = ref(false);
 
 // ACT: 上组为内容页（广场/群聊/我的工作室），下组为账户；左栏改为图标导航（悬停显示文字），设置入口在下组并直接打开设置弹窗。
 const topNav = [
@@ -30,6 +36,15 @@ const bottomNav = [
 
 function isActive(path: string) { return route.path === path; }
 function go(path: string) { if (route.path !== path) void router.push(path); }
+
+async function onAccountCommand(command: string) {
+  if (command === "account") { go("/account"); return; }
+  if (command !== "logout") return;
+  await auth.logout();
+  ElMessage.success("已退出登录");
+  // ACT: 退出后若正停留在需要登录的页面（我的工作室），退回账户页并重新弹出登录框。
+  if (route.meta.requiresAuth === true) void router.replace({ path: "/account", query: { login: "1" } });
+}
 
 // ACT: 默认展开左栏，便于直接看到整体外观；顶栏圆形按钮可折叠/展开。
 const open = ref(true);
@@ -134,8 +149,21 @@ onBeforeUnmount(onDividerPointerUp);
         </div>
 
         <div class="shellTopbarRight">
-          <button class="shellRound" type="button" :aria-label="translate('账户')" :title="translate('账户')" @click="go('/account')">
-            <!-- ACT: 顶栏账户按钮与左栏账户项共用同一个 icons/user.svg。 -->
+          <!-- ACT: 已登录显示头像（无头像时回落 icons/user.svg）并挂下拉菜单；未登录则点击直接打开登录框。 -->
+          <el-dropdown v-if="auth.signedIn" trigger="click" @command="onAccountCommand">
+            <button class="shellRound" type="button" :aria-label="translate('账户')" :title="auth.displayName">
+              <img v-if="auth.avatarUrl" class="roundAvatar" :src="auth.avatarUrl" :alt="auth.displayName" />
+              <span v-else class="navIcon roundIcon" :style="{ '--nav-icon': `url(&quot;${iconAccount}&quot;)` }" aria-hidden="true" />
+            </button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item disabled>{{ auth.displayName }}</el-dropdown-item>
+                <el-dropdown-item divided command="account">{{ translate("账户") }}</el-dropdown-item>
+                <el-dropdown-item command="logout">{{ translate("退出登录") }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <button v-else class="shellRound" type="button" :aria-label="translate('登录')" :title="translate('登录')" @click="loginVisible = true">
             <span class="navIcon roundIcon" :style="{ '--nav-icon': `url(&quot;${iconAccount}&quot;)` }" aria-hidden="true" />
           </button>
           <languageSelect popover />
@@ -148,6 +176,7 @@ onBeforeUnmount(onDividerPointerUp);
     </div>
 
     <settings v-model="settingsVisible" />
+    <loginDialog v-model="loginVisible" />
   </div>
 </template>
 
@@ -244,6 +273,14 @@ onBeforeUnmount(onDividerPointerUp);
 
   &.toggleIcon { width: 18px; height: 18px; }
   &.roundIcon { width: 20px; height: 20px; }
+}
+
+// ACT: 登录后的头像填满圆形按钮，与未登录的图标态保持同一尺寸。
+.roundAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .shellSpacer { flex: 1 1 auto; }

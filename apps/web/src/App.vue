@@ -2,14 +2,11 @@
   <el-config-provider :locale="elementLocale">
     <config-provider :globalConfig="tdesignLocale">
       <router-view v-slot="{ Component: currentComponent }">
+        <!-- ACT: 路由页不再套 out-in 过渡：设置页子树离开时过渡完成回调不触发，会卡死后续换页（hash 变但视图不换）；改为直接替换保证导航可靠。 -->
         <appShell v-if="shellRoute">
-          <transition name="el-fade-in" mode="out-in">
-            <component :is="currentComponent" />
-          </transition>
-        </appShell>
-        <transition v-else name="el-fade-in" mode="out-in">
           <component :is="currentComponent" />
-        </transition>
+        </appShell>
+        <component v-else :is="currentComponent" />
       </router-view>
       <loadingPage v-model:visible="workspaceStore.projectLoadingVisible" v-model:drawn="workspaceStore.projectLoadingDrawn" :active="workspaceStore.projectLoading" />
       <ffmpegRequired />

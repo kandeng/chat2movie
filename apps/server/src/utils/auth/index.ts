@@ -98,10 +98,13 @@ function createInstance() {
         },
         update: {
           // ACT: 昵称/头像变更同步到 Matrix profile（对齐 drone PATCH /users/me 后的资料编辑行为）。
+          // 必须 await：better-auth 在返回 updateUser 响应前会等待 after 钩子；若像旧代码那样 void 触发，
+          // Matrix 头像上传还没完成客户端就已 refreshProfile 回读，导致头像永远慢一拍（保存 image_1 仍显示 image_0）。
+          // syncMatrixProfile 内部吞掉所有异常只返回布尔值，await 它不会因 Synapse 故障拖垮资料更新。
           after: async (user) => {
             const mxid = typeof user.mxid === "string" ? user.mxid : "";
             if (!mxid) return;
-            void syncMatrixProfile(
+            await syncMatrixProfile(
               mxid,
               typeof user.name === "string" ? user.name : undefined,
               typeof user.image === "string" ? user.image : undefined,

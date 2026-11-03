@@ -8,7 +8,8 @@
         </appShell>
         <component v-else :is="currentComponent" />
       </router-view>
-      <loadingPage v-model:visible="workspaceStore.projectLoadingVisible" v-model:drawn="workspaceStore.projectLoadingDrawn" :active="workspaceStore.projectLoading" />
+      <!-- ACT: 带 shell 的路由把项目加载动画限制在主面板内，左栏/顶栏不遮挡、不重绘。 -->
+      <loadingPage v-model:visible="workspaceStore.projectLoadingVisible" v-model:drawn="workspaceStore.projectLoadingDrawn" :active="workspaceStore.projectLoading" :contained="shellRoute" />
       <ffmpegRequired />
     </config-provider>
   </el-config-provider>

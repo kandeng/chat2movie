@@ -1,6 +1,7 @@
 <template>
-  <teleport to="body">
-    <div v-if="visible" class="loadingPage" role="status" aria-label="正在加载项目">
+  <!-- ACT: contained 模式 teleport 到 shell 主面板（shellMain），加载动画只覆盖主面板，左栏与顶栏保持可见。 -->
+  <teleport :to="contained ? 'main.shellMain' : 'body'">
+    <div v-if="visible" class="loadingPage" :class="{ contained }" role="status" aria-label="正在加载项目">
       <div class="logoWrap" :class="{ drawn, filling }" aria-hidden="true">
         <div class="logoOutline" @animationend="finishDrawing">
           <div ref="logoElement" class="logoPulse" v-html="logoSvg" />
@@ -16,7 +17,7 @@ import { onBeforeUnmount, ref, watch } from "vue";
 import logoRaw from "@toonflow/assets/logo.svg?raw";
 import logoUrl from "@toonflow/assets/logo.svg";
 
-const props = defineProps<{ active: boolean }>();
+const props = defineProps<{ active: boolean; contained?: boolean }>();
 const visible = defineModel<boolean>("visible", { default: false });
 const drawn = defineModel<boolean>("drawn", { default: false });
 const logoDocument = new DOMParser().parseFromString(logoRaw, "image/svg+xml");
@@ -76,6 +77,16 @@ function finishFilling() {
   inset: 0;
   z-index: 1100;
   background: var(--el-bg-color);
+
+  // ACT: 带 shell 的路由下限制在主面板内（shellMain 为 position:relative），避免整屏遮罩看起来像整页刷新。
+  &.contained {
+    position: absolute;
+
+    .logoWrap {
+      top: 50%;
+      left: 50%;
+    }
+  }
 
   .logoWrap {
     position: absolute;

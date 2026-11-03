@@ -10,7 +10,7 @@ import iconPlaza from "@/icons/photo.svg";
 import iconChat from "@/icons/chat.svg";
 import iconStudio from "@/icons/recorder.svg";
 import iconAccount from "@/icons/user.svg";
-import iconTool from "@/icons/tool.svg";
+import iconSettings from "@/icons/settings.svg";
 import languageSelect from "@/components/languageSelect.vue";
 import loginDialog from "@/components/loginDialog.vue";
 import settings from "@/components/settings/index.vue";
@@ -23,9 +23,10 @@ const auth = useAuthStore();
 const loginVisible = ref(false);
 
 // ACT: 上组为内容页（广场/群聊/我的工作室），下组为账户；左栏改为图标导航（悬停显示文字），设置入口在下组并直接打开设置弹窗。
-const topNav = [
+const topNav: { path: string; label: string; icon: string; size?: number }[] = [
   { path: "/home", label: "广场", icon: iconPlaza },
-  { path: "/chat", label: "群聊", icon: iconChat },
+  // ACT: 群聊气泡为椭圆+小点，光学尺寸偏小；单独放大到 22px 的 110%（24.2px）以对齐 recorder 的视觉重量。
+  { path: "/chat", label: "群聊", icon: iconChat, size: 24.2 },
   { path: "/workspace", label: "我的工作室", icon: iconStudio },
 ];
 const bottomNav = [
@@ -96,7 +97,7 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
             :aria-label="translate(item.label)"
             @click="go(item.path)">
             <!-- ACT: Vite 将小体积 svg 内联为 data URI（内含单引号），url() 必须加双引号否则整条 mask-image 失效。 -->
-            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${item.icon}&quot;)` }" aria-hidden="true" />
+            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${item.icon}&quot;)`, ...(item.size ? { width: item.size + 'px', height: item.size + 'px' } : {}) }" aria-hidden="true" />
           </button>
         </el-tooltip>
       </nav>
@@ -122,7 +123,7 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
             type="button"
             :aria-label="translate('设置')"
             @click="settingsVisible = true">
-            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${iconTool}&quot;)` }" aria-hidden="true" />
+            <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${iconSettings}&quot;)` }" aria-hidden="true" />
           </button>
         </el-tooltip>
       </nav>

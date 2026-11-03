@@ -1016,7 +1016,7 @@
     "apps/web/src/components/appShell.vue",
     "apps/web/src/pages/chat/index.vue"
   ],
-  "我的工作室": [
+  "摄影棚": [
     "apps/web/src/components/appShell.vue"
   ],
   "已退出登录": [

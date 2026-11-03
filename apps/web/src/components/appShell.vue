@@ -21,12 +21,14 @@ const router = useRouter();
 const auth = useAuthStore();
 const loginVisible = ref(false);
 
-// ACT: 上组为内容页（广场/群聊/我的工作室），下组为账户；左栏改为图标导航（悬停显示文字），设置入口在下组并直接打开设置弹窗。
+// ACT: 上组为内容页（广场/群聊/摄影棚），下组为账户；左栏改为图标导航（悬停显示文字），设置入口在下组并直接打开设置弹窗。
 const topNav: { path: string; label: string; icon: string; size?: number }[] = [
-  { path: "/home", label: "广场", icon: iconPlaza },
+  // ACT: photo.svg 的字形内切于圆，横向仅占 viewBox 的 938.6/1024≈0.917，在 22px 容器下实际宽约 20.2px；
+  // 放大到 24px 使其渲染宽度 0.917×24≈22px，与全出血的 recorder（Studio）等宽。
+  { path: "/home", label: "广场", icon: iconPlaza, size: 24 },
   // ACT: 群聊气泡为椭圆+小点，光学尺寸偏小；单独放大到 22px 的 110%（24.2px）以对齐 recorder 的视觉重量。
   { path: "/chat", label: "群聊", icon: iconChat, size: 24.2 },
-  { path: "/workspace", label: "我的工作室", icon: iconStudio },
+  { path: "/workspace", label: "摄影棚", icon: iconStudio },
 ];
 const bottomNav = [
   { path: "/account", label: "账户", icon: iconAccount },

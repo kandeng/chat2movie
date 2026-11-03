@@ -8,8 +8,7 @@
       :class="{ backgroundPanel: activePanel !== 'canvas' }"
       :inert="activePanel !== 'canvas'"
       :aria-hidden="activePanel !== 'canvas'"
-      :active="activePanel === 'canvas'"
-      :settingsVisible="settingsVisible" />
+      :active="activePanel === 'canvas'" />
     <keep-alive :key="workspaceStore.project?.directory" :max="1">
       <documentPanel
         v-if="activePanel === 'document'"
@@ -25,7 +24,7 @@
         :fileAction="performFileAction"
         :saveNode="saveDocumentNode" />
     </keep-alive>
-    <workspaceMenu class="workspaceMenu" @openSettings="settingsVisible = true" />
+    <workspaceMenu class="workspaceMenu" @openSettings="openSettings" />
     <div class="workspaceTools">
       <el-segmented :modelValue="activePanel" class="panelSwitcher" :options="panelOptions" size="small" aria-label="切换面板" @change="switchPanel">
         <template #default="{ item }">
@@ -39,7 +38,7 @@
         <el-card v-if="activePanel === 'canvas'" class="toolMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
           <div class="toolMenuContent" role="toolbar" aria-label="画布工具">
             <el-tooltip content="添加节点" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
-              <el-button class="toolButton addNodeButton" :disabled="!canvasPanelRef?.canvasReady || settingsVisible" aria-label="添加节点" aria-haspopup="menu" @click="canvasPanelRef?.addNodeAtPointer()">
+              <el-button class="toolButton addNodeButton" :disabled="!canvasPanelRef?.canvasReady" aria-label="添加节点" aria-haspopup="menu" @click="canvasPanelRef?.addNodeAtPointer()">
                 <icon-plus :size="18" aria-hidden="true" />
               </el-button>
             </el-tooltip>
@@ -55,7 +54,7 @@
               </el-button>
             </el-tooltip>
             <el-tooltip content="搜索节点" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
-              <el-button class="toolButton" text :disabled="!canvasPanelRef?.canvasReady || settingsVisible" aria-label="搜索节点" @click="canvasPanelRef?.openNodeSearch()">
+              <el-button class="toolButton" text :disabled="!canvasPanelRef?.canvasReady" aria-label="搜索节点" @click="canvasPanelRef?.openNodeSearch()">
                 <icon-search :size="18" aria-hidden="true" />
               </el-button>
             </el-tooltip>
@@ -111,7 +110,6 @@
       </div>
     </div>
     <floatingAgent v-model="agentVisible" :inert="workspaceStore.projectLoadingVisible" @resize="agentWidth = $event" />
-    <settings v-model="settingsVisible" />
     <el-dialog v-model="contactVisible" :title="contactInfo.title" width="min(360px, calc(100vw - 32px))" alignCenter appendToBody>
       <div class="contactContent">
         <q-r-code
@@ -132,12 +130,11 @@
 <script setup lang="ts">
 import { translate } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, provide, ref, shallowRef, watch, type ComponentPublicInstance } from "vue";
-import { onBeforeRouteLeave, useRoute } from "vue-router";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase } from "@tabler/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { QRCode } from "tdesign-vue-next";
-import settings from "@/components/settings/index.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
 import { useAuthStore } from "@/stores/auth";
 import { registerWorkspaceControl, waitForControlValue } from "@/lib/mcpControl";
@@ -167,6 +164,9 @@ onScopeDispose(() => {
 const workspaceStore = useWorkspaceStore();
 const auth = useAuthStore();
 const route = useRoute();
+const router = useRouter();
+// ACT: 设置已改为整页路由（对齐群聊页布局）；工作区的「设置」入口直接跳转 /settings。
+function openSettings() { void router.push("/settings"); }
 
 // ACT: 计划 Task 4 —— 从群聊主持人的「自动生成视频 / 分步生成视频」按钮跳转过来时，
 // 把生成意图与归属账号落到 workspace store，并标记当前项目的归属。
@@ -188,7 +188,6 @@ const panelOptions = [
 ];
 const agentVisible = ref(true);
 const agentWidth = ref(0);
-const settingsVisible = ref(false);
 const helpVisible = ref(false);
 const contactVisible = ref(false);
 const contactType = ref<"community" | "business">("community");

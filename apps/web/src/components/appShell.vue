@@ -13,7 +13,6 @@ import iconAccount from "@/icons/user.svg";
 import iconSettings from "@/icons/settings.svg";
 import languageSelect from "@/components/languageSelect.vue";
 import loginDialog from "@/components/loginDialog.vue";
-import settings from "@/components/settings/index.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
@@ -46,7 +45,6 @@ async function onAccountCommand(command: string) {
 }
 
 // ACT: 左栏已是固定窄栏、不再提供折叠，顶栏只保留账户/语言入口与品牌区。
-const settingsVisible = ref(false);
 // ACT: 左栏改为固定窄栏（图标水平居中、左右留白相等），分隔条不再可拖拽，宽度完全由 CSS 决定。
 
 // ACT: 品牌区不再取顶栏正中，而是取「主面板左边界 ↔ host 账户图标最左缘」的中点：
@@ -118,11 +116,13 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
           </button>
         </el-tooltip>
         <el-tooltip :content="translate('设置')" placement="right" :show-after="100">
+          <!-- ACT: 设置改为整页路由 /settings（对齐群聊页布局），不再弹窗；路由命中时高亮。 -->
           <button
             class="shellNavItem"
+            :class="{ active: isActive('/settings') }"
             type="button"
             :aria-label="translate('设置')"
-            @click="settingsVisible = true">
+            @click="go('/settings')">
             <span class="navIcon" :style="{ '--nav-icon': `url(&quot;${iconSettings}&quot;)` }" aria-hidden="true" />
           </button>
         </el-tooltip>
@@ -173,7 +173,6 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
       </main>
     </div>
 
-    <settings v-model="settingsVisible" />
     <loginDialog v-model="loginVisible" />
   </div>
 </template>

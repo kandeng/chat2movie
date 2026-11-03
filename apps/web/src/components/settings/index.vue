@@ -1,7 +1,9 @@
 <template>
-  <el-dialog v-model="visible" title="设置" width="min(1080px, calc(100vw - 32px))" alignCenter appendToBody>
-    <div class="settings">
-      <aside class="sidebar" aria-label="设置分类">
+  <!-- ACT: 设置由弹窗改为整页布局（对齐群聊页）：左侧双倍加深的菜单栏 + 右侧主设置区。 -->
+  <div class="settings">
+    <aside class="sidebar" aria-label="设置分类">
+      <div class="settingsHeader"><span class="settingsTitle">{{ translate("设置") }}</span></div>
+      <div class="settingsNav">
         <template v-for="item in settingsPanels" :key="item.id">
           <h3 v-if="item.groupLabel" class="settingsGroupLabel">{{ item.groupLabel }}</h3>
           <button
@@ -16,27 +18,26 @@
             <span>{{ item.label }}</span>
           </button>
         </template>
-      </aside>
-      <section class="content" :aria-label="activePanel.label" tabindex="0">
-        <h2 class="panelTitle">{{ activePanel.label }}</h2>
-        <div class="panelContent">
-          <transition name="el-fade-in" mode="out-in">
-            <keep-alive include="personalization">
-              <component
-                :is="activePanel.component"
-                v-bind="
-                  ['pluginMarket', 'languageModel', 'mediaModel', 'personalization'].includes(activePanel.id) ? { visible } : {}
-                " />
-            </keep-alive>
-          </transition>
-        </div>
-      </section>
-    </div>
-  </el-dialog>
+      </div>
+    </aside>
+    <section class="content" :aria-label="activePanel.label" tabindex="0">
+      <h2 class="panelTitle">{{ activePanel.label }}</h2>
+      <div class="panelContent">
+        <transition name="el-fade-in" mode="out-in">
+          <keep-alive include="personalization">
+            <component
+              :is="activePanel.component"
+              v-bind="['pluginMarket', 'languageModel', 'mediaModel', 'personalization'].includes(activePanel.id) ? { visible: true } : {}" />
+          </keep-alive>
+        </transition>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { defineAsyncComponent, shallowRef } from "vue";
+import { translate } from "@toonflow/i18n/vue";
 import {
   IconPalette,
   IconSettings,
@@ -85,20 +86,45 @@ const settingsPanels = [
   { id: "about", label: "关于", icon: IconInfoCircle, component: defineAsyncComponent(() => import("./panels/about.vue")) },
 ];
 const activePanel = shallowRef(settingsPanels[0]!);
-const visible = defineModel<boolean>({ default: false });
 </script>
 
 <style lang="scss" scoped>
 .settings {
   display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  height: min(72vh, calc(100dvh - 140px));
+  grid-template-columns: 220px minmax(0, 1fr);
+  height: 100%;
   overflow: hidden;
+  // ACT: 基准字号与群聊页对齐（14px），避免继承 body 的 16px 导致菜单/正文偏大。
+  font-size: 14px;
 
   .sidebar {
+    display: flex;
+    flex-direction: column;
     min-height: 0;
-    overflow-y: auto;
-    padding: 2px;
+    // ACT: 与群聊页左栏同款双倍加深背景（图标栏 96/4、本栏 92/8），随主题变量适配深/浅色。
+    background: color-mix(in srgb, var(--el-bg-color) 92%, var(--el-text-color-primary));
+    border-inline-end: 1px solid var(--el-border-color-lighter);
+
+    .settingsHeader {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--el-border-color-lighter);
+
+      .settingsTitle {
+        font-size: 15px;
+        font-weight: 600;
+      }
+    }
+
+    .settingsNav {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 2px;
+    }
 
     .settingsGroupLabel {
       margin: 14px 12px 6px;
@@ -182,6 +208,10 @@ const visible = defineModel<boolean>({ default: false });
     grid-template-columns: 44px minmax(0, 1fr);
 
     .sidebar {
+      .settingsHeader {
+        display: none;
+      }
+
       .settingsGroupLabel {
         margin: 12px 0 6px;
         text-align: center;

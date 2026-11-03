@@ -393,6 +393,8 @@ onMounted(async () => {
   height: 100%;
   background: var(--el-bg-color);
   color: var(--el-text-color-primary);
+  // ACT: 显式钉住基准字号 14px，与设置页保持一致（不继承 body 的 16px）。
+  font-size: 14px;
 }
 
 .signedOut {
@@ -408,6 +410,8 @@ onMounted(async () => {
   grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
   min-height: 0;
+  // ACT: 背景比最左图标栏（96% bg + 4% text）再深一倍（92% bg + 8% text），形成层级对比；随主题变量自动适配深/浅色。
+  background: color-mix(in srgb, var(--el-bg-color) 92%, var(--el-text-color-primary));
   border-inline-end: 1px solid var(--el-border-color-lighter);
 }
 

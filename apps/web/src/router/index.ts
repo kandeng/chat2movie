@@ -31,6 +31,12 @@ const router = createRouter({
       meta: { shell: true },
     },
     {
+      // ACT: 设置整页（对齐群聊页布局）：左侧加深菜单栏 + 右侧主设置区，取代原弹窗。
+      path: "/settings",
+      component: () => import("@/pages/settings/index.vue"),
+      meta: { shell: true },
+    },
+    {
       path: "/canvas",
       redirect: "/workspace",
     },

@@ -2,6 +2,7 @@ import { Database } from "bun:sqlite";
 import { randomBytes } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { Pool } from "pg";
 import { betterAuth } from "better-auth";
 import { emailOTP } from "better-auth/plugins";
 import { getMigrations } from "better-auth/db/migration";
@@ -11,7 +12,8 @@ import { sendOtpEmail } from "./email";
 
 // ACT: 本地账号系统（按 drone-navigation-v2 的 FastAPI+fastapi-users 方案移植，改用 better-auth 实现）。
 // 与 drone 对齐的设计原则：
-// - 网站账号是主身份（邮箱+密码 / Google OAuth），存 data/auth.db（bun:sqlite，后续可切 Postgres）；
+// - 网站账号是主身份（邮箱+密码 / Google OAuth），存 auth.databaseUrl 指定的 Postgres（pg Pool）；
+//   未配置连接串时回退到 data/auth.db（bun:sqlite），便于无 Postgres 环境快速起服；
 // - 注册即发放隐藏 Matrix 影子账号 @u_<12hex>:server（drone 的 on_after_register -> ensure_matrix_user），
 //   客户端凭据由 /api/matrix/token 用 Admin 傀儡令牌代签，用户永远看不到 Matrix 密码；
 // - 邮箱激活码：6 位数字、10 分钟有效、60 秒重发冷却、库里只存哈希（drone verification.py 语义）；
@@ -49,7 +51,11 @@ function createInstance() {
     // baseUrl 留空时 better-auth 按请求 Host 动态推导，Vite 代理（:5173 -> :3000）下也能工作。
     ...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
     trustedOrigins: [...(config.baseUrl ? [config.baseUrl] : []), "http://localhost:5173"],
-    database: new Database(resolve(dataDirectory(), "auth.db")),
+    database: config.databaseUrl
+      // ACT: 配置了 postgres:// 连接串时用 pg Pool；better-auth 通过 .connect() 鸭子探测为 Postgres 方言，
+      // 迁移会自动生成 Postgres DDL。bun:sql 无 .connect()，不被 better-auth 识别，故此处必须用 pg Pool。
+      ? new Pool({ connectionString: config.databaseUrl })
+      : new Database(resolve(dataDirectory(), "auth.db")),
     user: {
       // ACT: mxid = 隐藏 Matrix 影子账号（drone models.MatrixAccount.mxid）；input:false 禁止客户端注入。
       additionalFields: { mxid: { type: "string", required: false, input: false } },

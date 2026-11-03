@@ -21,6 +21,8 @@ export type SmtpConfig = { host?: string; port?: number; secure?: boolean; user?
 export type AuthConfig = {
   baseUrl?: string;
   sessionSecret?: string;
+  // ACT: 账号库连接串。留空时回退到 data/auth.db（bun:sqlite）；填入 postgres:// 连接串时改用 pg Pool（Postgres）。
+  databaseUrl?: string;
   smtp?: SmtpConfig;
   google?: { clientId?: string; clientSecret?: string };
 };
@@ -76,6 +78,7 @@ export function getAuthConfig(): AuthConfig {
   return {
     baseUrl: (auth.baseUrl ?? "").trim().replace(/\/+$/, ""),
     sessionSecret: (auth.sessionSecret ?? "").trim(),
+    databaseUrl: (auth.databaseUrl ?? "").trim(),
     smtp: smtp ? {
       host: (smtp.host ?? "").trim(),
       port: smtp.port,

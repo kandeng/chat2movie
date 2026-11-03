@@ -16,7 +16,7 @@ export type SynapseConfig = {
   roomId?: string;
 };
 // ACT: 本地账号系统（better-auth）配置，端口自 drone-navigation-v2 的 config 块：
-// smtp 供验证码/重置邮件使用（缺省降级为控制台打印）；google 缺省时 OAuth 自动禁用。
+// smtp 供验证码/重置邮件使用（缺省降级为控制台打印）。
 export type SmtpConfig = { host?: string; port?: number; secure?: boolean; user?: string; pass?: string; from?: string };
 export type AuthConfig = {
   baseUrl?: string;
@@ -24,7 +24,6 @@ export type AuthConfig = {
   // ACT: 账号库连接串。留空时回退到 data/auth.db（bun:sqlite）；填入 postgres:// 连接串时改用 pg Pool（Postgres）。
   databaseUrl?: string;
   smtp?: SmtpConfig;
-  google?: { clientId?: string; clientSecret?: string };
 };
 export type AppConfig = { providers?: Record<string, ProviderKeyConfig>; synapse?: SynapseConfig; auth?: AuthConfig };
 
@@ -74,7 +73,6 @@ export function getSynapseConfig(): SynapseConfig {
 export function getAuthConfig(): AuthConfig {
   const auth = readAppConfig().auth ?? {};
   const smtp = auth.smtp && typeof auth.smtp === "object" ? auth.smtp : undefined;
-  const google = auth.google && typeof auth.google === "object" ? auth.google : undefined;
   return {
     baseUrl: (auth.baseUrl ?? "").trim().replace(/\/+$/, ""),
     sessionSecret: (auth.sessionSecret ?? "").trim(),
@@ -86,10 +84,6 @@ export function getAuthConfig(): AuthConfig {
       user: (smtp.user ?? "").trim(),
       pass: smtp.pass ?? "",
       from: (smtp.from ?? "").trim(),
-    } : undefined,
-    google: google ? {
-      clientId: (google.clientId ?? "").trim(),
-      clientSecret: (google.clientSecret ?? "").trim(),
     } : undefined,
   };
 }

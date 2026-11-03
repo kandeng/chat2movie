@@ -3915,7 +3915,7 @@
   "6 位数字": [
     "apps/web/src/components/loginDialog.vue"
   ],
-  "验证并登录": [
+  "验证邮箱": [
     "apps/web/src/components/loginDialog.vue"
   ],
   "忘记密码": [
@@ -3931,20 +3931,13 @@
     "apps/web/src/components/loginDialog.vue",
     "apps/server/src/utils/auth/email.ts"
   ],
-  "或": [
-    "apps/web/src/components/loginDialog.vue",
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "使用 Google 登录": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
   "重发验证码": [
     "apps/web/src/components/loginDialog.vue"
   ],
   "登录成功": [
     "apps/web/src/components/loginDialog.vue"
   ],
-  "验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。": [
+  "账号已创建并已登录。若收到邮箱验证码，输入后即可验证邮箱；若未收到，可直接关闭本窗口，稍后在账户页查看验证说明。": [
     "apps/web/src/components/loginDialog.vue"
   ],
   "验证码已重新发送": [
@@ -4038,6 +4031,9 @@
   "添加私有提供商": [
     "apps/web/src/pages/hello/index.vue"
   ],
+  "或": [
+    "apps/web/src/pages/hello/index.vue"
+  ],
   "稍后配置": [
     "apps/web/src/pages/hello/index.vue"
   ],
@@ -4070,6 +4066,33 @@
   ],
   "自动配置失败，请重试": [
     "apps/web/src/pages/hello/index.vue"
+  ],
+  "你的邮箱尚未验证": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "注册已完成，你可以正常使用本站。验证邮件可能尚未送达，因此邮箱目前尚未验证。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "通用建议：请先检查垃圾邮件或订阅文件夹；若仍未收到，说明站点邮箱服务的发信授权码尚未配置，请联系站点管理员。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "开启发信授权码的方式因邮箱服务商而异，以 QQ 邮箱为例：": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "登录 QQ 邮箱网页版，进入「设置」→「账号与安全」。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "在「安全设置」中找到「POP3/IMAP/SMTP/Exchange/CardDAV 服务」。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "开启「IMAP/SMTP 服务」，按提示用手机发送短信完成验证。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "生成并保存 16 位「授权码」，填入站点服务端 config.json 的 auth.smtp.pass 字段。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "未验证邮箱的影响：如果忘记密码，将无法通过邮箱重置。请尽快完成验证。": [
+    "apps/web/src/pages/account/index.vue"
   ],
   "更换头像": [
     "apps/web/src/pages/account/index.vue"

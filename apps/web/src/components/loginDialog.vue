@@ -35,7 +35,7 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- ACT: 注册——第一步填邮箱/昵称/密码，第二步输入 6 位邮箱验证码激活并登录。 -->
+      <!-- ACT: 注册——提交表单即完成注册并自动登录（未验证也能登录）；随后进入可选的邮箱验证步骤，收不到验证码也可直接关闭。 -->
       <el-tab-pane :label="translate('注册')" name="register">
         <el-form v-if="regStep === 'form'" class="authForm" label-position="top" @submit.prevent="submitRegister">
           <el-form-item :label="translate('邮箱')">
@@ -56,7 +56,7 @@
           </el-form-item>
           <div class="btnRow">
             <el-button :disabled="auth.busy || cooldown > 0" @click="resendRegOtp">{{ resendLabel }}</el-button>
-            <el-button type="primary" :loading="auth.busy" :disabled="regOtp.trim().length < 6" @click="submitVerify">{{ translate("验证并登录") }}</el-button>
+            <el-button type="primary" :loading="auth.busy" :disabled="regOtp.trim().length < 6" @click="submitVerify">{{ translate("验证邮箱") }}</el-button>
           </div>
         </el-form>
       </el-tab-pane>
@@ -86,12 +86,6 @@
     </el-tabs>
 
     <el-text v-if="errorMessage" class="authError" type="danger" role="alert">{{ errorMessage }}</el-text>
-
-    <!-- ACT: Google 登录仅在服务端配置了 OAuth 凭据时出现（GET /api/account/config 的 googleEnabled）。 -->
-    <template v-if="auth.googleEnabled && activeTab !== 'reset'">
-      <el-divider class="authDivider">{{ translate("或") }}</el-divider>
-      <el-button class="googleBtn" :disabled="auth.busy" @click="submitGoogle">{{ translate("使用 Google 登录") }}</el-button>
-    </template>
 
     <template #footer>
       <div class="authFooter">
@@ -152,7 +146,7 @@ const dialogTitle = computed(() =>
   activeTab.value === "register" ? translate("注册") : activeTab.value === "reset" ? translate("重置密码") : translate("登录"));
 const resendLabel = computed(() => cooldown.value > 0 ? `${translate("重发验证码")} (${cooldown.value}s)` : translate("重发验证码"));
 
-// ACT: 每次打开都回到登录页并清空上一次的输入/错误；顺带拉取 googleEnabled 决定是否显示 Google 按钮。
+// ACT: 每次打开都回到登录页并清空上一次的输入/错误。
 watch(visible, value => {
   if (!value) return;
   errorMessage.value = "";
@@ -161,7 +155,6 @@ watch(visible, value => {
   loginPassword.value = "";
   regStep.value = "form"; regOtp.value = "";
   resetStep.value = "email"; resetOtp.value = ""; resetNewPassword.value = "";
-  void auth.loadConfig();
 });
 
 function onTabChange() { errorMessage.value = ""; noticeMessage.value = ""; }
@@ -191,10 +184,13 @@ async function submitRegister() {
   if (auth.busy) return;
   errorMessage.value = "";
   try {
+    // ACT: 注册即完成——先建账号，再显式登录（服务端 requireEmailVerification=false，未验证也能登录）。
+    // 这样无论验证码能否送达，注册都必定成功；随后进入可选的邮箱验证步骤。
     await auth.register(regEmail.value, regPassword.value, regName.value);
+    await auth.login(regEmail.value, regPassword.value);
     regStep.value = "otp";
     startCooldown(60);
-    noticeMessage.value = translate("验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。");
+    noticeMessage.value = translate("账号已创建并已登录。若收到邮箱验证码，输入后即可验证邮箱；若未收到，可直接关闭本窗口，稍后在账户页查看验证说明。");
   } catch (error) { fail(error, "注册失败，请稍后重试"); }
 }
 
@@ -212,10 +208,8 @@ async function submitVerify() {
   if (auth.busy) return;
   errorMessage.value = "";
   try {
-    // ACT: 先激活邮箱，再用注册时的邮箱/密码登录（服务端 autoSignIn=false，需显式登录一次）。
+    // ACT: 注册时已自动登录，这里仅用验证码激活邮箱；成功后关闭弹窗。
     await auth.verifyOtp(regEmail.value, regOtp.value);
-    loginEmail.value = regEmail.value;
-    await auth.login(regEmail.value, regPassword.value);
     await succeed();
   } catch (error) { fail(error, "验证失败，请稍后重试"); }
 }
@@ -252,14 +246,6 @@ async function submitResetConfirm() {
     resetStep.value = "email"; resetOtp.value = ""; resetNewPassword.value = "";
     noticeMessage.value = "";
   } catch (error) { fail(error, "重置密码失败，请稍后重试"); }
-}
-
-async function submitGoogle() {
-  if (auth.busy) return;
-  errorMessage.value = "";
-  try {
-    await auth.signInGoogle(); // ACT: 触发跳转到 Google 授权页，回调后由 restore() 续接会话。
-  } catch (error) { fail(error, "Google 登录失败，请稍后重试"); }
 }
 </script>
 
@@ -298,14 +284,6 @@ async function submitGoogle() {
   display: block;
   margin-top: 4px;
   font-size: 13px;
-}
-
-.authDivider {
-  margin: 16px 0 12px;
-}
-
-.googleBtn {
-  width: 100%;
 }
 
 .authFooter {

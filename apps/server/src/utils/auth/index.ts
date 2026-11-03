@@ -12,7 +12,7 @@ import { sendOtpEmail } from "./email";
 
 // ACT: 本地账号系统（按 drone-navigation-v2 的 FastAPI+fastapi-users 方案移植，改用 better-auth 实现）。
 // 与 drone 对齐的设计原则：
-// - 网站账号是主身份（邮箱+密码 / Google OAuth），存 auth.databaseUrl 指定的 Postgres（pg Pool）；
+// - 网站账号是主身份（邮箱+密码），存 auth.databaseUrl 指定的 Postgres（pg Pool）；
 //   未配置连接串时回退到 data/auth.db（bun:sqlite），便于无 Postgres 环境快速起服；
 // - 注册即发放隐藏 Matrix 影子账号 @u_<12hex>:server（drone 的 on_after_register -> ensure_matrix_user），
 //   客户端凭据由 /api/matrix/token 用 Admin 傀儡令牌代签，用户永远看不到 Matrix 密码；
@@ -45,7 +45,6 @@ function resolveSecret(): string {
 function createInstance() {
   const config = getAuthConfig();
   const synapse = getSynapseConfig();
-  const googleEnabled = Boolean(config.google?.clientId && config.google?.clientSecret);
   return betterAuth({
     secret: resolveSecret(),
     // baseUrl 留空时 better-auth 按请求 Host 动态推导，Vite 代理（:5173 -> :3000）下也能工作。
@@ -62,16 +61,11 @@ function createInstance() {
     },
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true, // 未激活的邮箱不能登录（drone requires_verification=True）
-      autoSignIn: false,              // 注册成功后必须再登录一次
+      // ACT: 允许「未验证邮箱」登录——注册无论能否收到验证码都必定成功（验证码邮件 best-effort 发送）。
+      // 未验证的唯一后果是无法用邮箱重置密码，账户页会给出提醒与 QQ 邮箱授权码启用指引。
+      requireEmailVerification: false,
+      autoSignIn: false,              // 注册成功后由客户端显式登录一次（登录时代签 Matrix 影子令牌）
       minPasswordLength: 8,
-    },
-    ...(googleEnabled
-      ? { socialProviders: { google: { clientId: config.google!.clientId!, clientSecret: config.google!.clientSecret! } } }
-      : {}),
-    account: {
-      // ACT: 对齐 drone 的 associate_by_email——Google 登录可按同邮箱自动关联既有密码账号并自动视为已验证。
-      accountLinking: { enabled: true, trustedProviders: ["google"] },
     },
     plugins: [
       emailOTP({

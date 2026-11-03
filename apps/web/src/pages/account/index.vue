@@ -5,6 +5,21 @@
 
       <!-- ACT: 已登录：展示网站账号资料（邮箱/验证态）+ Matrix 影子身份，并支持编辑昵称/头像；未登录：打开统一登录框。 -->
       <div v-if="auth.signedIn" class="accountProfile">
+        <!-- ACT: 未验证邮箱提醒（需求 2）：注册总能成功；未验证时说明现状、QQ 邮箱授权码启用步骤与后果。 -->
+        <div v-if="!auth.emailVerified" class="verifyNotice" role="note">
+          <p class="verifyTitle">{{ translate("你的邮箱尚未验证") }}</p>
+          <p>{{ translate("注册已完成，你可以正常使用本站。验证邮件可能尚未送达，因此邮箱目前尚未验证。") }}</p>
+          <p>{{ translate("通用建议：请先检查垃圾邮件或订阅文件夹；若仍未收到，说明站点邮箱服务的发信授权码尚未配置，请联系站点管理员。") }}</p>
+          <p class="verifySub">{{ translate("开启发信授权码的方式因邮箱服务商而异，以 QQ 邮箱为例：") }}</p>
+          <ol class="verifySteps">
+            <li>{{ translate("登录 QQ 邮箱网页版，进入「设置」→「账号与安全」。") }}</li>
+            <li>{{ translate("在「安全设置」中找到「POP3/IMAP/SMTP/Exchange/CardDAV 服务」。") }}</li>
+            <li>{{ translate("开启「IMAP/SMTP 服务」，按提示用手机发送短信完成验证。") }}</li>
+            <li>{{ translate("生成并保存 16 位「授权码」，填入站点服务端 config.json 的 auth.smtp.pass 字段。") }}</li>
+          </ol>
+          <p class="verifyWarn">{{ translate("未验证邮箱的影响：如果忘记密码，将无法通过邮箱重置。请尽快完成验证。") }}</p>
+        </div>
+
         <div class="avatarRow">
           <div class="avatarBox">
             <img v-if="pendingAvatar || auth.avatarUrl" class="avatar" :src="pendingAvatar || auth.avatarUrl" :alt="auth.displayName" />
@@ -195,6 +210,35 @@ watch(() => route.query.login, async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+// ACT: 未验证邮箱提醒条：暖色警示风格，内含授权码启用步骤列表。
+.verifyNotice {
+  padding: 12px 14px;
+  border: 1px solid var(--el-color-warning-light-5);
+  border-radius: var(--ui-radius);
+  background: var(--el-color-warning-light-9);
+  font-size: 13px;
+  line-height: 1.7;
+
+  p { margin: 0 0 8px; }
+  p:last-child { margin-bottom: 0; }
+
+  .verifyTitle {
+    font-weight: 600;
+    color: var(--el-color-warning-dark-2);
+  }
+
+  .verifySub { margin-bottom: 4px; font-weight: 500; }
+
+  .verifySteps {
+    margin: 0 0 8px;
+    padding-left: 20px;
+
+    li { margin-bottom: 2px; }
+  }
+
+  .verifyWarn { color: var(--el-color-warning-dark-2); }
 }
 
 .avatarRow {

@@ -6,7 +6,7 @@ import { fetchMediaBlobUrl } from "@/lib/matrixMedia";
 import { authClient } from "@/lib/authClient";
 
 // ACT: 统一登录态（计划 Task 4，按 drone-navigation-v2 的「网站账号为主身份 + Matrix 影子账号」重写）。
-// - 网站账号（邮箱/密码、Google、邮箱验证码）由 better-auth 管理，会话是 HttpOnly Cookie，不落地 localStorage；
+// - 网站账号（邮箱/密码、邮箱验证码）由 better-auth 管理，会话是 HttpOnly Cookie，不落地 localStorage；
 // - 登录成功后向 /api/matrix/token 代签隐藏 Matrix 影子账号令牌，聊天层照旧使用这份 Matrix 凭据；
 // - localStorage（chat2movie.auth）只持久化 Matrix 半段会话；刷新后 restore() 先验 better-auth Cookie，
 //   再复用（whoami 校验）或重新代签 Matrix 令牌，Synapse 不可用时仅聊天降级、网站账号仍有效。
@@ -78,7 +78,6 @@ export const useAuthStore = defineStore("auth", () => {
   const account = ref<AuthAccount | null>(null); // 网站账号资料（不持久化，restore 时拉取）
   const busy = ref(false);
   const restored = ref(false);
-  const googleEnabled = ref(false);
   // ACT: 头像的 blob 地址只存在于内存（objectURL 无法持久化），每次会话恢复后重新拉取。
   const avatarObjectUrl = ref("");
 
@@ -216,12 +215,6 @@ export const useAuthStore = defineStore("auth", () => {
     if (res.error) throw clientError(res.error, "重置密码失败，请稍后重试");
   }
 
-  // ACT: 跳转 Google OAuth；回调落回 /api/auth/callback/google 后由 restore() 续接会话。
-  async function signInGoogle() {
-    const res = await authClient.signIn.social({ provider: "google", callbackURL: window.location.href });
-    if (res.error) throw clientError(res.error, "Google 登录失败，请稍后重试");
-  }
-
   // ACT: 更新网站账号昵称/头像；服务端 update.after 钩子会把资料同步到 Matrix，这里再刷新本地展示。
   async function updateProfile(name: string, avatarDataUri?: string) {
     busy.value = true;
@@ -239,21 +232,10 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  // ACT: 读取 /api/account/config，决定登录框是否展示「使用 Google 登录」。
-  async function loadConfig() {
-    try {
-      const { data } = await axios.get<{ code: number; data?: { googleEnabled: boolean } }>("/api/account/config");
-      googleEnabled.value = Boolean(data.data?.googleEnabled);
-    } catch {
-      googleEnabled.value = false;
-    }
-  }
-
   // 页面刷新后：先验 better-auth Cookie 会话，再复用/重签 Matrix 令牌；返回是否仍处于登录态。
   async function restore(): Promise<boolean> {
     if (restored.value) return signedIn.value;
     restored.value = true;
-    void loadConfig();
     const res = await authClient.getSession();
     const user = (res.data as { user?: unknown; session?: unknown } | null);
     if (!user?.session || !user?.user) {
@@ -300,10 +282,10 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   return {
-    session, account, busy, restored, googleEnabled,
+    session, account, busy, restored,
     signedIn, myUserId, accessToken, deviceId, displayName, avatarUrl, email, emailVerified,
     login, logout, restore, invalidate, refreshProfile, loadAvatar,
-    register, sendVerificationOtp, verifyOtp, requestPasswordReset, resetPassword, signInGoogle, updateProfile, loadConfig,
+    register, sendVerificationOtp, verifyOtp, requestPasswordReset, resetPassword, updateProfile,
   };
 }, {
   // ACT: 只持久化 Matrix 半段会话；网站账号会话由 better-auth 的 HttpOnly Cookie 管理，不落 localStorage。

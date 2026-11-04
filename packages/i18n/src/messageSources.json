@@ -990,7 +990,6 @@
   ],
   "设置": [
     "apps/web/src/components/appShell.vue",
-    "apps/web/src/components/settings/index.vue",
     "apps/web/src/pages/workspace/components/workspaceMenu.vue"
   ],
   "账户": [
@@ -3909,20 +3908,19 @@
   "至少 8 位": [
     "apps/web/src/components/loginDialog.vue"
   ],
-  "邮箱验证码": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
-  "6 位数字": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
-  "验证邮箱": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
   "忘记密码": [
     "apps/web/src/components/loginDialog.vue"
   ],
   "发送重置验证码": [
     "apps/web/src/components/loginDialog.vue"
+  ],
+  "邮箱验证码": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "6 位数字": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
   ],
   "新密码": [
     "apps/web/src/components/loginDialog.vue"
@@ -3932,19 +3930,15 @@
     "apps/server/src/utils/auth/email.ts"
   ],
   "重发验证码": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
-  "登录成功": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
-  "账号已创建并已登录。若收到邮箱验证码，输入后即可验证邮箱；若未收到，可直接关闭本窗口，稍后在账户页查看验证说明。": [
-    "apps/web/src/components/loginDialog.vue"
-  ],
-  "验证码已重新发送": [
-    "apps/web/src/components/loginDialog.vue"
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
   ],
   "重置验证码已发送到你的邮箱，10 分钟内有效。开发环境未配置 SMTP 时，验证码会打印在服务端日志。": [
     "apps/web/src/components/loginDialog.vue"
+  ],
+  "验证码已重新发送": [
+    "apps/web/src/components/loginDialog.vue",
+    "apps/web/src/pages/account/index.vue"
   ],
   "密码已重置，请用新密码登录": [
     "apps/web/src/components/loginDialog.vue"
@@ -4067,6 +4061,33 @@
   "自动配置失败，请重试": [
     "apps/web/src/pages/hello/index.vue"
   ],
+  "账户分类": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "账户内容": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "更换头像": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "保存后生效": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "未知": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "已验证": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "未验证": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "用户 ID": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "设备 ID": [
+    "apps/web/src/pages/account/index.vue"
+  ],
   "你的邮箱尚未验证": [
     "apps/web/src/pages/account/index.vue"
   ],
@@ -4094,28 +4115,31 @@
   "未验证邮箱的影响：如果忘记密码，将无法通过邮箱重置。请尽快完成验证。": [
     "apps/web/src/pages/account/index.vue"
   ],
-  "更换头像": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "保存后生效": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "未知": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "已验证": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "未验证": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "用户 ID": [
-    "apps/web/src/pages/account/index.vue"
-  ],
-  "设备 ID": [
+  "验证邮箱": [
     "apps/web/src/pages/account/index.vue"
   ],
   "登录后即可创建群聊、邀请成员，并作为主持人生成视频。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "钱包": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "钱包功能即将上线，敬请期待。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "账单": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "账单功能即将上线，敬请期待。": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "验证码发送失败，请稍后再试": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "邮箱已验证": [
+    "apps/web/src/pages/account/index.vue"
+  ],
+  "验证失败，请稍后重试": [
     "apps/web/src/pages/account/index.vue"
   ],
   "图片读取失败，请换一张试试": [
@@ -6794,6 +6818,9 @@
   "[matrix] 停止机器人失败:": [
     "apps/server/src/matrix/bot.ts"
   ],
+  "[matrix] 未配置 synapse.botUserId，AI 客服无法入群": [
+    "apps/server/src/matrix/agent.ts"
+  ],
   "根据本次群聊生成一段简洁的示意视频。": [
     "apps/server/src/matrix/trigger.ts"
   ],
@@ -6822,6 +6849,9 @@
     "apps/server/src/index.ts"
   ],
   "启动聊天转视频机器人失败：": [
+    "apps/server/src/index.ts"
+  ],
+  "初始化 AI 客服身份失败：": [
     "apps/server/src/index.ts"
   ],
   "无法读取文本：仅支持 UTF-8 或带 BOM 的 UTF-16 编码，请转换编码后重试。": [
@@ -6898,7 +6928,8 @@
     "apps/server/src/routes/agent/mentionSource.ts"
   ],
   "请先登录网站账号": [
-    "apps/server/src/routes/matrix/token.ts"
+    "apps/server/src/routes/matrix/token.ts",
+    "apps/server/src/routes/matrix/agent.ts"
   ],
   "未配置 Synapse，无法代签 Matrix 令牌": [
     "apps/server/src/routes/matrix/token.ts"
@@ -6908,6 +6939,18 @@
   ],
   "Synapse 暂时不可用，请稍后再试": [
     "apps/server/src/routes/matrix/token.ts"
+  ],
+  "未配置 Synapse，无法邀请 AI 客服入群": [
+    "apps/server/src/routes/matrix/agent.ts"
+  ],
+  "该账号缺少 Matrix 身份，无法邀请 AI 客服入群": [
+    "apps/server/src/routes/matrix/agent.ts"
+  ],
+  "AI 客服入群失败，请确认 Synapse 可用且已配置 synapse.botUserId": [
+    "apps/server/src/routes/matrix/agent.ts"
+  ],
+  "AI 客服已加入群聊": [
+    "apps/server/src/routes/matrix/agent.ts"
   ],
   "未配置 Synapse，请先在 config.json 的 synapse 块填写 baseUrl 与 adminAccessToken": [
     "apps/server/src/routes/matrix/generate.ts"

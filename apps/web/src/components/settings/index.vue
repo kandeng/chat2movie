@@ -2,7 +2,6 @@
   <!-- ACT: 设置由弹窗改为整页布局（对齐群聊页）：左侧双倍加深的菜单栏 + 右侧主设置区。 -->
   <div class="settings">
     <aside class="sidebar" aria-label="设置分类">
-      <div class="settingsHeader"><span class="settingsTitle">{{ translate("设置") }}</span></div>
       <div class="settingsNav">
         <template v-for="item in settingsPanels" :key="item.id">
           <h3 v-if="item.groupLabel" class="settingsGroupLabel">{{ item.groupLabel }}</h3>
@@ -12,9 +11,6 @@
             :aria-label="item.label"
             :aria-pressed="activePanel.id === item.id"
             @click="activePanel = item">
-            <span class="panelIcon">
-              <component :is="item.icon" :size="18" aria-hidden="true" />
-            </span>
             <span>{{ item.label }}</span>
           </button>
         </template>
@@ -37,53 +33,35 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent, shallowRef } from "vue";
-import { translate } from "@toonflow/i18n/vue";
-import {
-  IconPalette,
-  IconSettings,
-  IconPhotoVideo,
-  IconBuildingStore,
-  IconInfoCircle,
-  IconCode,
-  IconShieldLock,
-  IconPlugConnected,
-  IconMovie,
-  IconUserCog,
-  IconSubtitlesAi,
-  IconNetwork,
-} from "@tabler/icons-vue";
 
 const settingsPanels = [
-  { id: "ui", label: "界面设置", icon: IconPalette, component: defineAsyncComponent(() => import("./panels/ui.vue")) },
-  { id: "general", label: "常规配置", icon: IconSettings, component: defineAsyncComponent(() => import("./panels/general/index.vue")) },
+  { id: "ui", label: "界面设置", component: defineAsyncComponent(() => import("./panels/ui.vue")) },
+  { id: "general", label: "常规配置", component: defineAsyncComponent(() => import("./panels/general/index.vue")) },
   {
     id: "languageModel",
     label: "文本模型",
-    icon: IconSubtitlesAi,
     groupLabel: "模型",
     component: defineAsyncComponent(() => import("./panels/languageModel/index.vue")),
   },
-  { id: "mediaModel", label: "媒体模型", icon: IconPhotoVideo, component: defineAsyncComponent(() => import("./panels/mediaModel/index.vue")) },
+  { id: "mediaModel", label: "媒体模型", component: defineAsyncComponent(() => import("./panels/mediaModel/index.vue")) },
   {
     id: "pluginMarket",
     label: "插件市场",
-    icon: IconBuildingStore,
     groupLabel: "市场",
     component: defineAsyncComponent(() => import("./panels/pluginMarket/index.vue")),
   },
-  { id: "mcp", label: "MCP", icon: IconPlugConnected, groupLabel: "通讯", component: defineAsyncComponent(() => import("./panels/mcp/index.vue")) },
-  { id: "chatToVideo", label: "聊天转视频", icon: IconMovie, component: defineAsyncComponent(() => import("./panels/chatToVideo/index.vue")) },
-  { id: "network", label: "网络设置", icon: IconNetwork, component: defineAsyncComponent(() => import("./panels/network.vue")) },
+  { id: "mcp", label: "MCP", groupLabel: "通讯", component: defineAsyncComponent(() => import("./panels/mcp/index.vue")) },
+  { id: "chatToVideo", label: "聊天转视频", component: defineAsyncComponent(() => import("./panels/chatToVideo/index.vue")) },
+  { id: "network", label: "网络设置", component: defineAsyncComponent(() => import("./panels/network.vue")) },
   {
     id: "personalization",
     label: "个性化",
-    icon: IconUserCog,
     groupLabel: "其他",
     component: defineAsyncComponent(() => import("./panels/personalization.vue")),
   },
-  { id: "privacy", label: "隐私", icon: IconShieldLock, component: defineAsyncComponent(() => import("./panels/privacy.vue")) },
-  { id: "developer", label: "开发者选项", icon: IconCode, component: defineAsyncComponent(() => import("./panels/developer/index.vue")) },
-  { id: "about", label: "关于", icon: IconInfoCircle, component: defineAsyncComponent(() => import("./panels/about.vue")) },
+  { id: "privacy", label: "隐私", component: defineAsyncComponent(() => import("./panels/privacy.vue")) },
+  { id: "developer", label: "开发者选项", component: defineAsyncComponent(() => import("./panels/developer/index.vue")) },
+  { id: "about", label: "关于", component: defineAsyncComponent(() => import("./panels/about.vue")) },
 ];
 const activePanel = shallowRef(settingsPanels[0]!);
 </script>
@@ -105,25 +83,12 @@ const activePanel = shallowRef(settingsPanels[0]!);
     background: color-mix(in srgb, var(--el-bg-color) 92%, var(--el-text-color-primary));
     border-inline-end: 1px solid var(--el-border-color-lighter);
 
-    .settingsHeader {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      height: 48px;
-      padding: 0 14px;
-      border-bottom: 1px solid var(--el-border-color-lighter);
-
-      .settingsTitle {
-        font-size: 15px;
-        font-weight: 600;
-      }
-    }
-
     .settingsNav {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: 2px;
+      // ACT: 顶部留白与菜单行间距同尺寸（24px = 14 + 条目上内边距 10），移除标题后菜单不再紧贴面板顶边。
+      padding: 14px 2px 2px;
     }
 
     .settingsGroupLabel {
@@ -148,11 +113,6 @@ const activePanel = shallowRef(settingsPanels[0]!);
       font: inherit;
       text-align: start;
       cursor: pointer;
-
-      .panelIcon {
-        display: inline-flex;
-        flex-shrink: 0;
-      }
 
       > span {
         min-width: 0;
@@ -183,7 +143,8 @@ const activePanel = shallowRef(settingsPanels[0]!);
 
     .panelTitle {
       flex-shrink: 0;
-      margin: 0 0 20px;
+      // ACT: 顶部留白与账户页主面板首段标题对齐（20px），避免标题紧贴内容区上边框。
+      margin: 20px 0 20px;
       font-size: 18px;
     }
 

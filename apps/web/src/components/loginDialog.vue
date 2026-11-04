@@ -35,9 +35,10 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- ACT: 注册——提交表单即完成注册并自动登录（未验证也能登录）；随后进入可选的邮箱验证步骤，收不到验证码也可直接关闭。 -->
+      <!-- ACT: 注册——仅需邮箱+昵称+密码，提交即建账号并自动登录（服务端 requireEmailVerification=false）。
+           邮箱验证不在注册内完成；未验证时账户页给出提醒与验证码输入框，稍后补验即可。 -->
       <el-tab-pane :label="translate('注册')" name="register">
-        <el-form v-if="regStep === 'form'" class="authForm" label-position="top" @submit.prevent="submitRegister">
+        <el-form class="authForm" label-position="top" @submit.prevent="submitRegister">
           <el-form-item :label="translate('邮箱')">
             <el-input v-model="regEmail" :disabled="auth.busy" autocomplete="email" placeholder="you@example.com" :aria-label="translate('邮箱')" />
           </el-form-item>
@@ -48,16 +49,6 @@
             <el-input v-model="regPassword" type="password" show-password :disabled="auth.busy" autocomplete="new-password" :placeholder="translate('至少 8 位')" :aria-label="translate('密码')" />
           </el-form-item>
           <el-button class="submitBtn" type="primary" :loading="auth.busy" :disabled="!regEmail.trim() || !regPassword" @click="submitRegister">{{ translate("注册") }}</el-button>
-        </el-form>
-        <el-form v-else class="authForm" label-position="top" @submit.prevent="submitVerify">
-          <p class="authNotice">{{ noticeMessage }}</p>
-          <el-form-item :label="translate('邮箱验证码')">
-            <el-input v-model="regOtp" :disabled="auth.busy" maxlength="6" inputmode="numeric" :placeholder="translate('6 位数字')" :aria-label="translate('邮箱验证码')" @keydown.enter="submitVerify" />
-          </el-form-item>
-          <div class="btnRow">
-            <el-button :disabled="auth.busy || cooldown > 0" @click="resendRegOtp">{{ resendLabel }}</el-button>
-            <el-button type="primary" :loading="auth.busy" :disabled="regOtp.trim().length < 6" @click="submitVerify">{{ translate("验证邮箱") }}</el-button>
-          </div>
         </el-form>
       </el-tab-pane>
 
@@ -116,12 +107,10 @@ const noticeMessage = ref("");
 const loginEmail = ref("");
 const loginPassword = ref("");
 
-// 注册（两步：表单 -> 验证码）
-const regStep = ref<"form" | "otp">("form");
+// 注册（单步：邮箱 + 昵称 + 密码，提交即完成并自动登录）
 const regEmail = ref("");
 const regName = ref("");
 const regPassword = ref("");
-const regOtp = ref("");
 
 // 重置密码（两步：邮箱 -> 验证码 + 新密码）
 const resetStep = ref<"email" | "otp">("email");
@@ -153,7 +142,6 @@ watch(visible, value => {
   noticeMessage.value = "";
   activeTab.value = "login";
   loginPassword.value = "";
-  regStep.value = "form"; regOtp.value = "";
   resetStep.value = "email"; resetOtp.value = ""; resetNewPassword.value = "";
 });
 
@@ -163,11 +151,11 @@ function fail(error: unknown, fallback: string) {
   errorMessage.value = error instanceof Error ? error.message : translate(fallback);
 }
 
-async function succeed() {
+async function succeed(message = "登录成功") {
   loginPassword.value = "";
   regPassword.value = "";
   visible.value = false;
-  ElMessage.success(translate("登录成功"));
+  ElMessage.success(translate(message));
   emit("success");
 }
 
@@ -184,34 +172,12 @@ async function submitRegister() {
   if (auth.busy) return;
   errorMessage.value = "";
   try {
-    // ACT: 注册即完成——先建账号，再显式登录（服务端 requireEmailVerification=false，未验证也能登录）。
-    // 这样无论验证码能否送达，注册都必定成功；随后进入可选的邮箱验证步骤。
+    // ACT: 注册即完成——提交邮箱+昵称+密码即建账号并显式登录（服务端 requireEmailVerification=false）。
+    // 邮箱验证不在注册流程内；未验证时账户页给出提醒与验证码输入框，稍后补验即可。
     await auth.register(regEmail.value, regPassword.value, regName.value);
     await auth.login(regEmail.value, regPassword.value);
-    regStep.value = "otp";
-    startCooldown(60);
-    noticeMessage.value = translate("账号已创建并已登录。若收到邮箱验证码，输入后即可验证邮箱；若未收到，可直接关闭本窗口，稍后在账户页查看验证说明。");
+    await succeed("注册成功");
   } catch (error) { fail(error, "注册失败，请稍后重试"); }
-}
-
-async function resendRegOtp() {
-  if (auth.busy || cooldown.value > 0) return;
-  errorMessage.value = "";
-  try {
-    await auth.sendVerificationOtp(regEmail.value, "email-verification");
-    startCooldown(60);
-    noticeMessage.value = translate("验证码已重新发送");
-  } catch (error) { fail(error, "验证码发送失败，请稍后再试"); }
-}
-
-async function submitVerify() {
-  if (auth.busy) return;
-  errorMessage.value = "";
-  try {
-    // ACT: 注册时已自动登录，这里仅用验证码激活邮箱；成功后关闭弹窗。
-    await auth.verifyOtp(regEmail.value, regOtp.value);
-    await succeed();
-  } catch (error) { fail(error, "验证失败，请稍后重试"); }
 }
 
 async function submitResetRequest() {

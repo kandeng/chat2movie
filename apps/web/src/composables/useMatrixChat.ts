@@ -1,4 +1,5 @@
 import { computed, ref, shallowRef, watch } from "vue";
+import axios from "axios";
 import * as sdk from "matrix-js-sdk";
 import { translate } from "@toonflow/i18n/vue";
 import { authenticatedMediaUrl } from "@/lib/matrixMedia";
@@ -16,6 +17,7 @@ export type ChatMessage = {
   id: string;
   senderId: string;
   senderName: string;
+  senderAvatar: string; // 发送者头像的 blob 地址（鉴权媒体解析后）；无头像为空串
   msgtype: string; // m.text / m.image / m.video / ...
   body: string;
   url: string; // 媒体消息解析出的可播放 blob 地址；文本消息为空串
@@ -178,10 +180,15 @@ function refreshTimeline() {
     const mxc = typeof content.url === "string" && content.url.startsWith("mxc://") ? content.url : "";
     // ACT: 媒体消息异步解析成 blob URL（鉴权媒体）；解析完成后会再次刷新时间线。
     if (mxc && !mediaCache.has(mxc)) resolveMedia(mxc);
+    const member = room.getMember(senderId);
+    // ACT: 头像同属鉴权媒体：mxc -> blob；解析完成的回调会再刷一次时间线把头像填上。
+    const avatarMxc = member?.getMxcAvatarUrl() ?? "";
+    if (avatarMxc && !mediaCache.has(avatarMxc)) resolveMedia(avatarMxc);
     msgs.push({
       id: ev.getId() ?? `${ev.getTs()}-${senderId}`,
       senderId,
-      senderName: room.getMember(senderId)?.name || senderId,
+      senderName: member?.name || senderId,
+      senderAvatar: cachedMediaUrl(avatarMxc),
       msgtype,
       body: typeof content.body === "string" ? content.body : "",
       url: cachedMediaUrl(mxc),
@@ -371,6 +378,16 @@ async function waitForRoom(roomId: string, timeout = 8000): Promise<sdk.Room | n
   return client?.getRoom(roomId) ?? null;
 }
 
+// ACT: 新建群聊自动拉入 AI 客服（Customer Service）：邀请与入群都由后端用当前用户（房间创建者）
+// 的 Matrix 影子身份完成，前端无需知道机器人 mxid。失败只记日志，不影响建房本身（群聊仍可用）。
+async function addAgentToRoom(roomId: string) {
+  try {
+    await axios.post("/api/matrix/agent", { roomId });
+  } catch (err) {
+    console.warn("[chat] AI 客服入群失败：", err);
+  }
+}
+
 async function createRoom(options: { name: string; invite?: string[] }): Promise<string> {
   if (!client) throw new Error(translate("尚未连接到聊天服务"));
   const name = options.name.trim();
@@ -382,6 +399,8 @@ async function createRoom(options: { name: string; invite?: string[] }): Promise
     invite: options.invite ?? [],
   });
   await waitForRoom(created.room_id);
+  // ACT: 先等自己入群（成为房内成员）再拉 AI 客服，否则后端的代签邀请会因邀请人不在房内而 403。
+  await addAgentToRoom(created.room_id);
   refreshRooms();
   setActiveRoom(created.room_id);
   return created.room_id;
@@ -442,7 +461,13 @@ const activeRoom = computed(() => {
   const roomId = activeRoomId.value;
   return current && roomId ? (current.getRoom(roomId) ?? null) : null;
 });
-const roomName = computed(() => activeRoom.value?.name ?? activeRoomId.value);
+// ACT: 标题取 rooms 快照中的名字（refreshRooms 随 Timeline/Name 事件刷新，是响应式来源）。
+// 不能直接读 activeRoom.name：SDK 会对 room 对象原地改名，computed 对其无响应式依赖、不会重算，
+// 标题会停在进房瞬间的默认名（如 "Empty room"），与左栏列表显示的群名不一致。
+const roomName = computed(() => {
+  const id = activeRoomId.value;
+  return rooms.value.find(room => room.id === id)?.name || activeRoom.value?.name || id;
+});
 // ACT: 主持人＝当前房间的创建者（m.room.create 的发送者）；只有主持人才看到生成视频入口。
 const isHost = computed(() => {
   const room = activeRoom.value;

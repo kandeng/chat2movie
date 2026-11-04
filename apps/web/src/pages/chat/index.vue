@@ -79,15 +79,23 @@
             <p v-if="!activeRoomId" class="emptyHint">{{ translate("从左侧选择一个群聊开始。") }}</p>
             <p v-else-if="!timeline.length" class="emptyHint">{{ translate("还没有消息，发送第一条开始讨论吧。") }}</p>
             <div v-for="msg in timeline" :key="msg.id" class="messageRow" :class="{ mine: msg.mine, anchored: anchoredId === msg.id }" :data-event-id="msg.id">
+              <!-- ACT: 圆形头像置于气泡外侧（他人左/自己右），替代原先气泡内的发送者名字；无头像时用首字母占位圆。 -->
+              <span v-if="!msg.mine" class="msgAvatar" :aria-label="msg.senderName">
+                <img v-if="msg.senderAvatar" :src="msg.senderAvatar" :alt="msg.senderName" />
+                <span v-else class="initial">{{ msg.senderName.charAt(0) }}</span>
+              </span>
               <div class="bubble">
                 <div class="meta">
-                  <span class="sender">{{ msg.senderName }}</span>
                   <span class="time">{{ formatTime(msg.ts) }}</span>
                 </div>
                 <video v-if="msg.msgtype === 'm.video' && msg.url" class="media" :src="msg.url" controls />
                 <el-image v-else-if="msg.msgtype === 'm.image' && msg.url" class="media" :src="msg.url" fit="contain" :preview-src-list="[msg.url]" />
                 <p class="text">{{ msg.body }}</p>
               </div>
+              <span v-if="msg.mine" class="msgAvatar" :aria-label="msg.senderName">
+                <img v-if="msg.senderAvatar" :src="msg.senderAvatar" :alt="msg.senderName" />
+                <span v-else class="initial">{{ msg.senderName.charAt(0) }}</span>
+              </span>
             </div>
           </div>
         </el-scrollbar>
@@ -608,6 +616,8 @@ onMounted(async () => {
 
   .messageRow {
     display: flex;
+    align-items: flex-end;
+    gap: 8px;
 
     &.mine {
       justify-content: flex-end;
@@ -625,6 +635,31 @@ onMounted(async () => {
     }
   }
 
+  // ACT: 气泡旁的圆形头像（替代气泡内发送者名字）；与气泡底边对齐，无头像时首字母占位。
+  .msgAvatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--el-fill-color);
+    color: var(--el-text-color-regular);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .initial {
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
   .bubble {
     max-width: min(72%, 640px);
     padding: 8px 12px;
@@ -636,12 +671,6 @@ onMounted(async () => {
       gap: 8px;
       align-items: baseline;
       margin-bottom: 4px;
-
-      .sender {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--el-text-color-regular);
-      }
 
       .time {
         font-size: 11px;

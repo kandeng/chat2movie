@@ -176,6 +176,46 @@ export async function joinRoomAs(mxid: string, roomId: string): Promise<boolean>
   }
 }
 
+// 读取房间当前的成员 mxid 列表（GET /_synapse/admin/v1/rooms/<roomId>/members）；不可用时返回空数组。
+export async function roomMembers(roomId: string): Promise<string[]> {
+  const synapse = requireConfig();
+  try {
+    const resp = await fetch(`${synapse.baseUrl}/_synapse/admin/v1/rooms/${encodeURIComponent(roomId)}/members`, {
+      headers: adminHeaders(synapse.adminAccessToken),
+    });
+    if (!resp.ok) return [];
+    const data = (await resp.json()) as { members?: unknown };
+    return Array.isArray(data.members) ? data.members.filter((mxid): mxid is string => typeof mxid === "string") : [];
+  } catch (err) {
+    console.error(`[matrix] roomMembers 失败:`, err);
+    return [];
+  }
+}
+
+// 代签 mxid 的令牌后，以它自己的身份往房间发一条 m.text 消息
+// （PUT /_matrix/client/v3/rooms/<roomId>/send/m.room.message/<txnId>，txnId 保证幂等不重复发）。
+export async function sendTextAs(mxid: string, roomId: string, body: string): Promise<boolean> {
+  const synapse = requireConfig();
+  const creds = await brokerToken(mxid);
+  if (!creds) return false;
+  const txnId = `c2m_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  try {
+    const resp = await fetch(`${synapse.baseUrl}/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/send/m.room.message/${encodeURIComponent(txnId)}`, {
+      method: "PUT",
+      headers: adminHeaders(creds.access_token),
+      body: JSON.stringify({ msgtype: "m.text", body }),
+    });
+    if (!resp.ok) {
+      console.error(`[matrix] sendTextAs ${mxid} -> HTTP ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(`[matrix] sendTextAs ${mxid} 失败:`, err);
+    return false;
+  }
+}
+
 // ACT: 把本地账号的昵称/头像同步到隐藏 Matrix 账号的 profile（端口自 drone 的 PATCH /users/me 行为）。
 // 头像以 data URI 传入：先上传到 Matrix 媒体库换 mxc:// 地址，再写入 avatar_url；
 // 任一环节失败只记日志不抛错（聊天降级，主服务不受影响）。

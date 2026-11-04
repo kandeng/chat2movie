@@ -29,6 +29,10 @@ app.listen(realPort, async (error?: Error) => {
   // ACT: 聊天转视频机器人（Task 3）随主服务启动；未配置 Synapse 或未启用时内部静默降级，不阻塞监听。
   const { startMatrixBot } = await import("./matrix/bot");
   await startMatrixBot().catch(botError => console.warn("启动聊天转视频机器人失败：", botError));
+  // ACT: 顺手把 AI 客服的身份（显示名 + 头像）同步到 Synapse，新建群聊时它才能以正确形象入群。
+  // 内部全部降级、不抛错，用 fire-and-forget 以免 Synapse 慢响应拖住启动日志。
+  const { ensureAgentIdentity } = await import("./matrix/agent");
+  void ensureAgentIdentity().catch(agentError => console.warn("初始化 AI 客服身份失败：", agentError));
   console.log(`[服务启动成功]: http://localhost:${realPort}`);
   console.log(`[启动耗时]: ${(Date.now() - startTime).toFixed(2)}ms`);
 });

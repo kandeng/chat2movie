@@ -3219,5 +3219,7 @@
   "这条消息已开始引导当前任务，不能再取回": "Mesej ini telah mula mengarahkan tugas semasa dan tidak boleh diambil semula",
   "正常": "Biasa",
   "重新连接": "Sambung semula",
-  "字幕偏移": "Ofset sari kata"
+  "字幕偏移": "Ofset sari kata",
+  "自动生成视频": "Jana video secara automatik",
+  "分步生成视频": "Jana video langkah demi langkah"
 }

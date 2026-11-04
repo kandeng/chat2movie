@@ -122,23 +122,21 @@
           </div>
 
           <div class="composerTools">
-            <!-- ACT: 只有房间主持人能看到生成视频入口，两个按钮把意图带到我的工作室（Task 4 读取 query）。 -->
+            <!-- ACT: 只有房间主持人能看到生成视频入口，两个图标按钮把意图带到我的工作室（Task 4 读取 query），名称作 tooltip。 -->
             <div v-if="isHost" class="hostTools">
-              <el-button type="primary" plain :disabled="!ready || !activeRoomId" @click="goStudio('auto')">
-                <icon-player-play :size="16" aria-hidden="true" />
-                <span>{{ translate("自动生成视频") }}</span>
+              <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('自动生成视频')" :title="translate('自动生成视频')" @click="goStudio('auto')">
+                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconMovieFilm}&quot;)` }" aria-hidden="true" />
               </el-button>
-              <el-button plain :disabled="!ready || !activeRoomId" @click="goStudio('step')">
-                <icon-list-check :size="16" aria-hidden="true" />
-                <span>{{ translate("分步生成视频") }}</span>
+              <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('分步生成视频')" :title="translate('分步生成视频')" @click="goStudio('step')">
+                <span class="toolIcon wide" :style="{ '--tool-icon': `url(&quot;${iconMovieCamera}&quot;)` }" aria-hidden="true" />
               </el-button>
             </div>
             <div class="toolGroup">
               <el-button class="toolButton" :aria-label="translate('团队')" :title="translate('团队')" @click="team">
-                <icon-users :size="18" aria-hidden="true" />
+                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconUserGroup}&quot;)` }" aria-hidden="true" />
               </el-button>
               <el-button class="toolButton" :aria-label="translate('上传文件')" :title="translate('上传文件')" @click="fileInput?.click()">
-                <icon-folder :size="18" aria-hidden="true" />
+                <span class="toolIcon wide" :style="{ '--tool-icon': `url(&quot;${iconFileUpload}&quot;)` }" aria-hidden="true" />
               </el-button>
               <input ref="fileInput" type="file" multiple hidden :disabled="!ready" @change="onPickFiles" />
             </div>
@@ -190,6 +188,11 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage, type ScrollbarInstance } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import loginDialog from "@/components/loginDialog.vue";
+// ACT: 工具按钮图标统一取自 src/icons（CSS mask + currentColor 着色，与全局外壳一致）。
+import iconUserGroup from "@/icons/user_group.svg";
+import iconFileUpload from "@/icons/file_upload.svg";
+import iconMovieFilm from "@/icons/movie_film.svg";
+import iconMovieCamera from "@/icons/movie_camera.svg";
 import { useAuthStore } from "@/stores/auth";
 import { useMatrixChat } from "@/composables/useMatrixChat";
 
@@ -742,7 +745,6 @@ onMounted(async () => {
     gap: 8px;
 
     .el-button { margin: 0; }
-    .el-button span { margin-inline-start: 6px; }
   }
 
   .toolGroup {
@@ -763,6 +765,27 @@ onMounted(async () => {
     color: var(--el-text-color-regular);
 
     &:hover:not(:disabled) { background: var(--el-fill-color); color: var(--el-text-color-primary); }
+  }
+
+  // ACT: 图标用 mask + currentColor 着色，兼容内置固定填充色的 svg（与全局外壳同一做法）。
+  // .wide 对应 viewBox 宽于高的图标（file_upload 1228x1024、movie_camera 1270x1024），
+  // 按比例加宽盒子让 contain 后的视觉高度与方形图标一致。
+  .toolIcon {
+    display: block;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    background-color: currentColor;
+    mask-image: var(--tool-icon);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--tool-icon);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+
+    &.wide { width: 22px; }
   }
 }
 

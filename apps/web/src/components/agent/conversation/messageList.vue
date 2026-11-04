@@ -5,7 +5,8 @@
         <template #content>
           <section class="welcomeMessage" aria-label="开始新对话">
             <div class="welcomeHeader">
-              <span class="welcomeIcon" aria-hidden="true"><span class="welcomeLogo" :style="{ maskImage: `url(${logoUrl})` }" /></span>
+              <!-- ACT: data URI 内含单引号，url() 必须加引号包裹，否则整条 mask 声明无效。 -->
+              <span class="welcomeIcon" aria-hidden="true"><span class="welcomeLogo" :style="{ maskImage: `url(&quot;${logoUrl}&quot;)` }" /></span>
               <div>
                 <p class="welcomeLabel">你好，我是 chat2movie 助手</p>
                 <h3>从一个想法开始</h3>
@@ -86,7 +87,8 @@
 import { computed, nextTick, onUpdated, ref, watch, type ComponentPublicInstance } from "vue";
 import { defaultRangeExtractor, observeElementRect, useVirtualizer } from "@tanstack/vue-virtual";
 import { IconArrowDown, IconArrowUpRight, IconAtom, IconChevronDown, IconChevronRight, IconCopy, IconCornerDownRight, IconMovie, IconPencil, IconPhoto, IconTrash, IconUsersGroup, IconVector, IconX } from "@tabler/icons-vue";
-import logoUrl from "@toonflow/assets/logo.svg";
+// ACT: 助手欢迎语头像改用客服图标（取代 Toonflow 钢笔 Logo）。
+import logoUrl from "@/icons/customer_service.svg";
 import browserPanel from "@toonflow/tool-browser/panel";
 import { isBrowserTool } from "@toonflow/tool-browser/client";
 import type { AgentToolCall } from "@toonflow/server/agent/types";

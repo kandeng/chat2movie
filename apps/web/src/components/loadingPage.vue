@@ -14,8 +14,9 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from "vue";
-import logoRaw from "@toonflow/assets/logo.svg?raw";
-import logoUrl from "@toonflow/assets/logo.svg";
+// ACT: 加载动画改用 chat2movie 品牌 Logo（取代 Toonflow 钢笔 Logo）。
+import logoRaw from "@/assets/logo_chat2movie.svg?raw";
+import logoUrl from "@/assets/logo_chat2movie.svg";
 
 const props = defineProps<{ active: boolean; contained?: boolean }>();
 const visible = defineModel<boolean>("visible", { default: false });
@@ -103,7 +104,7 @@ function finishFilling() {
       line-height: 0;
       will-change: opacity;
 
-      :deep(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+      :deep(svg) { display: block; width: 100%; height: 100%; overflow: visible; }
       :deep(path) {
         stroke: #000;
         stroke-width: 14;
@@ -115,6 +116,8 @@ function finishFilling() {
         animation: logoDraw 0.65s linear both;
       }
       :deep(path[data-part="1"]) { animation-delay: 0.08s; }
+      // ACT: 品牌 Logo 有三段轮廓（气泡/相机/气泡），第三段顺延描边。
+      :deep(path[data-part="2"]) { animation-delay: 0.16s; }
     }
 
     .logoFill {
@@ -123,6 +126,7 @@ function finishFilling() {
       display: block;
       width: 100%;
       height: 100%;
+      object-fit: contain;
       opacity: 0;
       will-change: opacity;
     }

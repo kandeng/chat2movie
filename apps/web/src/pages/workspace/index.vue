@@ -105,7 +105,10 @@
             :aria-expanded="agentVisible"
             aria-label="chat2movie Agent"
             aria-controls="agentPanel"
-            @click="agentVisible = !agentVisible"></el-button>
+            @click="agentVisible = !agentVisible">
+            <!-- ACT: data URI 内含单引号，url() 必须加引号包裹，否则整条 mask 声明无效。 -->
+            <span class="agentLogo" :style="{ maskImage: `url(&quot;${agentLogoUrl}&quot;)` }" aria-hidden="true" />
+          </el-button>
         </el-tooltip>
       </div>
     </div>
@@ -144,6 +147,8 @@ import canvasPanel from "./panels/canvas/canvasHost.vue";
 import type { DocumentNodeOptions } from "./panels/canvas/canvasFiles";
 import workspaceMenu from "./components/workspaceMenu.vue";
 import floatingAgent from "./components/floatingAgent.vue";
+// ACT: 收起态画布底部按钮的图标改用客服图标（与助手欢迎语头像一致）。
+import agentLogoUrl from "@/icons/customer_service.svg";
 
 const documentPanel = defineAsyncComponent(() => import("./panels/document/index.vue"));
 

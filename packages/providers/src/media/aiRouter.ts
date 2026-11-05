@@ -212,11 +212,11 @@ async function run(context: ProviderContext, request: AnyRequest, mediaType: Med
 }
 
 export default {
-  id: "bailian",
-  label: "阿里云百炼（Bailian）",
+  id: "aiRouter",
+  label: "AI-Router",
   icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff6a00' d='M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.3L12 16.9 5.8 21l2.4-7.3L2 9.2h7.6z'/%3E%3C/svg%3E",
   version,
-  readme: `## 阿里云百炼（Model Studio / DashScope）
+  readme: `## AI-Router（DashScope / 阿里云百炼）
 
 配置驱动的媒体供应商：视频、图片、语音（TTS）均支持，模型与接口全部可在「设置 → 媒体模型」中编辑。
 

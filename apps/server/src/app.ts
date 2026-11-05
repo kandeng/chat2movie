@@ -12,8 +12,8 @@ import initializePlugins from "@/utils/plugins/initialize";
 import { languageRequest, resolveRequestLocale, runWithLocale, setLocaleFallback, translateError, translateMessage } from "@/lib/i18n";
 import { detectLocale, normalizeLocale } from "@toonflow/i18n";
 
-// ACT: 原型需要开箱即用的视频生成——bailian 的密钥已托管在 config.json，故把 bailian.ts 一并纳入内置自动安装，使「设置 → 媒体模型」出现其视频模型且生成时自动取用该密钥。
-const autoInstallProviders = ["tfRouter.ts", "apiMart.ts", "metaso.ts", "compshare.ts", "bailian.ts"];
+// ACT: 原型需要开箱即用的视频生成——aiRouter 的密钥已托管在 config.json，故把 aiRouter.ts（DashScope/百炼适配器）一并纳入内置自动安装，使「设置 → 媒体模型」出现其视频模型且生成时自动取用该密钥。
+const autoInstallProviders = ["aiRouter.ts", "apiMart.ts", "metaso.ts", "compshare.ts"];
 
 export async function createApp({
   webRoot,
@@ -68,6 +68,10 @@ export async function createApp({
       providerRevision = hash.digest("hex");
     }
     await initializePlugins(resolve(dataDirectory, "providers"), sourceDirectory, autoInstallProviders, providerRevision);
+    // ACT: 再把 config.json 声明的「纯配置」媒体供应商（kind:"media" + adapter）物化为 data/providers/<id>.ts；
+    // 失败不阻塞启动（该供应商在 UI 中不可用，其余照常）。
+    const { materializeConfigProviders } = await import("@/utils/media/provider");
+    await materializeConfigProviders(sourceDirectory).catch(error => console.warn("[media] 物化配置供应商失败：", error));
   }
   // ACT: 技能和团队只补首次安装，保留用户修改。
   if (dataDirectory && skillsRoot) await initializePlugins(resolve(dataDirectory, "skills"), skillsRoot);

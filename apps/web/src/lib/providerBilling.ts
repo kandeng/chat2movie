@@ -100,8 +100,8 @@ export function useProviderBalances() {
   function syncProviders() {
     const configs = settings.value.mediaProviderConfigs as Record<string, Record<string, unknown>> | undefined;
     const previousEntries = new Map(providerBalances.value.map(entry => [entry.id, entry]));
-    const choices = [{ id: "tfRouter", label: "TF-Router", supportsBalance: true },
-      ...providers.filter(item => item.id !== "tfRouter" && item.supportsBalance)];
+    // ACT: TF-Router 官方余额入口已随 tfRouter 下线；仅展示实际支持余额查询的媒体供应商（见 docs/aiRouter-deferred-features.md）。
+    const choices = providers.filter(item => item.supportsBalance);
     providerBalances.value = choices.map(provider => {
       const config = { ...configs?.[provider.id], ...(provider.id === "tfRouter" ? { apiKey: tfBalanceApiKey.value } : {}) };
       const configKey = JSON.stringify(config);

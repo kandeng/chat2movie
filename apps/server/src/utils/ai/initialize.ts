@@ -1,8 +1,6 @@
-import tfRouter from "@toonflow/providers/language/tfRouter";
-import tfRouterMedia from "@toonflow/providers/media/tfRouter";
 import conf from "@/utils/conf";
+import { getConfigApiKey } from "@/utils/appConfig";
 import { fetchProviderModels } from "@/utils/ai/models";
-import { getMediaProviderApiKey, refreshMediaProviderModels } from "@/utils/media/provider";
 
 let initialization: Promise<void> | undefined;
 
@@ -10,59 +8,76 @@ function normalizeApiKey(value: unknown) {
   return typeof value === "string" ? value.trim().replace(/^Bearer(?:\s+|$)/i, "").trim() : "";
 }
 
-function getLanguageProvider(settings: Record<string, unknown>) {
-  const providers = settings.customProviders;
-  if (!Array.isArray(providers)) return;
-  return providers.find(item => typeof item?.id === "string" && item.id.toLowerCase() === tfRouter.id.toLowerCase()
-    && typeof item.apiUrl === "string" && URL.canParse(item.apiUrl) && new URL(item.apiUrl).origin === new URL(tfRouter.apiUrl).origin);
+// ACT: 优先使用 config.json 托管的密钥（providers.<id>.apiKey），其次才是 settings 中存储的密钥。
+function resolveProviderApiKey(provider?: { id?: unknown; apiKey?: unknown }) {
+  if (!provider || typeof provider.id !== "string") return "";
+  return normalizeApiKey(getConfigApiKey(provider.id) || provider.apiKey);
 }
 
+function asProviderList(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is Record<string, unknown> => !!item && typeof item === "object" && !Array.isArray(item))
+    : [];
+}
+
+function providerLabel(provider: Record<string, unknown>): string {
+  return typeof provider.label === "string" && provider.label.trim() ? provider.label : String(provider.id ?? "供应商");
+}
+
+function hasFetchableEndpoint(provider: Record<string, unknown>): boolean {
+  return typeof provider.apiUrl === "string" && URL.canParse(provider.apiUrl) && typeof provider.protocol === "string";
+}
+
+// ACT: 逐个刷新「模型为空」或「密钥相对上次变化」的文本供应商——覆盖内置 aiRouter 与 config.json
+// 声明的任意兼容供应商，按各自 protocol（openai-completions/openai-responses/anthropic-messages）动态拉取模型。
 async function refreshLanguageModels(previousSettings?: Record<string, unknown>) {
-  const provider = getLanguageProvider(conf.get("settings", {}));
-  const apiKey = normalizeApiKey(provider?.apiKey);
-  if (!apiKey || (previousSettings && apiKey === normalizeApiKey(getLanguageProvider(previousSettings)?.apiKey))) return;
-  const models = await fetchProviderModels({ apiUrl: provider.apiUrl, protocol: provider.protocol, apiKey });
-  if (!models.length) throw new Error("未获取到文本模型，保留原有列表");
-  const current = conf.get("settings.customProviders");
-  if (!Array.isArray(current)) return;
-  const index = current.findIndex(item => item?.id === provider.id && item.apiUrl === provider.apiUrl
-    && item.protocol === provider.protocol && item.apiKey === provider.apiKey);
-  if (index === -1) return;
-  const providers = current.map((item, itemIndex) => itemIndex === index ? { ...item, models: models.map(model => {
-    const saved = Array.isArray(item.models) ? item.models.find((existing: { id?: string; reasoningEfforts?: unknown }) => existing?.id === model.id) : undefined;
-    return saved?.reasoningEfforts === undefined ? model : { ...model, reasoningEfforts: saved.reasoningEfforts };
-  }) } : item);
-  conf.set("settings.customProviders", providers);
-  return providers;
-}
-
-async function refreshMediaModels(previousSettings: Record<string, unknown> | undefined, errors: string[]) {
-  const apiKey = getMediaProviderApiKey(tfRouterMedia.id);
-  const configs = previousSettings?.mediaProviderConfigs as Record<string, { apiKey?: unknown }> | undefined;
-  if (!apiKey || (previousSettings && apiKey === normalizeApiKey(configs?.[tfRouterMedia.id]?.apiKey))) return;
-  let provider: Awaited<ReturnType<typeof refreshMediaProviderModels>> | undefined;
-  // ACT: 同一供应商文件按类型串行保存，避免多个刷新读取相同版本后互相冲突。
-  for (const type of ["video", "image", "audio"] as const) {
-    if (getMediaProviderApiKey(tfRouterMedia.id) !== apiKey) break;
-    try { provider = await refreshMediaProviderModels(`${tfRouterMedia.id}.ts`, undefined, type, apiKey); }
-    catch (error) {
-      if (getMediaProviderApiKey(tfRouterMedia.id) !== apiKey) break;
-      errors.push(`TF-Router ${{ video: "视频", image: "图片", audio: "音频" }[type]}模型更新失败：${error instanceof Error ? error.message : "未知错误"}`);
+  const current = asProviderList(conf.get("settings.customProviders"));
+  const previous = asProviderList(previousSettings?.customProviders);
+  const targets = current.filter(provider => {
+    if (!hasFetchableEndpoint(provider)) return false;
+    const apiKey = resolveProviderApiKey(provider);
+    if (!apiKey) return false;
+    if (!Array.isArray(provider.models) || provider.models.length === 0) return true;
+    const before = previous.find(item => item.id === provider.id);
+    return !!before && resolveProviderApiKey(before) !== apiKey;
+  });
+  const errors: string[] = [];
+  let changed = false;
+  for (const target of targets) {
+    const label = providerLabel(target);
+    try {
+      const models = await fetchProviderModels({
+        apiUrl: String(target.apiUrl), protocol: String(target.protocol), apiKey: resolveProviderApiKey(target),
+      });
+      if (!models.length) { errors.push(`${label} 未获取到文本模型，保留原有列表`); continue; }
+      // ACT: 重新读取最新列表并按 id 定位，保留用户已有的 reasoningEfforts 等本地编辑。
+      const list = asProviderList(conf.get("settings.customProviders"));
+      const index = list.findIndex(item => item.id === target.id);
+      if (index === -1) continue;
+      const item = list[index]!;
+      list[index] = { ...item, models: models.map(model => {
+        const saved = Array.isArray(item.models)
+          ? (item.models as { id?: string; reasoningEfforts?: unknown }[]).find(existing => existing?.id === model.id)
+          : undefined;
+        return saved?.reasoningEfforts === undefined ? model : { ...model, reasoningEfforts: saved.reasoningEfforts };
+      }) };
+      conf.set("settings.customProviders", list);
+      changed = true;
+    } catch (reason) {
+      errors.push(`${label} 文本模型更新失败：${reason instanceof Error ? reason.message : "未知错误"}`);
     }
   }
-  return provider;
+  return { changed, errors };
 }
 
 export async function refreshProviderModels(previousSettings?: Record<string, unknown>) {
-  const errors: string[] = [];
-  const [language, media] = await Promise.allSettled([refreshLanguageModels(previousSettings), refreshMediaModels(previousSettings, errors)]);
-  for (const [result, label] of [[language, "文本"], [media, "媒体"]] as const) {
-    if (result.status === "rejected") errors.push(`TF-Router ${label}模型更新失败：${result.reason instanceof Error ? result.reason.message : "未知错误"}`);
-  }
+  // ACT: aiRouter 媒体模型为静态配置（无 modelsUrl），无需在此自动刷新；仅刷新文本模型。
+  const result = await refreshLanguageModels(previousSettings).catch((reason: unknown) => ({
+    changed: false, errors: [`文本模型更新失败：${reason instanceof Error ? reason.message : "未知错误"}`],
+  }));
   return {
-    ...(language.status === "fulfilled" && language.value ? { customProviders: conf.get("settings.customProviders") as typeof language.value } : {}),
-    ...(media.status === "fulfilled" && media.value ? { mediaProvider: media.value } : {}),
-    ...(errors.length ? { modelRefreshErrors: errors } : {}),
+    ...(result.changed ? { customProviders: conf.get("settings.customProviders") as Record<string, unknown>[] } : {}),
+    ...(result.errors.length ? { modelRefreshErrors: result.errors } : {}),
   };
 }
 

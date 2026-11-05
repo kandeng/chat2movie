@@ -114,7 +114,7 @@ async function assetBytes(asset: MediaAsset, mediaType: "image" | "video" | "aud
 async function prepareRequest<T>(directory: string | undefined, mediaType: "image" | "video" | "audio", request: MediaGenerationRequest,
   read: (cwd: string, reference: MediaReference, type: string, signal?: AbortSignal) => Promise<T>, signal?: AbortSignal) {
   // ACT: 仅向已适配引用映射的内置供应商传递，其他第三方适配器仍接收原有公共参数。
-  const referenceOrder = mediaType === "video" && ["tfRouter", "apiMart", "metaso", "compshare"].includes(request.providerId) ? request.referenceOrder : undefined;
+  const referenceOrder = mediaType === "video" && ["apiMart", "metaso", "compshare"].includes(request.providerId) ? request.referenceOrder : undefined;
   if (referenceOrder) {
     const media = { image: request.images, video: request.videos, audio: request.audios };
     for (const [index, reference] of referenceOrder.entries()) {

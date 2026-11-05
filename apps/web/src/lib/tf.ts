@@ -79,15 +79,15 @@ type TfPluginParams = {
   searchKeyword?: string;
 };
 
-export function isTfRouterProvider(provider: { id: string; apiUrl: string }) {
-  return provider.id.toLowerCase() === "tfrouter" && URL.canParse(provider.apiUrl)
-    && new URL(provider.apiUrl).origin === "https://api.toonflow.net";
+// ACT: aiRouter 为内置官方路由（语言/媒体统一入口），其 baseUrl 可能是百炼或自建路由，故仅按 id 识别。
+export function isAiRouterProvider(provider: { id: string; apiUrl?: string }) {
+  return provider.id.toLowerCase() === "airouter";
 }
 
 const client = axios.create({ baseURL: "https://api.toonflow.net" });
 
 export function getTfApiKey() {
-  const provider = customProviders.value.find(isTfRouterProvider);
+  const provider = customProviders.value.find(isAiRouterProvider);
   const mediaConfigs = settings.value.mediaProviderConfigs as Record<string, { apiKey?: unknown }> | undefined;
   return [provider?.apiKey, mediaConfigs?.tfRouter?.apiKey]
     .map(key => typeof key === "string" ? key.trim().replace(/^Bearer(?:\s+|$)/i, "").trim() : "")

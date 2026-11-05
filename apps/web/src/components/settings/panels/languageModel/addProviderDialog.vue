@@ -10,7 +10,7 @@
           :disabled="saving"
           :aria-pressed="selectedProvider === item.id"
           @click="selectedProvider = item.id">
-          <img v-if="item.icon" class="providerLogo" :class="{ monochrome: item.id === 'tfRouter' }" :src="item.icon" alt="" />
+          <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
           <modelIcon v-else :model="item.id" :size="18" />
           <span>{{ item.label }}</span>
         </button>
@@ -37,7 +37,7 @@
               </template>
             </el-auto-resizer>
           </div>
-          <el-text v-else-if="!fetching" type="info" size="small">{{ activeProvider && isTfRouterProvider(activeProvider) ? '保存 API Key 后自动获取模型列表' : formValues.apiKey ? '未获取到模型' : '填写 API Key 后自动获取模型列表' }}</el-text>
+          <el-text v-else-if="!fetching" type="info" size="small">{{ activeProvider && isAiRouterProvider(activeProvider) ? '保存 API Key 后自动获取模型列表' : formValues.apiKey ? '未获取到模型' : '填写 API Key 后自动获取模型列表' }}</el-text>
           <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
         </section>
       </el-scrollbar>
@@ -59,7 +59,7 @@ import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import type { Column } from "element-plus";
 import { saveSettings, type CustomProviderModel } from "@/stores/settings";
-import { isTfRouterProvider } from "@/lib/tf";
+import { isAiRouterProvider } from "@/lib/tf";
 
 const visible = defineModel<boolean>({ default: false });
 const selectedProvider = ref<string>(languageProviders[0]?.id ?? "");
@@ -88,28 +88,45 @@ const formOptions = computed<Options>(() => ({ form: { labelPosition: "top", dis
 const providerRules = computed(() =>
   formCreate.copyRules(activeProvider.value?.rules ?? []),
 );
+// ACT: 「自定义」预设的 apiUrl/protocol 来自表单而非预设本身，使客户可指向任意兼容端点；
+// 其余预设无这两个表单字段，回退到预设静态值。
+const effectiveProtocol = computed(() => {
+  const form = formValues.value.protocol;
+  if (typeof form === "string" && form.trim()) return form.trim();
+  const provider = activeProvider.value;
+  return provider && "protocol" in provider && typeof provider.protocol === "string" ? provider.protocol : "";
+});
+const effectiveApiUrl = computed(() => {
+  const form = formValues.value.apiUrl;
+  if (typeof form === "string" && form.trim()) return form.trim();
+  const provider = activeProvider.value;
+  return provider && "apiUrl" in provider && typeof provider.apiUrl === "string" ? provider.apiUrl : "";
+});
 
 watch(
-  [visible, activeProvider, () => formValues.value.apiKey, modelRefresh],
+  [visible, activeProvider, () => formValues.value.apiKey, () => formValues.value.apiUrl, () => formValues.value.protocol, modelRefresh],
   ([isVisible, provider, key], _previous, onCleanup) => {
     models.value = [];
     modelError.value = "";
     fetching.value = false;
     if (!isVisible || !provider) return;
-    if (isTfRouterProvider(provider)) return;
+    if (isAiRouterProvider(provider)) return;
     if (provider.models.length) {
       models.value = structuredClone(provider.models);
       return;
     }
     const apiKey = typeof key === "string" ? key.trim() : "";
     if (!apiKey) return;
+    // ACT: 自定义预设的接口地址来自表单；未填写时不发起拉取。
+    const apiUrl = effectiveApiUrl.value;
+    if (!apiUrl) return;
     const controller = new AbortController();
     fetching.value = true;
     // ACT: 输入停顿后自动获取；输入变化时立即取消旧请求，避免逐字请求和结果串到新密钥。
     const timer = setTimeout(async () => {
       try {
         const { data } = await axios.post("/api/providers/models", {
-          apiUrl: provider.apiUrl, protocol: provider.protocol, apiKey,
+          apiUrl, protocol: effectiveProtocol.value, apiKey,
         }, { signal: controller.signal, timeout: 35000 });
         if (controller.signal.aborted) return;
         if (data.code !== 200 || !Array.isArray(data.data)) throw new Error(data.message || "获取模型列表失败");
@@ -147,6 +164,12 @@ async function addProvider() {
     formError.value = "请填写 API Key";
     return;
   }
+  // ACT: 自定义预设的接口地址/协议来自表单，保存前校验地址已填写。
+  const apiUrl = effectiveApiUrl.value;
+  if (!apiUrl) {
+    formError.value = "请填写 API 地址";
+    return;
+  }
   saving.value = true;
   try {
     const addedProvider = {
@@ -154,8 +177,8 @@ async function addProvider() {
       label: provider.label,
       icon: provider.icon,
       apiKey,
-      apiUrl: "apiUrl" in provider ? provider.apiUrl : "",
-      protocol: "protocol" in provider ? provider.protocol : "",
+      apiUrl,
+      protocol: effectiveProtocol.value,
       models: models.value.map(model => ({ ...model })),
     };
     await saveSettings(settings => {

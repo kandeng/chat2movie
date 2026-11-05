@@ -10,6 +10,8 @@ type CanvasSnapshot = { nodes: readonly { type?: string }[]; edgeCount: number }
 const nodeTypes = ["textNode", "imageNode", "videoNode", "audioNode", "imageGenerationNode", "videoGenerationNode", "audioGenerationNode", "director3dNode", "canvasGroup"];
 let readCanvas: (() => CanvasSnapshot | undefined) | undefined;
 let collector: { track: (event: UsageEvent) => void; startAgent: () => (outcome: AgentOutcome) => void } | undefined;
+// ACT: 匿名遥测上报端点为 api.toonflow.net，已随 Toonflow 下线；在接入 aiRouter 自有端点前停止上报（见 docs/aiRouter-deferred-features.md）。
+const telemetryEnabled: boolean = false;
 
 const anonymousData = {
   track(event: UsageEvent) {
@@ -101,6 +103,7 @@ export function registerAnonymousData() {
   }
 
   function report() {
+    if (!telemetryEnabled) return;
     if (!collecting || !privacySettings.value.dataCollectionEnabled) return;
     accountTime();
     controller?.abort();

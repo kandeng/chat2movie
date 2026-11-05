@@ -6,7 +6,23 @@ import { resolve } from "node:path";
 // 也允许用环境变量 TOONFLOW_CONFIG_FILE 覆盖路径，便于打包或自定义部署。
 const configPath = process.env.TOONFLOW_CONFIG_FILE ?? resolve(import.meta.dirname, "../../../../config.json");
 
-export type ProviderKeyConfig = { apiKey?: string; baseUrl?: string };
+// ACT: config.json 的 providers.<id> 既托管密钥（apiKey/baseUrl），也可声明「纯配置」供应商：
+// - kind:"language"（或缺省 kind 但带 protocol、无 adapter）：按 protocol 直接作为文本供应商，启动时合并进 settings.customProviders 并动态拉取模型，无需任何 .ts；
+// - kind:"media" 且带 adapter：套用内置通用媒体适配器（dashscope/openaiImages/fal/replicate），注入 models[] 后物化为 data/providers/<id>.ts；
+// - 缺省 kind 且只有 apiKey/baseUrl：保持既有「密钥/地址覆盖」语义（如内置 aiRouter）。
+export type ProviderEntry = {
+  kind?: "language" | "media";
+  protocol?: "openai-completions" | "openai-responses" | "anthropic-messages";
+  adapter?: string;
+  baseUrl?: string;
+  apiKey?: string;
+  label?: string;
+  icon?: string;
+  models?: unknown[];
+  enabled?: boolean;
+};
+// ACT: 向后兼容别名——早期仅 { apiKey, baseUrl } 的密钥托管用法等价于一个未声明 kind 的 ProviderEntry。
+export type ProviderKeyConfig = ProviderEntry;
 // ACT: Synapse（Matrix）homeserver 连接信息，供聊天转视频原型使用；未配置时相关功能自动降级为不可用。
 export type SynapseConfig = {
   baseUrl?: string;
@@ -25,7 +41,7 @@ export type AuthConfig = {
   databaseUrl?: string;
   smtp?: SmtpConfig;
 };
-export type AppConfig = { providers?: Record<string, ProviderKeyConfig>; synapse?: SynapseConfig; auth?: AuthConfig };
+export type AppConfig = { providers?: Record<string, ProviderEntry>; synapse?: SynapseConfig; auth?: AuthConfig };
 
 // ACT: 按文件 mtime 做轻量缓存，避免每次生成都重复读盘；文件变更后自动失效。
 let cache: { mtimeMs: number; config: AppConfig } | null = null;
@@ -55,6 +71,13 @@ export function getConfigApiKey(id: string): string {
 export function getConfigBaseUrl(id: string): string {
   const value = readAppConfig().providers?.[id]?.baseUrl;
   return typeof value === "string" ? value.trim() : "";
+}
+
+// ACT: 返回 config.json 中声明的全部供应商条目（含密钥托管与纯配置供应商）；缺省或非法时为空对象。
+// 供 conf 合并文本供应商、media/provider 物化媒体供应商使用。
+export function getProviderEntries(): Record<string, ProviderEntry> {
+  const providers = readAppConfig().providers;
+  return providers && typeof providers === "object" && !Array.isArray(providers) ? providers : {};
 }
 
 // ACT: 读取 Synapse 配置并做基础归一化（去除 baseUrl 末尾斜杠、去除令牌可能误填的 Bearer 前缀）。

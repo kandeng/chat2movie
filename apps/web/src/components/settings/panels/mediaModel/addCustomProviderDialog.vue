@@ -19,7 +19,7 @@
           :disabled="saving"
           :aria-pressed="selectedProvider === item.id"
           @click="selectedProvider = item.id">
-          <img v-if="item.icon" class="providerLogo" :class="{ monochrome: item.id === 'tfRouter' }" :src="item.icon" alt="" />
+         <img v-if="item.icon" class="providerLogo" :class="{ monochrome: item.id === 'fal' || item.id === 'replicate' }" :src="item.icon" alt="" />
           <modelIcon v-else :model="item.id" :size="18" />
           <span>{{ item.label }}</span>
         </button>
@@ -107,12 +107,14 @@ import { mediaProviders } from "@toonflow/providers";
 import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
-import tfRouterSource from "@toonflow/providers/media/tfRouter?raw";
 import apiMartSource from "@toonflow/providers/media/apiMart?raw";
 import metasoSource from "@toonflow/providers/media/metaso?raw";
 import compshareSource from "@toonflow/providers/media/compshare?raw";
-import bailianSource from "@toonflow/providers/media/bailian?raw";
+import aiRouterSource from "@toonflow/providers/media/aiRouter?raw";
 import musicSource from "@toonflow/providers/media/music?raw";
+import openaiImagesSource from "@toonflow/providers/media/openaiImages?raw";
+import falSource from "@toonflow/providers/media/fal?raw";
+import replicateSource from "@toonflow/providers/media/replicate?raw";
 import type { MediaProvider } from "./types";
 import { providerPrompt } from "./providerPrompt";
 import { modelChoices, saveSettings } from "@/stores/settings";
@@ -122,7 +124,7 @@ import { actualPlatform } from "@/lib/platform";
 const { mode = "custom" } = defineProps<{ mode?: "builtin" | "custom" }>();
 const visible = defineModel<boolean>({ default: false });
 const emit = defineEmits<{ added: [provider: MediaProvider] }>();
-const providerSources: Record<string, string> = { tfRouter: tfRouterSource, apiMart: apiMartSource, metaso: metasoSource, compshare: compshareSource, bailian: bailianSource, music: musicSource };
+const providerSources: Record<string, string> = { aiRouter: aiRouterSource, apiMart: apiMartSource, metaso: metasoSource, compshare: compshareSource, music: musicSource, openaiImages: openaiImagesSource, fal: falSource, replicate: replicateSource };
 const selectedProvider = ref<string>(mediaProviders[0]?.id ?? "");
 const activeProvider = computed(() => mediaProviders.find(provider => provider.id === selectedProvider.value));
 const models = computed<MediaProvider["models"]>(() => activeProvider.value?.models ?? []);

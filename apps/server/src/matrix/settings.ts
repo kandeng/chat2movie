@@ -18,7 +18,7 @@ export type ChatToVideoSettings = {
 
 const defaults: ChatToVideoSettings = {
   enabled: true,
-  providerId: "bailian",
+  providerId: "aiRouter",
   modelId: "wan3.0-video",
   command: "!video",
   recentMessageLimit: 20,

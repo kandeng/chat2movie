@@ -1,7 +1,7 @@
 {
   "_comment": "复制本文件为同目录下的 config.json，并填入真实密钥。config.json 已被 .gitignore 忽略，不会提交到 git；本模板文件 config_sample.json 需要提交。",
   "_usage": {
-    "providers": "键为供应商 id（媒体供应商如 bailian；聊天供应商如 tfRouter），值为 { apiKey, baseUrl }。",
+    "providers": "键为供应商 id（内置统一路由 aiRouter，语言与媒体共用同一密钥），值为 { apiKey, baseUrl }。",
     "precedence": "config.json 中的 apiKey / baseUrl 优先级高于 data/settings.json；未在此配置的供应商会自动回退到「设置」界面中保存的值。",
     "apiKey": "必填。可直接粘贴，也可带 'Bearer ' 前缀（代码会自动去除）。",
     "baseUrl": "可选。留空或删除该项则使用供应商内置默认地址。百炼 Token Plan 密钥(sk-sp-)用 https://token-plan.cn-beijing.maas.aliyuncs.com ；标准密钥(sk-)用 https://dashscope.aliyuncs.com 。",
@@ -10,13 +10,9 @@
     "auth": "可选。本地账号系统（注册/登录/邮箱验证/重置密码）配置：baseUrl 留空时自动从请求 Host 推导（经 Vite 代理也能工作）；sessionSecret 缺省时自动生成并持久化到 data/auth-secret.key；smtp 缺省时验证码只打印到服务端日志（本地开发可用）。"
   },
   "providers": {
-    "bailian": {
-      "apiKey": "sk-your-bailian-api-key",
+    "aiRouter": {
+      "apiKey": "sk-your-router-or-bailian-api-key",
       "baseUrl": "https://token-plan.cn-beijing.maas.aliyuncs.com"
-    },
-    "tfRouter": {
-      "apiKey": "sk-your-toonflow-router-key",
-      "baseUrl": "https://api.toonflow.net/v1"
     }
   },
   "synapse": {

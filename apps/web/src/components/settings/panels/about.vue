@@ -20,16 +20,6 @@
       </a>
     </el-card>
 
-    <el-card class="infoCard repositoryCard" shadow="never">
-      <a class="repositoryLink" href="https://api.toonflow.net/" target="_blank" rel="noopener noreferrer">
-        <icon-world class="repositoryIcon" :size="22" aria-hidden="true" />
-        <div class="repositoryInfo">
-          <span class="repositoryTitle">官方中转平台 TF-Router</span>
-        </div>
-        <icon-external-link class="externalIcon" :size="16" aria-hidden="true" />
-      </a>
-    </el-card>
-
     <el-card class="infoCard" shadow="never">
       <div class="cardHeader">
         <div class="cardLabel">
@@ -56,7 +46,7 @@
       </div>
     </el-card>
 
-    <section class="sponsorPanel" aria-label="赞助商">
+    <section v-if="sponsorsEnabled" class="sponsorPanel" aria-label="赞助商">
       <h3 class="sponsorTitle">
         <icon-gift :size="20" aria-hidden="true" />
         赞助商
@@ -110,7 +100,6 @@ import {
   IconBrandGithub,
   IconExternalLink,
   IconGift,
-  IconWorld,
   IconBrandWechat,
   IconQrcode,
 } from "@tabler/icons-vue";
@@ -125,8 +114,11 @@ const currentVersion = import.meta.env.appVersion as string | undefined;
 const activeSponsorId = ref<number>();
 const controller = new AbortController();
 const sponsors = ref<TfSponsor[]>([]);
+// ACT: 赞助商与 TF-Router 平台入口均来自 api.toonflow.net，已随 tfRouter 下线；保留代码作为未来 aiRouter 复用基础（见 docs/aiRouter-deferred-features.md）。
+const sponsorsEnabled: boolean = false;
 
 onMounted(async () => {
+  if (!sponsorsEnabled) return;
   try {
     sponsors.value = await tf.getSponsorList({ signal: controller.signal });
   } catch (error) {

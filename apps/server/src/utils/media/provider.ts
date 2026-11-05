@@ -5,11 +5,10 @@ import { lstat, mkdir, readFile, readdir, unlink } from "@toonflow/file";
 import { dirname, join } from "node:path";
 import { createContext, SourceTextModule } from "node:vm";
 import type { AudioConvertOptions, Provider, ProviderTools } from "@toonflow/providers";
-import tfRouter from "@toonflow/providers/media/tfRouter";
 import { parse, parseExpression } from "@babel/parser";
 import { z } from "zod";
 import conf from "@/utils/conf";
-import { getConfigApiKey } from "@/utils/appConfig";
+import { getConfigApiKey, getProviderEntries } from "@/utils/appConfig";
 import { convertAudio } from "@/utils/media/audioProcessor";
 import { createWorkspaceFfmpeg } from "@/utils/ffmpeg";
 import { lockWorkspaceFiles, writeWorkspaceFile } from "@/utils/workspace/files";
@@ -213,14 +212,13 @@ function parseProvider(source: string) {
   const rules = providerRulesSchema.safeParse(value("rules") ?? []);
   if (!rules.success) invalid("供应商 rules 必须为表单配置对象数组");
   return { object, modelProperty: entries.get("models"), id: id as string, label, icon, version: version?.trim(), readme, modelsUrl: modelsUrl as string | undefined, rules: rules.data, models: models.data,
-    supportsPrice: entries.has("getPrice") || id === tfRouter.id, supportsBalance: entries.has("getBalance") || id === tfRouter.id };
+    supportsPrice: entries.has("getPrice"), supportsBalance: entries.has("getBalance") };
 }
 
 function metadata(fileName: string, source: string) {
   const { id, label, icon, version, readme, modelsUrl, rules, models, supportsPrice, supportsBalance } = parseProvider(source);
   if (fileName !== `${id}.ts`) invalid("供应商 ID 与文件名不一致");
-  // ACT: 兼容旧 TF-Router 文件，缺少列表地址时使用内置定义。
-  return { fileName, id, label, icon, version, readme, modelsUrl: modelsUrl ?? (id === tfRouter.id ? tfRouter.modelsUrl : undefined), rules, models,
+  return { fileName, id, label, icon, version, readme, modelsUrl, rules, models,
     supportsPrice, supportsBalance, revision: createHash("sha256").update(source).digest("hex"), loadError: "" };
 }
 
@@ -293,6 +291,94 @@ export async function addMediaProvider(source: string) {
   return result;
 }
 
+// ACT: 通用媒体适配器名 -> 内置模板源文件名（位于构建产物 providersRoot/media 下）。
+// config.json 的 providers.<id> 声明 kind:"media" + adapter 名后，启动时套用对应模板物化为 data/providers/<id>.ts。
+const mediaAdapterTemplates: Record<string, string> = {
+  dashscope: "aiRouter.ts",
+  "openai-images": "openaiImages.ts",
+  fal: "fal.ts",
+  replicate: "replicate.ts",
+};
+
+// ACT: 用 config 声明的 id/label/icon/models 覆盖适配器模板对应字面量，生成可独立运行的供应商源码。
+// 仅按 AST 偏移替换这几个属性的值区间，保留模板里的 run/generateImage 等全部函数逻辑与 version/rules 常量。
+function instantiateAdapterSource(template: string, overrides: { id: string; label: string; icon?: string; models: unknown[] }) {
+  let module: ReturnType<typeof parse>;
+  try { module = parse(template, { sourceType: "module", plugins: ["typescript"] }); }
+  catch (err) { invalid(t`适配器模板语法错误：${err instanceof Error ? err.message : String(err)}`); }
+  const exported = module.program.body.find(item => item.type === "ExportDefaultDeclaration");
+  if (!exported || exported.type !== "ExportDefaultDeclaration") invalid("适配器模板须通过 export default 导出对象");
+  const object = unwrap(exported.declaration as Expression);
+  if (object.type !== "ObjectExpression") invalid("适配器模板须直接导出对象字面量");
+  const entries = properties(object);
+  const newline = template.includes("\r\n") ? "\r\n" : "\n";
+  const replacements: { start: number; end: number; text: string }[] = [];
+  function overrideLiteral(name: string, text: string) {
+    const property = entries.get(name);
+    if (!property || property.type !== "ObjectProperty") return;
+    const node = property.value as Expression;
+    if (node.start == null || node.end == null) return;
+    replacements.push({ start: node.start, end: node.end, text });
+  }
+  overrideLiteral("id", JSON.stringify(overrides.id));
+  overrideLiteral("label", JSON.stringify(overrides.label));
+  if (overrides.icon) overrideLiteral("icon", JSON.stringify(overrides.icon));
+  overrideLiteral("models", JSON.stringify(overrides.models, null, 2).replace(/\n/g, `${newline}  `));
+  // ACT: 从后往前替换，避免前面的改动使后续偏移失效。
+  replacements.sort((left, right) => right.start - left.start);
+  let source = template;
+  for (const { start, end, text } of replacements) source = source.slice(0, start) + text + source.slice(end);
+  return source;
+}
+
+// ACT: 启动时把 config.json 声明的「纯配置」媒体供应商物化为 data/providers/<id>.ts。
+// 优先级：config.json 负责播种/更新（B 层）模型与适配器，密钥始终来自 config.json；
+// 用户在 UI 中对模型的编辑会持久化到 B 层，只有当对应 config 条目发生变化（指纹改变）时才会被重新播种覆盖。
+export async function materializeConfigProviders(sourceDirectory: string) {
+  const targets = Object.entries(getProviderEntries())
+    .filter(([, entry]) => !!entry && typeof entry === "object" && entry.kind === "media"
+      && entry.enabled !== false && typeof entry.adapter === "string" && entry.adapter.trim() !== "");
+  if (!targets.length) return;
+  const hashes = { ...(conf.get("settings.mediaProviderSeedHash", {}) as Record<string, string>) };
+  let changed = false;
+  for (const [id, entry] of targets) {
+    try {
+      if (!providerIdSchema.safeParse(id).success) { console.warn(`[media] 跳过配置供应商 ${id}：ID 非法（须为小驼峰文件名）`); continue; }
+      const templateName = mediaAdapterTemplates[entry.adapter!];
+      if (!templateName) { console.warn(`[media] 跳过配置供应商 ${id}：未知适配器 "${entry.adapter}"`); continue; }
+      const models = mediaModelsSchema.safeParse(Array.isArray(entry.models) ? entry.models : [], validationOptions());
+      if (!models.success) { console.warn(`[media] 跳过配置供应商 ${id}：models 无效——${models.error.issues.map(issue => translateMessage(issue.message)).join("; ")}`); continue; }
+      const label = (typeof entry.label === "string" && entry.label.trim()) ? entry.label.trim() : id;
+      const fingerprint = createHash("sha256")
+        .update(JSON.stringify({ adapter: entry.adapter, label, icon: entry.icon ?? "", models: models.data })).digest("hex");
+      const path = await directory(true);
+      if (!path) continue;
+      const file = join(path, `${id}.ts`);
+      const existing = await readFile(file, "utf8").catch((error: NodeJS.ErrnoException) => {
+        if (error.code === "ENOENT") return null;
+        throw error;
+      });
+      if (existing !== null) {
+        // ACT: 已存在且指纹未变——保留 UI 编辑，不动文件。
+        if (hashes[id] === fingerprint) continue;
+        // ACT: 已存在但首次纳管（无基线指纹）——记录为基线，不覆盖既有文件，避免清掉手动安装/历史播种内容。
+        if (hashes[id] === undefined) { hashes[id] = fingerprint; changed = true; continue; }
+      }
+      const template = await readFile(join(sourceDirectory, templateName), "utf8");
+      const source = instantiateAdapterSource(template, { id, label, icon: entry.icon, models: models.data });
+      validateMediaProviderSource(source);
+      const release = lockWorkspaceFiles([file]);
+      try { await writeWorkspaceFile(file, source); }
+      finally { release(); }
+      hashes[id] = fingerprint;
+      changed = true;
+    } catch (error) {
+      console.warn(`[media] 物化配置供应商 ${id} 失败：`, error);
+    }
+  }
+  if (changed) conf.set("settings.mediaProviderSeedHash", hashes);
+}
+
 export async function saveMediaProvider(fileName: string, models: z.infer<typeof mediaModelsSchema>, revision: string, expectedApiKey?: string) {
   if (!mediaProviderFileSchema.safeParse(fileName).success) invalid("供应商文件名无效");
   const checked = mediaModelsSchema.safeParse(models, validationOptions());
@@ -333,7 +419,7 @@ export async function refreshMediaProviderModels(fileName: string, revision?: st
   if (!provider.modelsUrl) invalid("供应商未配置 modelsUrl");
   const apiKey = getMediaProviderApiKey(provider.id);
   if (expectedApiKey !== undefined && apiKey !== expectedApiKey) invalid("供应商配置已变更，请重试", 409);
-  const modelTypes = provider.id === tfRouter.id && !modelType ? ["video", "image", "audio"] : [modelType];
+  const modelTypes = [modelType];
   // ACT: 各类型只并行获取，汇总后保存一次，避免同一供应商文件发生版本冲突。
   const models = (await Promise.all(modelTypes.map(async requestedModelType => {
     const modelsUrl = new URL(provider.modelsUrl!);
@@ -356,8 +442,7 @@ export async function refreshMediaProviderModels(fileName: string, revision?: st
     const requestedType = z.enum(["text", "image", "video", "audio"]).safeParse(modelsUrl.searchParams.get("type"));
     return result.data.map(({ modelInfo, ...model }) => {
       const id = model.id.trim();
-      const previous = provider.models.find(item => item.id === id)
-        ?? (provider.id === tfRouter.id ? tfRouter.models.find(item => item.id === id) : undefined);
+      const previous = provider.models.find(item => item.id === id);
       const type = model.type ?? (requestedType.success ? requestedType.data : previous?.type);
       if (!type) invalid(t`模型 ${id} 缺少 type，请在返回数据或 modelsUrl 的 type 参数中指定`);
       if (requestedType.success && type !== requestedType.data) invalid(t`模型 ${id} 的 type 与请求类型不一致`);
@@ -404,11 +489,6 @@ export async function loadMediaProviderSource(source: string, config: Record<str
   await module.evaluate({ timeout: 1000 });
   signal?.throwIfAborted();
   const definition = (module.namespace as { default: Provider }).default;
-  // ACT: 已安装 TF-Router 仅补齐缺省查询能力，保留用户适配代码与模型列表。
-  if (id === tfRouter.id) {
-    definition.getPrice ??= tfRouter.getPrice;
-    definition.getBalance ??= tfRouter.getBalance;
-  }
   const rules = Array.isArray(definition.rules) ? definition.rules : [];
   const providerConfig = { ...Object.fromEntries(rules.map(rule => [rule.field, rule.value])), ...structuredClone(config) };
   const provider = {

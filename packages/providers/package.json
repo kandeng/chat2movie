@@ -9,13 +9,16 @@
   "exports": {
     ".": "./index.ts",
     "./types": "./types.d.ts",
-    "./language/tfRouter": "./src/language/tfRouter.ts",
+    "./language/aiRouter": "./src/language/aiRouter.ts",
     "./language/deepSeek": "./src/language/deepSeek.ts",
-    "./media/tfRouter": "./src/media/tfRouter.ts",
+    "./language/custom": "./src/language/custom.ts",
+    "./media/aiRouter": "./src/media/aiRouter.ts",
     "./media/apiMart": "./src/media/apiMart.ts",
     "./media/metaso": "./src/media/metaso.ts",
     "./media/compshare": "./src/media/compshare.ts",
-    "./media/bailian": "./src/media/bailian.ts",
-    "./media/music": "./src/media/music.ts"
+    "./media/music": "./src/media/music.ts",
+    "./media/openaiImages": "./src/media/openaiImages.ts",
+    "./media/fal": "./src/media/fal.ts",
+    "./media/replicate": "./src/media/replicate.ts"
   }
 }

@@ -3,25 +3,25 @@
     <div class="itemList">
       <el-card v-for="item in sortedProviders" :key="item.id" class="providerItem" shadow="never">
         <div class="providerHeader">
-          <div v-if="item.icon || isTfRouterProvider(item)" class="providerMark" aria-hidden="true">
-            <img class="providerLogo" :class="{ monochrome: isTfRouterProvider(item) }" :src="item.icon || logoUrl" alt="" />
+          <div v-if="item.icon || isAiRouterProvider(item)" class="providerMark" aria-hidden="true">
+            <img class="providerLogo" :src="item.icon || logoUrl" alt="" />
           </div>
           <div class="providerInfo">
             <div class="providerHeading">
               <el-text class="providerName" tag="strong">{{ item.label }}</el-text>
-              <el-tag v-if="isTfRouterProvider(item)" size="small">官方</el-tag>
+              <el-tag v-if="isAiRouterProvider(item)" size="small">官方</el-tag>
             </div>
             <el-text class="providerId" size="small" type="info" :title="item.id">{{ item.id }}</el-text>
           </div>
         </div>
-        <tfAccount v-if="isTfRouterProvider(item)" :apiKey="typeof item.apiKey === 'string' ? item.apiKey : ''" :visible="visible" :saveApiKey="(key) => saveProviderApiKey(item.id, key)" />
+        <tfAccount v-if="balanceEnabled && isAiRouterProvider(item)" :apiKey="typeof item.apiKey === 'string' ? item.apiKey : ''" :visible="visible" :saveApiKey="(key) => saveProviderApiKey(item.id, key)" />
         <div class="providerFooter">
           <div class="providerMeta">
             <el-tag v-if="getProviderVersion(item)" size="small" type="info" effect="plain">v{{ getProviderVersion(item) }}</el-tag>
             <el-text size="small" type="info">{{ item.models.length }} 个模型</el-text>
           </div>
           <el-space class="itemActions" wrap>
-            <el-button v-if="isTfRouterProvider(item) && item.apiKey?.trim() && !item.models.length" text :icon="IconRefresh" :loading="fetchingId === item.id" :disabled="!!deletingId || !!fetchingId" @click="fetchProviderModels(item)">获取模型</el-button>
+            <el-button v-if="isAiRouterProvider(item) && item.apiKey?.trim() && !item.models.length" text :icon="IconRefresh" :loading="fetchingId === item.id" :disabled="!!deletingId || !!fetchingId" @click="fetchProviderModels(item)">获取模型</el-button>
             <el-button text :icon="IconEdit" :disabled="!!deletingId" @click="openCustomProvider(item)">编辑</el-button>
             <el-popconfirm title="确定删除此供应商及其模型？" confirmButtonText="删除" cancelButtonText="取消" @confirm="deleteProvider(item.id)">
               <template #reference><el-button text type="danger" :icon="IconTrash" :loading="deletingId === item.id" :disabled="!!deletingId">删除</el-button></template>
@@ -48,9 +48,11 @@ import { IconPlus, IconSettings, IconEdit, IconTrash, IconRefresh } from "@table
 import { languageProviders } from "@toonflow/providers";
 import logoUrl from "@toonflow/assets/logo.svg";
 import tfAccount from "../../tfAccount.vue";
-import { isTfRouterProvider } from "@/lib/tf";
+import { isAiRouterProvider } from "@/lib/tf";
 
 const { visible = true } = defineProps<{ visible?: boolean }>();
+// ACT: aiRouter 密钥托管在服务端 config.json，不适用 Toonflow 余额/充值；余额入口已下线，保留组件作为未来复用基础（见 docs/aiRouter-deferred-features.md）。
+const balanceEnabled: boolean = false;
 const addProviderDialog = shallowRef<Component>();
 const addCustomProviderDialog = shallowRef<Component>();
 const providerDialogVisible = ref(false);
@@ -58,7 +60,7 @@ const customProviderDialogVisible = ref(false);
 const editingProvider = ref<CustomProvider>();
 const deletingId = ref("");
 const fetchingId = ref("");
-const sortedProviders = computed(() => [...customProviders.value].sort((a, b) => Number(isTfRouterProvider(b)) - Number(isTfRouterProvider(a))));
+const sortedProviders = computed(() => [...customProviders.value].sort((a, b) => Number(isAiRouterProvider(b)) - Number(isAiRouterProvider(a))));
 
 function getProviderVersion(provider: CustomProvider) {
   const version = languageProviders.find(item => item.id.toLowerCase() === provider.id.toLowerCase())?.version ?? provider.version;

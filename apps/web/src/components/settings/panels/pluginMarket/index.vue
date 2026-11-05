@@ -2,13 +2,13 @@
   <div class="pluginMarket">
     <div class="marketToolbar">
       <nav class="marketNav" aria-label="插件列表">
-        <button class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button>
+        <button v-if="marketEnabled" class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button>
         <button class="navButton" type="button" :aria-pressed="activeTab === 'installed'" @click="activeTab = 'installed'">已安装</button>
         <button class="navButton" type="button" :aria-pressed="activeTab === 'mcp'" @click="activeTab = 'mcp'">MCP</button>
         <button class="navButton" type="button" :aria-pressed="activeTab === 'ffmpeg'" @click="activeTab = 'ffmpeg'">FFmpeg</button>
       </nav>
       <div class="marketActions">
-        <el-button tag="a" href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconExternalLink">
+        <el-button v-if="marketEnabled" tag="a" href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconExternalLink">
           网页版市场
         </el-button>
         <el-button tag="a" href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconBook">
@@ -271,9 +271,9 @@ import parse from "semver/functions/parse";
 import { computed, defineAsyncComponent, markRaw, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { IconBox, IconBook, IconTool, IconFileText, IconExternalLink, IconSparkles2, IconUpload, IconShare, IconStar, IconStarFilled, IconLink, IconSettings, IconCopy } from "@tabler/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import tf, { getTfApiKey, isTfRouterProvider } from "@/lib/tf";
+import tf, { getTfApiKey, isAiRouterProvider } from "@/lib/tf";
 import { saveSettings } from "@/stores/settings";
-import tfRouter from "@toonflow/providers/language/tfRouter";
+import aiRouter from "@toonflow/providers/language/aiRouter";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
 import saveFile from "@/lib/saveFile";
 import { writeClipboardText } from "@/lib/clipboard";
@@ -292,6 +292,8 @@ const { visible = true } = defineProps<{ visible?: boolean }>();
 const associationsVisible = ref(false);
 // ACT: Agent 插件市场仍在测试，暂时关闭入口。
 const agentMarketEnabled = false;
+// ACT: 「发现插件」依赖 api.toonflow.net 的 TF-Router Key，已随 tfRouter 下线；仅保留本地「已安装 / MCP / FFmpeg」（见 docs/aiRouter-deferred-features.md）。
+const marketEnabled = false;
 const pluginTypes = {
   node: { label: "节点", path: "nodes", icon: IconBox, tagType: "primary" },
   ext: { label: "文件扩展", path: "ext", icon: IconFileText, tagType: "info" },
@@ -300,7 +302,7 @@ const pluginTypes = {
   agent: { label: "Agent", path: agentMarketEnabled ? "agents" : null, icon: IconSparkles2, tagType: "danger" },
 } as const;
 const tabs = { get discover() { return translate("发现插件"); }, get installed() { return translate("已安装"); }, mcp: "MCP", ffmpeg: "FFmpeg" } as const;
-const activeTab = ref<keyof typeof tabs>("discover");
+const activeTab = ref<keyof typeof tabs>(marketEnabled ? "discover" : "installed");
 const isMarketTab = computed(() => activeTab.value === "discover");
 const marketPage = ref(1);
 const marketPageSize = 20;
@@ -576,11 +578,11 @@ async function saveMarketKey() {
       if (controller.signal.aborted) return;
       const providers = current.customProviders ?? [];
       if (!Array.isArray(providers)) throw new Error("文本模型配置格式无效");
-      const index = providers.findIndex((item) => typeof item?.id === "string" && isTfRouterProvider(item));
-      if (index < 0 && providers.some((item) => typeof item?.id === "string" && item.id.toLowerCase() === tfRouter.id.toLowerCase())) {
+      const index = providers.findIndex((item) => typeof item?.id === "string" && isAiRouterProvider(item));
+      if (index < 0 && providers.some((item) => typeof item?.id === "string" && item.id.toLowerCase() === aiRouter.id.toLowerCase())) {
         throw new Error("存在同名的非官方 TF-router 供应商，请先在文本模型中修改其 ID");
       }
-      const { id, label, icon, version, apiUrl, protocol, models } = tfRouter;
+      const { id, label, icon, version, apiUrl, protocol, models } = aiRouter;
       const configs = current.mediaProviderConfigs as Record<string, Record<string, unknown>> | undefined;
       if (configs !== undefined && (!configs || typeof configs !== "object" || Array.isArray(configs))) throw new Error("媒体供应商配置格式无效");
       const mediaConfig = configs?.tfRouter;

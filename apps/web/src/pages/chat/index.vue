@@ -1,5 +1,5 @@
 <template>
-  <main class="chat" :style="{ '--chat-w': chatWidth + 'px' }">
+  <main ref="chatEl" class="chat" :style="{ '--chat-w': chatWidth + 'px' }">
     <!-- ACT: 未登录时整页只给出登录引导；登录态由顶栏/账户页共用的 loginDialog 提供。 -->
     <section v-if="!auth.signedIn" class="signedOut">
       <el-empty :description="translate('登录后即可参与群聊')">
@@ -225,6 +225,17 @@ const videoItems = computed(() =>
 const CHAT_MIN = 320;
 const chatWidth = ref(400);
 const resizing = ref(false);
+const chatEl = ref<HTMLElement>();
+
+// ACT: 默认右栏（聊天框）宽度取主面板（.chat 容器）宽度的 1/3，挂载时按实际容器宽度计算一次；
+// 用户拖拽分隔条后以拖拽值为准，不再回退到默认值。
+function applyDefaultChatWidth() {
+  const panel = chatEl.value?.clientWidth ?? 0;
+  if (!panel) return;
+  const max = Math.round(window.innerWidth * 0.55);
+  chatWidth.value = Math.min(max, Math.max(CHAT_MIN, Math.round(panel / 3)));
+}
+onMounted(applyDefaultChatWidth);
 
 function onResizeDown(event: PointerEvent) {
   event.preventDefault();

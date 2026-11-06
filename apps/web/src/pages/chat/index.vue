@@ -120,7 +120,7 @@
                 <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconOneShot}&quot;)` }" aria-hidden="true" />
               </el-button>
               <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('分步生成视频')" :title="translate('分步生成视频')" @click="goStudio('step')">
-                <span class="toolIcon enlarged" :style="{ '--tool-icon': `url(&quot;${iconStepByStep}&quot;)` }" aria-hidden="true" />
+                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconStepByStep}&quot;)` }" aria-hidden="true" />
               </el-button>
             </div>
             <div class="toolGroup">
@@ -128,7 +128,7 @@
                 <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconUserGroup}&quot;)` }" aria-hidden="true" />
               </el-button>
               <el-button class="toolButton" :aria-label="translate('上传文件')" :title="translate('上传文件')" @click="fileInput?.click()">
-                <span class="toolIcon wide" :style="{ '--tool-icon': `url(&quot;${iconFileUpload}&quot;)` }" aria-hidden="true" />
+                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconFileUpload}&quot;)` }" aria-hidden="true" />
               </el-button>
               <input ref="fileInput" type="file" multiple hidden :disabled="!ready" @change="onPickFiles" />
             </div>
@@ -712,14 +712,13 @@ onMounted(async () => {
     border: 1px solid var(--el-border-color);
     border-radius: 10px;
     background: transparent;
-    color: var(--el-text-color-regular);
+    color: var(--el-text-color-primary);
 
     &:hover:not(:disabled) { background: var(--el-fill-color); color: var(--el-text-color-primary); }
   }
 
   // ACT: 图标用 mask + currentColor 着色，兼容内置固定填充色的 svg（与全局外壳同一做法）。
-  // .wide 对应 viewBox 宽于高的图标（file_upload 1228x1024），
-  // 按比例加宽盒子让 contain 后的视觉高度与方形图标一致。
+  // ACT: 字形盒子统一 18x18，与视频台画笔工具箱 .pic 尺寸一致。
   .toolIcon {
     display: block;
     flex-shrink: 0;
@@ -734,14 +733,6 @@ onMounted(async () => {
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
     -webkit-mask-size: contain;
-
-    &.wide { width: 22px; }
-
-    // ACT: 分步生成字形偏疏，单独放大到 18px 的 120%（21.6px）以对齐邻项视觉重量。
-    &.enlarged {
-      width: 21.6px;
-      height: 21.6px;
-    }
   }
 }
 

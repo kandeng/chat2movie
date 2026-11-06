@@ -3,6 +3,9 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { ElMessage } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import { useMatrixChat } from "@/composables/useMatrixChat";
+// ACT: 播放/暂停字形取自 src/icons 的描边 SVG（与画笔工具箱同 1.9 描边），经 mask + currentColor 着色。
+import iconVideoPlay from "@/icons/video_play.svg";
+import iconVideoPause from "@/icons/video_pause.svg";
 
 // ACT: 群聊页左侧「视频播放与截图」舞台：播放器 + 自定义控制条 + 画笔工具箱。
 // 画笔层移植自 mesh-controller-codegen 的 MeshViewer：标记以归一化坐标存储（0..1），
@@ -92,8 +95,6 @@ const TOOLS = [
 ] as const;
 
 const GLYPHS = {
-  play: ["M7 4.5 L15.5 10 L7 15.5 Z"],
-  pause: ["M7.5 4.5 V15.5", "M12.5 4.5 V15.5"],
   clear: ["M4.5 6.5 H15.5", "M8 6.5 V4.5 H12 V6.5", "M6.5 6.5 L7.5 16 H12.5 L13.5 6.5"],
   escape: ["M6 6 L14 14", "M14 6 L6 14"],
   camera: ["M4 7.5 H7 L8.5 5.5 H11.5 L13 7.5 H16 V15 H4 Z", "M10 12.6 m-2.1 0 a2.1 2.1 0 1 0 4.2 0 a2.1 2.1 0 1 0 -4.2 0"],
@@ -318,132 +319,131 @@ onBeforeUnmount(() => {
 
 <template>
   <section class="stage">
-    <el-empty v-if="!current" :description="translate('该群聊还没有视频')" />
-    <template v-else>
-      <div class="stageBoxWrap">
-        <!-- ACT: 盒子按视频原生宽高比撑开（object-fit 无需 letterbox），画笔层与视频内容完全重合。 -->
-        <div ref="boxRef" class="stageBox" :style="{ aspectRatio: `${aspect}` }">
-          <video
-            ref="videoRef"
-            :src="current.url"
-            preload="metadata"
-            @loadedmetadata="onMeta"
-            @timeupdate="onTime"
-            @play="playing = true"
-            @pause="playing = false"
-            @ended="playing = false" />
-          <canvas
-            ref="inkRef"
-            class="ink"
-            :style="{ pointerEvents: tool ? 'auto' : 'none' }"
-            @pointerdown="inkDown"
-            @pointermove="inkMove"
-            @pointerup="inkUp" />
-          <input
-            v-if="textAt"
-            ref="textInput"
-            v-model="textDraft"
-            class="inkText"
-            :style="{ left: `${textAt.x}px`, top: `${textAt.y}px`, color: inkColor }"
-            :placeholder="translate('输入文字，Enter 落笔，Esc 取消')"
-            @keydown.enter.prevent="commitText"
-            @keydown.escape.prevent="textAt = null"
-            @blur="commitText" />
-        </div>
-      </div>
-
-      <!-- ACT: 控制条：左播放/暂停、中滑杆、右时间盒（滑动时显示目标时间）。 -->
-      <div class="stageControls">
-        <button
-          class="ctlButton"
-          type="button"
-          :aria-label="playing ? translate('暂停') : translate('播放')"
-          :title="playing ? translate('暂停') : translate('播放')"
-          @click="togglePlay">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in (playing ? GLYPHS.pause : GLYPHS.play)" :key="index" :d="path" />
-          </svg>
-        </button>
+    <div class="stageBoxWrap">
+      <!-- ACT: 盒子按视频原生宽高比撑开（object-fit 无需 letterbox），画笔层与视频内容完全重合。 -->
+      <!-- ACT: 无视频时保留 16:9 占位盒与控制条/画笔工具箱，仅按钮置灰，布局不随内容跳变。 -->
+      <div ref="boxRef" class="stageBox" :class="{ empty: !current }" :style="{ aspectRatio: `${aspect}` }">
+        <video
+          v-if="current"
+          ref="videoRef"
+          :src="current.url"
+          preload="metadata"
+          @loadedmetadata="onMeta"
+          @timeupdate="onTime"
+          @play="playing = true"
+          @pause="playing = false"
+          @ended="playing = false" />
+        <el-empty v-else :description="translate('该群聊还没有视频')" />
+        <canvas
+          ref="inkRef"
+          class="ink"
+          :style="{ pointerEvents: tool ? 'auto' : 'none' }"
+          @pointerdown="inkDown"
+          @pointermove="inkMove"
+          @pointerup="inkUp" />
         <input
-          class="scrubber"
-          type="range"
-          min="0"
-          :max="duration || 0"
-          step="0.1"
-          :value="sliding ? scrub : currentTime"
-          :disabled="!duration"
-          :aria-label="translate('滑动定位')"
-          @pointerdown="onScrubDown"
-          @pointerup="onScrubUp"
-          @input="onScrubInput" />
-        <span class="timeBox">{{ sliding ? fmt(scrub) : `${fmt(currentTime)} / ${fmt(duration)}` }}</span>
+          v-if="textAt"
+          ref="textInput"
+          v-model="textDraft"
+          class="inkText"
+          :style="{ left: `${textAt.x}px`, top: `${textAt.y}px`, color: inkColor }"
+          :placeholder="translate('输入文字，Enter 落笔，Esc 取消')"
+          @keydown.enter.prevent="commitText"
+          @keydown.escape.prevent="textAt = null"
+          @blur="commitText" />
       </div>
+    </div>
 
-      <!-- ACT: 画笔工具箱：四支笔 + 墨色 + 清除/放下 + 截图发送/下载。 -->
-      <div class="pens">
-        <button
-          v-for="item in TOOLS"
-          :key="item.id"
-          type="button"
-          class="penButton"
-          :class="{ on: tool === item.id }"
-          :title="translate(item.label)"
-          :aria-label="translate(item.label)"
-          @click="toggleTool(item.id)">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in item.paths" :key="index" :d="path" />
-          </svg>
-        </button>
-        <input v-model="inkColor" type="color" :title="translate('墨色')" :aria-label="translate('墨色')" />
-        <span class="sep" aria-hidden="true" />
-        <button
-          type="button"
-          class="penButton"
-          :disabled="!marks.length"
-          :title="translate('清除标记')"
-          :aria-label="translate('清除标记')"
-          @click="clearMarks">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in GLYPHS.clear" :key="index" :d="path" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="penButton"
-          :class="{ on: !!tool }"
-          :disabled="!tool"
-          :title="translate('放下画笔')"
-          :aria-label="translate('放下画笔')"
-          @click="disarm">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in GLYPHS.escape" :key="index" :d="path" />
-          </svg>
-        </button>
-        <span class="sep" aria-hidden="true" />
-        <button
-          type="button"
-          class="penButton"
-          :disabled="!current || busy || !ready || !activeRoomId"
-          :title="translate('截图并发送到群聊')"
-          :aria-label="translate('截图并发送到群聊')"
-          @click="screenshot">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in GLYPHS.camera" :key="index" :d="path" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="penButton"
-          :disabled="!current"
-          :title="translate('下载截图')"
-          :aria-label="translate('下载截图')"
-          @click="download">
-          <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(path, index) in GLYPHS.download" :key="index" :d="path" />
-          </svg>
-        </button>
-      </div>
-    </template>
+    <!-- ACT: 控制条：左播放/暂停、中滑杆、右时间盒（滑动时显示目标时间）。无视频时播放键禁用。 -->
+    <div class="stageControls">
+      <button
+        class="ctlButton"
+        type="button"
+        :disabled="!current"
+        :aria-label="playing ? translate('暂停') : translate('播放')"
+        :title="playing ? translate('暂停') : translate('播放')"
+        @click="togglePlay">
+        <span class="pic" :style="{ '--tool-icon': `url(&quot;${playing ? iconVideoPause : iconVideoPlay}&quot;)` }" aria-hidden="true" />
+      </button>
+      <input
+        class="scrubber"
+        type="range"
+        min="0"
+        :max="duration || 0"
+        step="0.1"
+        :value="sliding ? scrub : currentTime"
+        :disabled="!duration"
+        :aria-label="translate('滑动定位')"
+        @pointerdown="onScrubDown"
+        @pointerup="onScrubUp"
+        @input="onScrubInput" />
+      <span class="timeBox">{{ sliding ? fmt(scrub) : `${fmt(currentTime)} / ${fmt(duration)}` }}</span>
+    </div>
+
+    <!-- ACT: 画笔工具箱：四支笔 + 墨色 + 清除/放下 + 截图发送/下载。 -->
+    <div class="pens">
+      <button
+        v-for="item in TOOLS"
+        :key="item.id"
+        type="button"
+        class="penButton"
+        :class="{ on: tool === item.id }"
+        :title="translate(item.label)"
+        :aria-label="translate(item.label)"
+        @click="toggleTool(item.id)">
+        <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path v-for="(path, index) in item.paths" :key="index" :d="path" />
+        </svg>
+      </button>
+      <input v-model="inkColor" type="color" :title="translate('墨色')" :aria-label="translate('墨色')" />
+      <span class="sep" aria-hidden="true" />
+      <button
+        type="button"
+        class="penButton"
+        :disabled="!marks.length"
+        :title="translate('清除标记')"
+        :aria-label="translate('清除标记')"
+        @click="clearMarks">
+        <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path v-for="(path, index) in GLYPHS.clear" :key="index" :d="path" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="penButton"
+        :class="{ on: !!tool }"
+        :disabled="!tool"
+        :title="translate('放下画笔')"
+        :aria-label="translate('放下画笔')"
+        @click="disarm">
+        <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path v-for="(path, index) in GLYPHS.escape" :key="index" :d="path" />
+        </svg>
+      </button>
+      <span class="sep" aria-hidden="true" />
+      <button
+        type="button"
+        class="penButton"
+        :disabled="!current || busy || !ready || !activeRoomId"
+        :title="translate('截图并发送到群聊')"
+        :aria-label="translate('截图并发送到群聊')"
+        @click="screenshot">
+        <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path v-for="(path, index) in GLYPHS.camera" :key="index" :d="path" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="penButton"
+        :disabled="!current"
+        :title="translate('下载截图')"
+        :aria-label="translate('下载截图')"
+        @click="download">
+        <svg class="pic" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path v-for="(path, index) in GLYPHS.download" :key="index" :d="path" />
+        </svg>
+      </button>
+    </div>
   </section>
 </template>
 
@@ -457,8 +457,6 @@ onBeforeUnmount(() => {
   background-color: var(--el-bg-color);
   background-image: radial-gradient(var(--el-border-color) 1px, transparent 1px);
   background-size: 16px 16px;
-
-  :deep(.el-empty) { margin: auto; }
 }
 
 .stageBoxWrap {
@@ -477,6 +475,17 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border-radius: var(--ui-radius);
   background: #000;
+
+  // ACT: 无视频时的占位态：透明底 + 虚线框勾出播放器区域，空态文案居中于盒内。
+  &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--el-border-color);
+    background: transparent;
+  }
+
+  :deep(.el-empty) { padding: 24px 0; }
 
   video {
     display: block;
@@ -516,21 +525,76 @@ onBeforeUnmount(() => {
     width: 32px;
     height: 32px;
     padding: 0;
+    // ACT: 边框用较浅的 --el-border-color，与聊天框 Generate 按钮边框同色；图标用 primary 文字色，与聊天框图标同深度；禁用态仅换光标。
     border: 1px solid var(--el-border-color);
     border-radius: 8px;
     background: transparent;
-    color: var(--el-text-color-regular);
+    color: var(--el-text-color-primary);
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
 
-    &:hover { background: var(--el-fill-color); color: var(--el-text-color-primary); }
+    &:hover:not(:disabled) { background: var(--el-fill-color); color: var(--el-text-color-primary); }
+    &:disabled { cursor: not-allowed; }
+
+    // ACT: 播放/暂停字形为 src/icons 的 1.9 描边 SVG，mask + currentColor 着色，与画笔/聊天框图标同色。
+    .pic {
+      background-color: currentColor;
+      mask-image: var(--tool-icon);
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+      -webkit-mask-image: var(--tool-icon);
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: contain;
+    }
   }
 
+  // ACT: 滑杆轨道与滑块同图标色（regular 文字色），不再使用系统默认浅灰轨道；禁用态不降透明度。
   .scrubber {
     flex: 1;
     min-width: 0;
-    accent-color: var(--el-color-primary);
+    height: 12px;
+    margin: 0;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
     cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--el-text-color-regular);
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      margin-top: -4px;
+      border-radius: 50%;
+      background: var(--el-text-color-regular);
+      cursor: pointer;
+    }
+
+    &::-moz-range-track {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--el-text-color-regular);
+    }
+
+    &::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--el-text-color-regular);
+      cursor: pointer;
+    }
+
+    &:disabled { cursor: not-allowed; }
   }
 
   // ACT: 时间盒：滑动时显示滑杆目标时间，平时显示 当前/总长。
@@ -538,6 +602,7 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
     min-width: 92px;
     padding: 3px 8px;
+    // ACT: 边框用 --el-border-color，与播放按钮/画笔/聊天框各图标按钮边框同色。
     border: 1px solid var(--el-border-color);
     border-radius: 6px;
     background: var(--el-fill-color-light);
@@ -564,7 +629,7 @@ onBeforeUnmount(() => {
     border: 1px solid var(--el-border-color);
     border-radius: 8px;
     background: transparent;
-    color: var(--el-text-color-regular);
+    color: var(--el-text-color-primary);
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
 

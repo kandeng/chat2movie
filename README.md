@@ -1,4 +1,4 @@
-# chat2movie — Prompt-to-Video Pipeline (Work Log)
+# Vidsay — Prompt-to-Video Pipeline (Work Log)
 
 > **Note:** This file is the working spec + log for the automatic
 > **text-prompt → finished video** pipeline and the AI models that power it.
@@ -7,70 +7,208 @@
 
 ---
 
-## 1. Objective
+## 1. Objective — `Vidsay`
 
-### 1.1 The big picture — collaborative chat-to-video
+> **Internal planning proposal.** `Vidsay` is the product framing of this
+> codebase: **short video as a new, lightweight expressive medium — say it with a
+> generated video instead of plain text.** Part A states *what* we are building
+> and *why*; Part B states *how* the architecture realizes it. Monetization and
+> roadmap are intentionally **out of scope** for this document.
 
-A social, iterative **chat → video → chat** loop built on **Matrix / Synapse**
-(peer-to-peer or group chat):
+### 1.1 Part A — Product
 
-1. The **host (“me”)** posts a **video of a real daily-life situation** and asks
-   the group for advice. *Example: a student shows how he was bullied at school
-   and asks how to handle it.*
-2. **Friends discuss** and propose reactions — *fight back, report to a teacher,
-   …*
-3. From those suggestions the host **generates a follow-up video** that advances
-   the story with new events. *Example: he fights back, but a teacher happens to
-   see it and mistakes it for his own misbehavior — so he asks how to defend
-   himself and avoid being misjudged.*
-4. **Discussion and videos continue**, round after round.
+**Concept.** Short video is a new expressive medium — richer and more intuitive
+than plain text or static images. Instead of drafting long paragraphs to describe
+an idea, a concept, a sketch, or a reaction, you generate a short video that
+*shows* it directly. A moving, narrated demonstration conveys meaning faster and
+more completely than words alone. Vidsay makes producing that video as casual as
+sending a message — a **communication primitive, not a video-generation toy**.
 
-Video generation can be **triggered manually by the host**, or **scheduled
-automatically** (e.g. every day at **03:00**) when so configured.
+**Who uses it, and when.** The moments for Vidsay overlap heavily with the
+moments you'd otherwise build a slide deck: a designer explaining a concept, an
+engineer walking through a mechanical idea, a researcher unpacking an abstract
+model, a creator sharing a vision. Wherever a static slide or a wall of text would
+fall short, a short generated video can carry the intent.
 
-### 1.2 The video generator — prompt-to-video pipeline
+**How it works — direct, then export.** The typical workflow has two distinct
+stages:
 
-Turn a short user prompt into a **3–5 minute composite video** assembled from
-multiple generated clips, with **voiceover (TTS)** and **background music (BGM)**
-mixed over the clips' native sound.
+1. **Direct the AI in a chat room.** You — alone, or together with a group of
+   colleagues — use **Matrix / Synapse** to instruct the model on *what* and
+   *how* to generate, refining it turn by turn. The chat room is a **control room
+   / studio**, *not* a social feed; the conversation is the directing layer.
+2. **Export and share it where you actually communicate.** Once the video is
+   ready, you **download the MP4** and send it on **WeChat** or any other channel
+   — email, docs, social platforms, a slide deck. The video is a **portable
+   artifact**; Vidsay does not try to be the social network.
 
-**User input**
-- A **text prompt** (the story / scene description).
-- **Optional 2D reference images** (character, style, or scene references).
+This separation is deliberate: **Matrix is how you *produce* the video; your
+existing channels are how you *communicate* with it.**
 
-**Output**
-- A **3–5 min composite video** made of **multiple clips**, plus **voiceover** and
-  **BGM**. Each clip also carries **native SFX/ambient audio** generated together
-  with its frames.
+**Solo or collaborative.**
+- **Solo** — you converse with the model directly until the video matches your
+  intent.
+- **Collaborative** — you invite colleagues into the same room to jointly decide
+  what and how to generate, converging on the video as a shared deliverable that
+  one person then exports and shares.
 
-#### Two operating modes
+**What you get.** A finished short video — coherent visuals with consistent
+style, synchronized narration (voiceover), and supporting sound (BGM / native
+SFX) — produced end-to-end from your description and delivered as a downloadable
+**MP4**. You can accept it as-is or refine any part (script, a shot, the
+narration, the music) and re-render only what changed.
 
-**(1) One-shot, fully automatic**
-- The system generates the **full finished video end-to-end** with no user
-  interaction.
-- The user may then **manually edit any intermediate step** (script, a clip's
-  prompt, a keyframe, a clip, the voiceover, the BGM) and **re-run only the
-  downstream steps** that depend on it.
+**Core Challenge.** Vidsay must synthesize the *visual evidence* for an idea —
+much of which has never existed and cannot be filmed. This splits into two
+fundamentally different jobs:
 
-**(2) Step-by-step**
-- The **LLM splits the prompt into script paragraphs**; **each paragraph = one
-  clip**.
-- The user **reviews** the paragraphs, **rearranges clips**, **adds transitions**,
-  then **renders the final video**.
+- **Faithful / precise rendering** — dynamic **2D diagrams**, **3D CAD / mesh**,
+  data visualizations, equations. These must be *correct*: a wrong dimension or a
+  mislabeled arrow destroys trust.
+- **Imaginative synthesis** — **ancient, future, or abstract** ideas and scenes we
+  can never see in reality. These cannot be filmed, so the model must invent them
+  convincingly and consistently.
+
+Holding both at once — **accurate where it matters, inventive where it must** —
+while keeping the result **controllable** (reliably turning *your* intent into the
+video you actually meant) is the core challenge. We address it with an iterative,
+conversational refinement loop, a staged pipeline that lets you edit and re-render
+individual steps instead of starting over, asynchronous generation so slow jobs
+never block you, and a provider-agnostic backend that auto-falls-back across
+models.
+
+**Our Mission.** Lower this barrier drastically — make video generation
+effortless for everyone. We support a wide spectrum of use cases, from everyday
+anecdotes and historical storytelling to interior-design previsualization and the
+illustration of abstract scientific theories. Our goal is to make video a
+**lightweight, everyday expressive primitive** — as easy to produce and send as a
+text message.
+
+### 1.2 Part B — Technical architecture
+
+**System overview.** Three services, started in dependency order:
+
+| # | Service | Role |
+| --- | --- | --- |
+| 1 | **Synapse** (Matrix homeserver) | The **control room**: chat transport / instruction bus where you (solo or with colleagues) direct the AI and receive the rendered video |
+| 2 | **vidsay server** (Bun + Express) | REST API + async media generation; hosts `@vidsay_bot`, which listens for `!video` |
+| 3 | **Web** (Vue 3 + Vite) | The site UI; proxies `/api` and `/_matrix` to the two services above |
+
+**Async task relay → export.** A user issues `!video <prompt>` in a Matrix room;
+the bot relays it to the server, the generation pipeline runs **asynchronously**
+(long jobs never block the room), and the finished video is uploaded and posted
+back into the room as an `m.video` event. The user then **downloads the MP4** and
+shares it wherever they actually communicate — **WeChat**, email, docs, social.
+The room is a production surface, **not** a social feed. The same pipeline also
+backs the web UI's manual generation flow.
+
+**Scene Intermediate Representation (Scene IR) + hybrid renderers (the core design).** Between your prompt and the
+final video sits a declarative **Scene IR** — a structured spec of *entities,
+named parameters, renderables, timeline, style tokens, and constraints*. The LLM
+planner turns your intent into this Scene IR; renderers turn the Scene IR into pixels; a
+compositor assembles them. The Scene IR is what makes **parameter binding**, an
+**entity registry**, **selective clip re-render**, and **direct manipulation**
+possible — none of which work on free-form generated video.
+
+Rendering is **hybrid**, split along the faithful / imaginative line:
+
+- **Faithful layer** (diagrams, CAD / cutaway, data viz, math, fields, units) →
+  rendered by **deterministic / programmatic engines** driven by the Scene IR
+  (Manim-style animation, a CAD / geometry kernel, plotting libs, three.js /
+  WebGL). Diffusion models must never dimension a part or draw a circuit.
+- **Imaginative layer** (ancient / future / abstract scenes, photoreal
+  previsualization) → **generative image / video models**, grounded by the Scene IR's
+  entities and style tokens.
+
+**Capability model.** Five pluggable layers:
+
+- **Renderables** — schematic / block diagrams, cutaway & cross-section geometry,
+  data visualization, math / symbolic animation, maps & geospatial, timelines &
+  process flows, particle / field visualization, 2.5D parallax, photoreal scenes,
+  characters / avatars, whiteboard / sketch, vector icons, mask / highlight &
+  pointer overlays, and side-by-side / A-B comparison.
+- **Audio** — TTS narration (+ voice cloning), character dialogue / voices, BGM,
+  synchronized SFX, prosodic emphasis alignment, ducking, and captions / subtitles
+  (ASR).
+- **Film grammar & assembly** — virtual camera (orbit / zoom / exploded view /
+  depth-of-field), shot primitives, graphic match cuts, transitions, beat / rhythm
+  mapping, and multi-view (PiP / tiled) layout.
+- **Grounding & consistency** — parameter binding, entity / object registry,
+  constraint solver (units, scale, aspect ratio, fonts), reference intake
+  (image / CAD / CSV / PDF), citation anchors, reusable style tokens, and asset /
+  instance reuse.
+- **Interaction (user-in-the-loop)** — scrubbable timeline preview, direct
+  manipulation on the canvas, keyframe editor, region / mask prompt override,
+  per-clip version branching & selective re-render, modular asset export
+  (GIF / MP4 / SVG / GLB), and an optional **interactive web scene**.
+
+**The prompt-to-video pipeline.** Turn a short prompt into a **short video** —
+from a single quick clip up to a **multi-clip composite (≈2–5 min)** — with
+**voiceover (TTS)** and **background music (BGM)** mixed over the clips' native
+sound, delivered as a downloadable **MP4**.
+
+- **User input** — a **text prompt** (the idea / scene to convey) plus **optional
+  references** (2D images, a CAD file, a dataset, or a PDF).
+- **Output** — an **MP4 short video**: one or more clips, plus **voiceover** and
+  **BGM**; each clip can also carry **native SFX/ambient audio** generated
+  together with its frames.
+
+**Two operating modes.**
+
+1. **One-shot, fully automatic** — the system generates the **full finished video
+   end-to-end** with no interaction; the user may then **edit any intermediate
+   step** (script, a clip's prompt, a keyframe, a clip, the voiceover, the BGM)
+   and **re-run only the downstream steps** that depend on it.
+2. **Step-by-step** — the **LLM splits the prompt into script paragraphs**
+   (**each paragraph = one clip**); the user **reviews** them, **rearranges
+   clips**, **adds transitions**, then **renders the final video**.
 
 ```mermaid
 graph TB
-    A[Text prompt + optional 2D reference images] --> B[LLM script writer]
-    B --> C[Script paragraphs = clip list]
-    C --> D[Per-clip image / keyframe generation]
-    D --> E[Per-clip video generation with native SFX]
+    A[Text prompt + optional references: image / CAD / CSV / PDF] --> B[LLM planner]
+    B --> C[Scene IR: entities, parameters, renderables, timeline, style, constraints]
+    C --> D[Faithful renderers: diagram / CAD / data / math / fields]
+    C --> E[Imaginative renderers: generative image / video scenes]
     C --> F[TTS voiceover]
     C --> G[BGM / music]
-    E --> H[Timeline: arrange clips + transitions]
+    D --> H[Timeline: arrange shots + transitions]
+    E --> H
     F --> H
     G --> H
-    H --> I[Compose + mix -> final 2-3 min video]
+    H --> I[Compose + mix -> short MP4 video]
 ```
+
+**AI model capabilities.** Each pipeline stage maps to a model capability;
+several capabilities hold multiple candidates with automatic fallback:
+
+| Capability | Role in the pipeline | Modality |
+| --- | --- | --- |
+| **LLM / planner** | Turn intent into the Scene IR: script paragraphs, per-clip prompts, shot & transition hints | text → text |
+| **Image generation / editing** | Keyframes, reference frames, character/style consistency from the references | text (+ image) → image |
+| **Video generation** | Turn each paragraph (and/or keyframe) into a clip **with native SFX** | text (+ image) → video+audio |
+| **TTS voiceover** | Narration / dialogue, with optional **voice cloning** | text → audio |
+| **Music / BGM** | Background score for the final mix | text (+ lyrics) → audio |
+| *ASR (optional)* | Auto-subtitles / captions for the voiceover | audio → text |
+
+**Config-driven provider system.** *No hard-coded models.* Providers are generic,
+config-driven engines: model IDs, endpoints, call mode, result paths, and
+candidate ordering all live in an editable per-model `adapter`. The unified
+**`aiRouter`** provider covers language (OpenAI/Anthropic-compatible) and media
+(DashScope), and **generic media adapters** (`openai-images`, `fal`,
+`replicate`) plus the `custom` language preset let a deployment add providers
+from `config.json` alone — no new code. Configuration is split into three tiers
+that never overlap: **package seed** (version-controlled template), **installed
+source** (runtime `data/providers/<id>.ts`, UI-editable), and **config store**
+(secrets only). Secrets live in a git-ignored **repo-root `config.json`** that
+takes precedence over `data/settings.json`.
+
+**Scalability & extensibility.** Generation is async and provider-agnostic, so new
+models/vendors are onboarded by editing configuration rather than code; the Scene
+IR and renderer set are **pluggable**, so a new renderable (a diagram type, a CAD
+kernel, a field visualizer) is added without changing the pipeline; Matrix gives a
+federated transport for the control room (solo or multi-user); and the staged
+pipeline allows any intermediate artifact to be edited and selectively re-rendered
+without regenerating the whole video.
 
 ---
 
@@ -86,7 +224,7 @@ Three services, started in dependency order:
 | # | Service | Role | URL |
 | --- | --- | --- | --- |
 | 1 | **Synapse** (Matrix homeserver) | Group-chat backend for the chat-to-video prototype | `http://127.0.0.1:8008` |
-| 2 | **chat2movie server** (Bun + Express) | API + media generation; hosts `@chat2movie_bot`, which listens for `!video` | `http://localhost:3000` |
+| 2 | **vidsay server** (Bun + Express) | API + media generation; hosts `@vidsay_bot`, which listens for `!video` | `http://localhost:3000` |
 | 3 | **Web** (Vue 3 + Vite dev server) | The site UI; proxies `/api` and `/_matrix` to the two services above | `http://localhost:5173/chat` |
 
 ### 2.2 One-time prerequisites
@@ -108,7 +246,7 @@ Three services, started in dependency order:
 ### 2.3 Start up
 
 **One command (recommended)** — brings up Synapse → server → web in order and
-streams logs to `/tmp/chat2movie-dev/`:
+streams logs to `/tmp/vidsay-dev/`:
 
 ```bash
 bash scripts/dev-local.sh        # equivalently: bun run dev:local
@@ -117,7 +255,7 @@ bash scripts/dev-local.sh        # equivalently: bun run dev:local
 - If Synapse is **already running**, the script **reuses** it instead of
   starting a second instance.
 - When the startup banner prints, open **http://localhost:5173/chat**.
-- Logs: `/tmp/chat2movie-dev/{synapse,server,web}.log`.
+- Logs: `/tmp/vidsay-dev/{synapse,server,web}.log`.
 
 > **Note:** the root `bun run dev` uses `bun run --filter`, which is **broken on
 > Linux**. Always use `scripts/dev-local.sh` / `bun run dev:local` (they call
@@ -306,7 +444,7 @@ All *direct* browser→vendor calls live in one module:
   **and** `apiUrl` origin `=== https://api.toonflow.net`.
 
 Balance and *model generation* do **not** go browser→vendor directly; they are
-proxied by the **local chat2movie server** (see §5.5–5.6).
+proxied by the **local vidsay server** (see §5.5–5.6).
 
 ### 5.3 Connect / login (how the platform is wired in)
 
@@ -445,7 +583,7 @@ so removing it later is *surgical*, not a delete:
 | Telemetry | `POST /web/telemetry/report` | anonymousData | none |
 | Model gen / price / balance / models | `…/v1/…` | media/tfRouter.ts (via server) | Bearer |
 
-**Local chat2movie server wrappers:** `GET /api/providers/media/list`,
+**Local vidsay server wrappers:** `GET /api/providers/media/list`,
 `POST /api/providers/media/add`, `POST /api/ai/media/balance`,
 `GET /api/ai/media/balanceEvents` (SSE), and the media-generation route.
 

@@ -1010,11 +1010,10 @@
   "广场": [
     "apps/web/src/components/appShell.vue"
   ],
-  "群聊": [
-    "apps/web/src/components/appShell.vue",
-    "apps/web/src/pages/chat/index.vue"
+  "一键生成": [
+    "apps/web/src/components/appShell.vue"
   ],
-  "摄影棚": [
+  "分步生成": [
     "apps/web/src/components/appShell.vue"
   ],
   "已退出登录": [
@@ -4106,6 +4105,9 @@
   "登录后即可参与群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
+  "群聊": [
+    "apps/web/src/pages/chat/index.vue"
+  ],
   "新建群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
@@ -4154,7 +4156,7 @@
   "发送": [
     "apps/web/src/pages/chat/index.vue"
   ],
-  "自动生成视频": [
+  "一键生成视频": [
     "apps/web/src/pages/chat/index.vue"
   ],
   "分步生成视频": [

@@ -3222,5 +3222,8 @@
   "字幕偏移": "Offset ng subtitle",
   "自动生成视频": "Awtomatikong gumawa ng video",
   "分步生成视频": "Gumawa ng video hakbang-hakbang",
-  "一段视频胜千言": "Ang isang video ay higit pa sa isang libong salita."
+  "一段视频胜千言": "Ang isang video ay higit pa sa isang libong salita.",
+  "一键生成": "Bumuo sa isang shot",
+  "分步生成": "Bumuo hakbang-hakbang",
+  "一键生成视频": "Bumuo ng video sa isang shot"
 }

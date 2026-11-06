@@ -3224,5 +3224,8 @@
   "字幕偏移": "Độ lệch thời gian phụ đề",
   "自动生成视频": "Tạo video tự động",
   "分步生成视频": "Tạo video theo từng bước",
-  "一段视频胜千言": "Một video thay cho ngàn lời nói."
+  "一段视频胜千言": "Một video thay cho ngàn lời nói.",
+  "一键生成": "Tạo trong một bước",
+  "分步生成": "Tạo từng bước",
+  "一键生成视频": "Tạo video trong một bước"
 }

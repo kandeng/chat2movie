@@ -124,11 +124,11 @@
           <div class="composerTools">
             <!-- ACT: 只有房间主持人能看到生成视频入口，两个图标按钮把意图带到我的工作室（Task 4 读取 query），名称作 tooltip。 -->
             <div v-if="isHost" class="hostTools">
-              <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('自动生成视频')" :title="translate('自动生成视频')" @click="goStudio('auto')">
-                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconMovieFilm}&quot;)` }" aria-hidden="true" />
+              <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('一键生成视频')" :title="translate('一键生成视频')" @click="goStudio('auto')">
+                <span class="toolIcon" :style="{ '--tool-icon': `url(&quot;${iconOneShot}&quot;)` }" aria-hidden="true" />
               </el-button>
               <el-button class="toolButton" :disabled="!ready || !activeRoomId" :aria-label="translate('分步生成视频')" :title="translate('分步生成视频')" @click="goStudio('step')">
-                <span class="toolIcon wide" :style="{ '--tool-icon': `url(&quot;${iconMovieCamera}&quot;)` }" aria-hidden="true" />
+                <span class="toolIcon enlarged" :style="{ '--tool-icon': `url(&quot;${iconStepByStep}&quot;)` }" aria-hidden="true" />
               </el-button>
             </div>
             <div class="toolGroup">
@@ -191,8 +191,8 @@ import loginDialog from "@/components/loginDialog.vue";
 // ACT: 工具按钮图标统一取自 src/icons（CSS mask + currentColor 着色，与全局外壳一致）。
 import iconUserGroup from "@/icons/user_group.svg";
 import iconFileUpload from "@/icons/file_upload.svg";
-import iconMovieFilm from "@/icons/movie_film.svg";
-import iconMovieCamera from "@/icons/movie_camera.svg";
+import iconOneShot from "@/icons/generator_one_shot.svg";
+import iconStepByStep from "@/icons/generator_step_by_step.svg";
 import { useAuthStore } from "@/stores/auth";
 import { useMatrixChat } from "@/composables/useMatrixChat";
 
@@ -768,7 +768,7 @@ onMounted(async () => {
   }
 
   // ACT: 图标用 mask + currentColor 着色，兼容内置固定填充色的 svg（与全局外壳同一做法）。
-  // .wide 对应 viewBox 宽于高的图标（file_upload 1228x1024、movie_camera 1270x1024），
+  // .wide 对应 viewBox 宽于高的图标（file_upload 1228x1024），
   // 按比例加宽盒子让 contain 后的视觉高度与方形图标一致。
   .toolIcon {
     display: block;
@@ -786,6 +786,12 @@ onMounted(async () => {
     -webkit-mask-size: contain;
 
     &.wide { width: 22px; }
+
+    // ACT: 分步生成字形偏疏，单独放大到 18px 的 120%（21.6px）以对齐邻项视觉重量。
+    &.enlarged {
+      width: 21.6px;
+      height: 21.6px;
+    }
   }
 }
 

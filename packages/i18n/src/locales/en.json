@@ -3342,5 +3342,8 @@
   "资料更新失败，请稍后重试": "Failed to update the profile; please try again later",
   "资料已更新": "Profile updated",
   "Synapse 暂时不可用，请稍后再试": "Synapse is temporarily unavailable; please try again later",
-  "一段视频胜千言": "One video says more than a thousand words."
+  "一段视频胜千言": "One video says more than a thousand words.",
+  "一键生成": "One Shot",
+  "分步生成": "Step by Step",
+  "一键生成视频": "Generate video in one shot"
 }

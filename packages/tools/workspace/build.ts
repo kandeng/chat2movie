@@ -8,8 +8,8 @@ await createToolConfig({
 grep 搜索文件内容、find 查找文件，范围严格限定在当前工作区，不搜索全局技能目录。
 修改已有文件前先读取相关内容，避免覆盖用户已有修改。
 存在与任务匹配的可用技能时，先阅读技能目录中的 SKILL.md，再按需读取其引用的本地资料；不要一次加载全部技能，也不要只凭名称猜测技能内容。`,
-  author: "chat2movie",
-  github: "https://github.com/kandeng/chat2movie",
+  author: "vidsay",
+  github: "https://github.com/kandeng/vidsay",
   configRules: [
     { type: "switch", field: "readOnly", title: "只读模式", value: false, info: "开启后只允许读取文件、列出目录和搜索工作区。" },
   ],

@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # ACT: 聊天转视频原型的「本地一键启动」脚本（Task 7）。仅在本机运行，不涉及 Caddy / systemd / 任何远程部署。
-# 依次拉起：本地 Synapse homeserver -> chat2movie 服务端（内含聊天转视频机器人）-> 前端 Vite 开发服务器。
+# 依次拉起：本地 Synapse homeserver -> vidsay 服务端（内含聊天转视频机器人）-> 前端 Vite 开发服务器。
 # 说明：根 package.json 的 dev 脚本使用 `bun run --filter`，在 Linux 上不可用，故此处一律用 `bun run --cwd`。
-# 日志统一写到 /tmp/chat2movie-dev，避免污染仓库工作区。
+# 日志统一写到 /tmp/vidsay-dev，避免污染仓库工作区。
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SYNAPSE_VENV="/home/robot/synapse-venv"
 SYNAPSE_CONF="/home/robot/synapse-data/homeserver.yaml"
 SYNAPSE_URL="http://127.0.0.1:8008"
-LOG_DIR="/tmp/chat2movie-dev"
+LOG_DIR="/tmp/vidsay-dev"
 mkdir -p "$LOG_DIR"
 
 SERVER_PID=""
@@ -45,7 +45,7 @@ else
   fi
 fi
 
-# 2) chat2movie 服务端（含聊天转视频机器人，监听 !video 指令）
+# 2) vidsay 服务端（含聊天转视频机器人，监听 !video 指令）
 echo "[server] 启动中...（日志：$LOG_DIR/server.log）"
 ( cd "$ROOT/apps/server" && NODE_ENV=dev bun run dev > "$LOG_DIR/server.log" 2>&1 ) &
 SERVER_PID=$!

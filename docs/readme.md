@@ -1,4 +1,4 @@
-# chat2movie 文档目录
+# vidsay 文档目录
 
 [返回项目首页](../README.md)
 

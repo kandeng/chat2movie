@@ -635,7 +635,7 @@
   "开始新对话": [
     "apps/web/src/components/agent/conversation/messageList.vue"
   ],
-  "你好，我是 chat2movie 助手": [
+  "你好，我是 vidsay 助手": [
     "apps/web/src/components/agent/conversation/messageList.vue"
   ],
   "从一个想法开始": [
@@ -1036,7 +1036,7 @@
   "开启 MCP": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
-  "允许外部 Coding 工具和 Agent 操作 chat2movie。开启后，将客户端配置添加到对应工具中。": [
+  "允许外部 Coding 工具和 Agent 操作 vidsay。开启后，将客户端配置添加到对应工具中。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "连接状态": [
@@ -1062,7 +1062,7 @@
     "apps/web/src/components/settings/panels/mcp/index.vue",
     "apps/web/src/pages/workspace/index.vue"
   ],
-  "画布与节点操作需要 chat2movie 界面保持打开。": [
+  "画布与节点操作需要 vidsay 界面保持打开。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "服务地址": [
@@ -1094,7 +1094,7 @@
   "HTTP 配置包含访问凭证，请仅提供给可信的客户端。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
-  "教外部 Agent 组合使用 chat2movie 工具。将 SKILL.md 安装到对应 Coding 工具的技能目录。": [
+  "教外部 Agent 组合使用 vidsay 工具。将 SKILL.md 安装到对应 Coding 工具的技能目录。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "查看 Skill": [
@@ -1414,25 +1414,25 @@
   "节点列表读取失败，请重试。已保存的菜单配置仍会保留。": [
     "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue"
   ],
-  "chat2movie 说明": [
+  "vidsay 说明": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "为所有聊天提供额外说明和上下文。支持 Markdown，保存后下一次发送消息时生效。": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
-  "chat2movie 说明内容": [
+  "vidsay 说明内容": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "有未保存的修改": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
-  "重新加载 chat2movie 说明": [
+  "重新加载 vidsay 说明": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "重新加载": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
-  "保存 chat2movie 说明": [
+  "保存 vidsay 说明": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "启用本地记忆": [
@@ -1450,7 +1450,7 @@
   "查看": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
-  "chat2movie 记忆": [
+  "vidsay 记忆": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "本地记忆内容": [
@@ -1510,7 +1510,7 @@
   "读取本地记忆失败，请重试": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
-  "将删除所有工作区共用的本地记忆及未保存的记忆修改，此操作无法撤销。chat2movie 说明会保留。": [
+  "将删除所有工作区共用的本地记忆及未保存的记忆修改，此操作无法撤销。vidsay 说明会保留。": [
     "apps/web/src/components/settings/panels/personalization.vue"
   ],
   "本地记忆已更新，未删除任何内容。请重新查看后重试。": [
@@ -2082,7 +2082,7 @@
   "启动命令": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
   ],
-  "命令在运行 chat2movie 的电脑或服务端执行。": [
+  "命令在运行 vidsay 的电脑或服务端执行。": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
   ],
   "当前平台不支持本地 MCP，请改用远程连接。": [
@@ -2309,7 +2309,7 @@
   "下载版本：{0} · {1}": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "保存在当前 chat2movie 服务的数据目录，下载后自动复用。": [
+  "保存在当前 vidsay 服务的数据目录，下载后自动复用。": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "下载版": [
@@ -2321,13 +2321,13 @@
   "不可用": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "优先使用已下载的版本；未下载时，从当前 chat2movie 服务的系统 PATH 查找。": [
+  "优先使用已下载的版本；未下载时，从当前 vidsay 服务的系统 PATH 查找。": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "仅使用此页面下载的版本。": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "仅从当前 chat2movie 服务的系统 PATH 查找 FFmpeg 与 ffprobe。": [
+  "仅从当前 vidsay 服务的系统 PATH 查找 FFmpeg 与 ffprobe。": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "等待下载": [
@@ -3451,7 +3451,7 @@
   "圆润": [
     "apps/web/src/components/settings/panels/ui.vue"
   ],
-  "chat2movie 每一个灵感，都值得被看见": [
+  "vidsay 每一个灵感，都值得被看见": [
     "apps/web/src/components/settings/panels/ui.vue"
   ],
   "这是当前颜色、字体与圆角的实际效果。": [
@@ -3668,7 +3668,7 @@
   "网络设置已保存": [
     "apps/web/src/components/settings/panels/network.vue"
   ],
-  "GitHub 仓库：kandeng/chat2movie": [
+  "GitHub 仓库：kandeng/vidsay": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
   "GitHub 仓库": [
@@ -3686,10 +3686,10 @@
   "展示二维码": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
-  "chat2movie 交流群二维码": [
+  "vidsay 交流群二维码": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
-  "chat2movie 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。": [
+  "vidsay 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。": [
     "apps/web/src/components/settings/panels/about.vue",
     "apps/web/src/pages/workspace/index.vue"
   ],
@@ -3705,7 +3705,7 @@
   "成为赞助商": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
-  "chat2movie 商务合作二维码": [
+  "vidsay 商务合作二维码": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
   "查看 {0} 详情": [
@@ -4031,7 +4031,7 @@
   "稍后配置": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "© {0} chat2movie · 保留所有权利。": [
+  "© {0} vidsay · 保留所有权利。": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "保存引导状态失败，请重试": [
@@ -5675,7 +5675,7 @@
   "使用教程": [
     "apps/web/src/pages/workspace/index.vue"
   ],
-  "chat2movie 需求/BUG反馈表": [
+  "vidsay 需求/BUG反馈表": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "汇报 BUG": [
@@ -7079,7 +7079,7 @@
   "项目包": [
     "apps/server/src/routes/workspaces/clone.ts"
   ],
-  "项目包必须包含有效的 chat2movie 画布 JSON 文件": [
+  "项目包必须包含有效的 vidsay 画布 JSON 文件": [
     "apps/server/src/routes/workspaces/clone.ts"
   ],
   "项目下载目录超出所选位置": [
@@ -7338,7 +7338,7 @@
   "工具状态文件无效": [
     "apps/server/src/routes/tools/setEnabled.ts"
   ],
-  "只允许 chat2movie 页面访问控制连接": [
+  "只允许 vidsay 页面访问控制连接": [
     "apps/server/src/utils/mcp/control.ts"
   ],
   "页面来源无效": [
@@ -7351,16 +7351,16 @@
     "apps/server/src/utils/mcp/control.ts",
     "packages/mcp/src/index.ts"
   ],
-  "chat2movie 页面已断开，请重新调用 getAppState": [
+  "vidsay 页面已断开，请重新调用 getAppState": [
     "apps/server/src/utils/mcp/control.ts"
   ],
-  "存在多个 chat2movie 页面，请用 target.connectionId 指定操作目标": [
+  "存在多个 vidsay 页面，请用 target.connectionId 指定操作目标": [
     "apps/server/src/utils/mcp/control.ts"
   ],
   "控制连接已存在": [
     "apps/server/src/utils/mcp/control.ts"
   ],
-  "chat2movie 页面已断开，操作已取消": [
+  "vidsay 页面已断开，操作已取消": [
     "apps/server/src/utils/mcp/control.ts"
   ],
   "控制命令已取消或不存在": [
@@ -7450,7 +7450,7 @@
   "不能通过 MCP 修改连接凭证或项目列表": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "在目标 chat2movie 页面打开已有工作目录，并等待工作区就绪；操作前获取 getAppState 的 connectionId。": [
+  "在目标 vidsay 页面打开已有工作目录，并等待工作区就绪；操作前获取 getAppState 的 connectionId。": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
   "切换工作区的 canvas 画布或 document 文档面板，先保存当前编辑。": [
@@ -7471,13 +7471,13 @@
   "合并保存指定顶层设置项，同时更新页面；不修改 mcp 凭证与 stores 项目列表，嵌套设置应先读取再合并。": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "文件正在 chat2movie 中打开，请使用画布或文档工具修改，关闭后再执行文件操作": [
+  "文件正在 vidsay 中打开，请使用画布或文档工具修改，关闭后再执行文件操作": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "列出连接的 chat2movie 页面及其 connectionId、工作目录、画布、项目列表和节点能力。多个页面时必须用 target.connectionId 明确操作对象；无页面连接时只有显式 target.directory 的服务端工具可用。": [
+  "列出连接的 vidsay 页面及其 connectionId、工作目录、画布、项目列表和节点能力。多个页面时必须用 target.connectionId 明确操作对象；无页面连接时只有显式 target.directory 的服务端工具可用。": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "请先打开 chat2movie 桌面或网页": [
+  "请先打开 vidsay 桌面或网页": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
   "尚未绑定画布": [
@@ -7486,7 +7486,7 @@
   "MCP 工具名称重复：{0}": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "工具已禁用，或所需 chat2movie 页面未连接，请重新读取工具列表": [
+  "工具已禁用，或所需 vidsay 页面未连接，请重新读取工具列表": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
   "MCP 不提供内置 Agent 会话能力：{0}": [
@@ -7522,7 +7522,7 @@
   "应用操作不存在，请查询 listAppOperations": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
-  "按用户请求调用 chat2movie 内置 Agent，等待本轮完成并返回对话文件与回复；会使用配置的模型。外部 Agent 可直接操作其他工具，仅需要委托内置 Agent 时调用。支持 MCP 取消，历史保存到工作区。": [
+  "按用户请求调用 vidsay 内置 Agent，等待本轮完成并返回对话文件与回复；会使用配置的模型。外部 Agent 可直接操作其他工具，仅需要委托内置 Agent 时调用。支持 MCP 取消，历史保存到工作区。": [
     "apps/server/src/utils/mcp/tools.ts"
   ],
   "列出已安装节点的元数据、说明和启用状态。": [
@@ -7627,7 +7627,7 @@
   "未知应用操作：{0}": [
     "apps/server/src/utils/mcp/operations.ts"
   ],
-  "chat2movie 服务尚未就绪": [
+  "vidsay 服务尚未就绪": [
     "apps/server/src/utils/mcp/operations.ts"
   ],
   "素材文件不能超过 20 MB": [
@@ -8252,7 +8252,7 @@
   "节点文件实际是 HTML 网页，不是节点脚本，请重新上传构建生成的 .umd.js 文件": [
     "apps/server/src/utils/plugins/install.ts"
   ],
-  "文件不是兼容的 chat2movie 节点，请使用节点脚手架构建生成的 .umd.js 文件": [
+  "文件不是兼容的 vidsay 节点，请使用节点脚手架构建生成的 .umd.js 文件": [
     "apps/server/src/utils/plugins/install.ts"
   ],
   "文件名与节点导出名不一致：{0} 需要导出 toonflowNodes.{1}，请按实际节点名修改文件名": [
@@ -8280,7 +8280,7 @@
     "apps/server/src/utils/plugins/install.ts",
     "apps/server/src/utils/plugins/ext.ts"
   ],
-  "文件不是兼容的 chat2movie 文件扩展，请使用扩展脚手架构建并保留原文件名": [
+  "文件不是兼容的 vidsay 文件扩展，请使用扩展脚手架构建并保留原文件名": [
     "apps/server/src/utils/plugins/install.ts"
   ],
   "文件扩展脚本语法无效，请重新构建完整的 .umd.js 文件": [
@@ -8547,7 +8547,7 @@
   "供应商 TypeScript 语法错误：{0}": [
     "apps/server/src/utils/media/provider.ts"
   ],
-  "检测到旧版 chat2movie 供应商 TS，无法在 chat2movie 2.0 中使用。请在「添加自定义媒体供应商」中点击「一键复制提示词」，结合旧代码和接口资料重新生成新版代码后再导入。": [
+  "检测到旧版 vidsay 供应商 TS，无法在 vidsay 2.0 中使用。请在「添加自定义媒体供应商」中点击「一键复制提示词」，结合旧代码和接口资料重新生成新版代码后再导入。": [
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商须通过 export default 导出对象": [

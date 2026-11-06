@@ -1,7 +1,7 @@
 import { getSynapseConfig } from "@/utils/appConfig";
 
 // ACT: Synapse（Matrix）Admin API 封装，端口自 drone-navigation-v2/server/app/matrix_admin.py。
-// 设计原则：网站身份仍由 chat2movie 掌握，每个 Matrix 账号都是隐藏账号，
+// 设计原则：网站身份仍由 vidsay 掌握，每个 Matrix 账号都是隐藏账号，
 // 客户端凭据通过 Admin「傀儡令牌」流程（POST /_synapse/admin/v1/users/<mxid>/login）代签，
 // 用户永远不会看到 Matrix 密码。Synapse 故障绝不能拖垮主服务：所有辅助函数在不可用时降级。
 

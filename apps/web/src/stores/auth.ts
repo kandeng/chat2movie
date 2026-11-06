@@ -8,7 +8,7 @@ import { authClient } from "@/lib/authClient";
 // ACT: 统一登录态（计划 Task 4，按 drone-navigation-v2 的「网站账号为主身份 + Matrix 影子账号」重写）。
 // - 网站账号（邮箱/密码、邮箱验证码）由 better-auth 管理，会话是 HttpOnly Cookie，不落地 localStorage；
 // - 登录成功后向 /api/matrix/token 代签隐藏 Matrix 影子账号令牌，聊天层照旧使用这份 Matrix 凭据；
-// - localStorage（chat2movie.auth）只持久化 Matrix 半段会话；刷新后 restore() 先验 better-auth Cookie，
+// - localStorage（vidsay.auth）只持久化 Matrix 半段会话；刷新后 restore() 先验 better-auth Cookie，
 //   再复用（whoami 校验）或重新代签 Matrix 令牌，Synapse 不可用时仅聊天降级、网站账号仍有效。
 
 export type AuthSession = {
@@ -290,7 +290,7 @@ export const useAuthStore = defineStore("auth", () => {
 }, {
   // ACT: 只持久化 Matrix 半段会话；网站账号会话由 better-auth 的 HttpOnly Cookie 管理，不落 localStorage。
   persist: {
-    key: "chat2movie.auth",
+    key: "vidsay.auth",
     pick: ["session"],
     storage: localStorage,
   },

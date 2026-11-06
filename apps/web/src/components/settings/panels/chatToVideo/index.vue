@@ -5,7 +5,7 @@
         <h3 id="c2vEnabledTitle">启用聊天转视频</h3>
         <el-switch :modelValue="config.enabled" :loading="saving" aria-label="启用聊天转视频" @change="(value) => persist({ enabled: value === true })" />
       </div>
-      <p class="description">开启后，机器人 <code>{{ status?.botUserId || "@chat2movie_bot" }}</code> 会监听群聊中的指令，把讨论内容生成视频并回帖到房间。需要先在 config.json 的 synapse 块完成配置。</p>
+      <p class="description">开启后，机器人 <code>{{ status?.botUserId || "@vidsay_bot" }}</code> 会监听群聊中的指令，把讨论内容生成视频并回帖到房间。需要先在 config.json 的 synapse 块完成配置。</p>
     </section>
 
     <section class="settingSection" aria-labelledby="c2vStatusTitle">

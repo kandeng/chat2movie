@@ -20,7 +20,7 @@
       </div>
       <div v-else class="welcomeContent">
         <h1 id="welcomeTitle">快速开始</h1>
-        <p class="description">chat2movie 已内置 AI-Router 模型路由，可直接开始创作；你也可以添加自己的私有模型提供商。</p>
+        <p class="description">vidsay 已内置 AI-Router 模型路由，可直接开始创作；你也可以添加自己的私有模型提供商。</p>
 
         <el-button class="loginButton" type="primary" @click="view = 'custom'">
           <icon-key class="buttonIcon" />
@@ -32,14 +32,14 @@
       </div>
 
       <footer class="pageFooter">
-        <p>© {{ new Date().getFullYear() }} chat2movie · 保留所有权利。</p>
+        <p>© {{ new Date().getFullYear() }} vidsay · 保留所有权利。</p>
       </footer>
     </section>
     <div class="artPanel" aria-hidden="true">
       <bg class="artBg" />
       <div class="artBrand">
         <span class="artLogo" v-html="logoSvg" />
-        <span class="artName">chat2movie</span>
+        <span class="artName">vidsay</span>
       </div>
     </div>
   </main>

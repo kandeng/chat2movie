@@ -11,7 +11,7 @@ import { createRoom, ensureUser, inviteToRoom, isConfigured, joinRoomAs, roomCre
 const DEMO_LOCALPARTS = ["host", "friend1", "friend2"] as const;
 // ACT: 计划 Task 2 改为「网站直接用密码登录 Matrix」，所以演示账号必须使用可预期的密码；
 // 机器人仍是隐藏账号，保持随机密码（它通过 Admin 代签令牌登录，不需要密码）。
-const DEMO_PASSWORD = process.env.CHAT2MOVIE_DEMO_PASSWORD || "chat2movie";
+const DEMO_PASSWORD = process.env.VIDSAY_DEMO_PASSWORD || "vidsay";
 
 const configPath = process.env.TOONFLOW_CONFIG_FILE ?? resolve(import.meta.dirname, "../../../config.json");
 
@@ -28,13 +28,13 @@ async function main() {
   }
   const synapse = getSynapseConfig();
   const serverName = synapse.serverName || "localhost";
-  const botMxid = synapse.botUserId || `@chat2movie_bot:${serverName}`;
+  const botMxid = synapse.botUserId || `@vidsay_bot:${serverName}`;
 
   console.log(`[provision] Synapse: ${synapse.baseUrl} (server_name=${serverName})`);
 
   // 1. 创建机器人 + 演示用户（幂等）
   const members: { mxid: string; label: string }[] = [{ mxid: botMxid, label: "bot 机器人" }];
-  const okBot = await ensureUser(botMxid, { displayName: "Chat2Movie Bot" });
+  const okBot = await ensureUser(botMxid, { displayName: "Vidsay Bot" });
   console.log(`[provision] ${okBot ? "✓" : "✗"} ${botMxid} (bot)`);
   for (const localpart of DEMO_LOCALPARTS) {
     const mxid = `@${localpart}:${serverName}`;
@@ -60,7 +60,7 @@ async function main() {
   }
   if (!roomId) {
     // ACT: 建房时就把其他成员列为邀请对象，下一步再让他们本人接受。
-    const created = await createRoom("Chat2Movie 原型房间", hostMxid, members.map(member => member.mxid).filter(mxid => mxid !== hostMxid));
+    const created = await createRoom("Vidsay 原型房间", hostMxid, members.map(member => member.mxid).filter(mxid => mxid !== hostMxid));
     if (!created) {
       console.error("[provision] 创建房间失败，请检查管理员令牌与 Synapse 状态。");
       process.exit(1);
@@ -86,7 +86,7 @@ async function main() {
   console.log(`  roomId   = ${roomId}`);
   console.log(`  bot      = ${botMxid}`);
   console.log(`  members  = ${members.map(member => member.mxid).join(", ")}`);
-  console.log(`  password = ${DEMO_PASSWORD}（host/friend1/friend2 通用，可用 CHAT2MOVIE_DEMO_PASSWORD 覆盖）`);
+  console.log(`  password = ${DEMO_PASSWORD}（host/friend1/friend2 通用，可用 VIDSAY_DEMO_PASSWORD 覆盖）`);
   console.log("\n下一步：打开 http://127.0.0.1:5173/#/account 用 host / 上述密码登录，再进入群聊。");
 }
 

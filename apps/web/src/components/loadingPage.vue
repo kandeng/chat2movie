@@ -14,9 +14,9 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from "vue";
-// ACT: 加载动画改用 chat2movie 品牌 Logo（取代 Toonflow 钢笔 Logo）。
-import logoRaw from "@/assets/logo_chat2movie.svg?raw";
-import logoUrl from "@/assets/logo_chat2movie.svg";
+// ACT: 加载动画改用 vidsay 品牌 Logo（取代 Toonflow 钢笔 Logo）。
+import logoRaw from "@/assets/logo_vidsay.svg?raw";
+import logoUrl from "@/assets/logo_vidsay.svg";
 
 const props = defineProps<{ active: boolean; contained?: boolean }>();
 const visible = defineModel<boolean>("visible", { default: false });

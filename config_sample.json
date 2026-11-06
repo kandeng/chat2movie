@@ -19,7 +19,7 @@
     "baseUrl": "http://127.0.0.1:8008",
     "serverName": "localhost",
     "adminAccessToken": "syt_your-synapse-admin-access-token",
-    "botUserId": "@chat2movie_bot:localhost",
+    "botUserId": "@vidsay_bot:localhost",
     "roomId": "!your-room-id:localhost"
   },
   "auth": {
@@ -31,7 +31,7 @@
       "secure": true,
       "user": "",
       "pass": "",
-      "from": "chat2movie <noreply@example.com>"
+      "from": "vidsay <noreply@example.com>"
     }
   }
 }

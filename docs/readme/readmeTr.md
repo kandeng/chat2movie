@@ -1,7 +1,7 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=chat2movie&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="chat2movie" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=vidsay&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="vidsay" width="100%" />
 
 <p>
-  <a href="https://github.com/kandeng/chat2movie">
+  <a href="https://github.com/kandeng/vidsay">
     <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" />
   </a>
 </p>
@@ -37,44 +37,44 @@
 <div align="center">
 
 <p align="center">
-  <img src="../images/logo.png" alt="chat2movie Logosu" width="120" height="120" />
+  <img src="../images/logo.png" alt="vidsay Logosu" width="120" height="120" />
 </p>
 
 <a href="https://git.io/typing-svg">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=chat2movie;AI%20Short%20Drama%20Studio;Turn%20ideas%20into%20stories" />
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=chat2movie;AI%20Short%20Drama%20Studio;Turn%20ideas%20into%20stories" alt="chat2movie · Yapay Zekâ Kısa Drama Stüdyosu · Fikirleri hikâyelere dönüştürün" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=vidsay;AI%20Short%20Drama%20Studio;Turn%20ideas%20into%20stories" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=vidsay;AI%20Short%20Drama%20Studio;Turn%20ideas%20into%20stories" alt="vidsay · Yapay Zekâ Kısa Drama Stüdyosu · Fikirleri hikâyelere dönüştürün" width="600" />
   </picture>
 </a>
 
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/stargazers">
-    <img src="https://img.shields.io/github/stars/kandeng/chat2movie?style=for-the-badge&logo=github" alt="Yıldız Rozeti" />
+  <a href="https://github.com/kandeng/vidsay/stargazers">
+    <img src="https://img.shields.io/github/stars/kandeng/vidsay?style=for-the-badge&logo=github" alt="Yıldız Rozeti" />
   </a>
   <a href="../../LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License Rozeti" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/releases">
-    <img src="https://img.shields.io/github/v/release/kandeng/chat2movie?style=for-the-badge" alt="Sürüm" />
+  <a href="https://github.com/kandeng/vidsay/releases">
+    <img src="https://img.shields.io/github/v/release/kandeng/vidsay?style=for-the-badge" alt="Sürüm" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/network/members">
-    <img src="https://img.shields.io/github/forks/kandeng/chat2movie?style=for-the-badge&logo=github&color=orange" alt="Çatallama Rozeti" />
+  <a href="https://github.com/kandeng/vidsay/network/members">
+    <img src="https://img.shields.io/github/forks/kandeng/vidsay?style=for-the-badge&logo=github&color=orange" alt="Çatallama Rozeti" />
   </a>
   <a href="https://discord.gg/HEjKmpNpAZ">
     <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/issues">
-    <img src="https://img.shields.io/github/issues/kandeng/chat2movie?style=for-the-badge&color=F48D73" alt="Sorunlar" />
+  <a href="https://github.com/kandeng/vidsay/issues">
+    <img src="https://img.shields.io/github/issues/kandeng/vidsay?style=for-the-badge&color=F48D73" alt="Sorunlar" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/kandeng/chat2movie?style=for-the-badge&color=2088FF" alt="Katkıda Bulunanlar" />
+  <a href="https://github.com/kandeng/vidsay/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/kandeng/vidsay?style=for-the-badge&color=2088FF" alt="Katkıda Bulunanlar" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/commits">
-    <img src="https://img.shields.io/github/last-commit/kandeng/chat2movie?style=for-the-badge&color=blueviolet" alt="Son Commit" />
+  <a href="https://github.com/kandeng/vidsay/commits">
+    <img src="https://img.shields.io/github/last-commit/kandeng/vidsay?style=for-the-badge&color=blueviolet" alt="Son Commit" />
   </a>
 </p>
 <p align="center">
@@ -86,29 +86,29 @@
 
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="kandeng/vidsay | Trendshift Vue Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
-  </a>
-</p>
-<p align="center">
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="kandeng/vidsay | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
   </a>
 </p>
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Month" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="kandeng/vidsay | Trendshift Vue Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="kandeng/vidsay | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+  </a>
+</p>
+<p align="center">
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Month" width="250" height="55" />
   </a>
 </p>
 
@@ -123,12 +123,12 @@
     <tr>
       <td width="50%" align="center">
         <a href="../images/gStar.png">
-          <img src="../images/gStar.png" alt="chat2movie AtomGit G-Star Sertifikası No.540" width="100%" />
+          <img src="../images/gStar.png" alt="vidsay AtomGit G-Star Sertifikası No.540" width="100%" />
         </a>
       </td>
       <td width="50%" align="center">
         <a href="../images/gvp.jpg">
-          <img src="../images/gvp.jpg" alt="chat2movie Gitee GVP Sertifikası" width="100%" />
+          <img src="../images/gvp.jpg" alt="vidsay Gitee GVP Sertifikası" width="100%" />
         </a>
       </td>
     </tr>
@@ -136,7 +136,7 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/releases">İndir</a> ·
+  <a href="https://github.com/kandeng/vidsay/releases">İndir</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/RXFqdgR2Xo0dXZxGfd0cZCGgnwf">Kullanıcı Kılavuzu</a> ·
   <a href="https://api.toonflow.net/console/plugIn">Eklenti Pazarı</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd">Geliştirici Belgeleri</a> ·
@@ -147,7 +147,7 @@
 
 ## 1. 💛 Sponsorlar ve Destek
 
-chat2movie açık kaynak projesini destekleyen aşağıdaki iş ortaklarına teşekkür ederiz.
+vidsay açık kaynak projesini destekleyen aşağıdaki iş ortaklarına teşekkür ederiz.
 
 <table>
   <tr>
@@ -189,7 +189,7 @@ chat2movie açık kaynak projesini destekleyen aşağıdaki iş ortaklarına te�
 
 ## 2. 🌟 Öne Çıkan Özellikler
 
-chat2movie; senaryoları, varlıkları ve video kliplerini tek bir sonsuz tuvalde bir araya getiren, kısa dramalar, hareketli çizgi romanlar ve kısa videolar için açık kaynaklı bir yapay zekâ üretim platformudur.
+vidsay; senaryoları, varlıkları ve video kliplerini tek bir sonsuz tuvalde bir araya getiren, kısa dramalar, hareketli çizgi romanlar ve kısa videolar için açık kaynaklı bir yapay zekâ üretim platformudur.
 
 | Özellik | Açıklama |
 | --- | --- |
@@ -213,25 +213,25 @@ Desteklenen diller: 简体中文, 繁體中文, English, 日本語, Русски
 
 <div align="center">
 
-<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="chat2movie · Proje ana sayfası ve fikir oluşturma" width="80%" /></a><br /><sub>Proje ana sayfası ve fikir oluşturma</sub>
+<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="vidsay · Proje ana sayfası ve fikir oluşturma" width="80%" /></a><br /><sub>Proje ana sayfası ve fikir oluşturma</sub>
 
-<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="chat2movie · İlk açılış ve hızlı kurulum" width="80%" /></a><br /><sub>İlk açılış ve hızlı kurulum</sub>
+<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="vidsay · İlk açılış ve hızlı kurulum" width="80%" /></a><br /><sub>İlk açılış ve hızlı kurulum</sub>
 
-<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="chat2movie · Yaratıcı tuval · Koyu tema" width="80%" /></a><br /><sub>Yaratıcı tuval · Koyu tema</sub>
+<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="vidsay · Yaratıcı tuval · Koyu tema" width="80%" /></a><br /><sub>Yaratıcı tuval · Koyu tema</sub>
 
-<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="chat2movie · Yaratıcı tuval · Açık tema" width="80%" /></a><br /><sub>Yaratıcı tuval · Açık tema</sub>
+<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="vidsay · Yaratıcı tuval · Açık tema" width="80%" /></a><br /><sub>Yaratıcı tuval · Açık tema</sub>
 
-<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="chat2movie · Karakter, sahne ve aksesuar varlıkları" width="80%" /></a><br /><sub>Karakter, sahne ve aksesuar varlıkları</sub>
+<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="vidsay · Karakter, sahne ve aksesuar varlıkları" width="80%" /></a><br /><sub>Karakter, sahne ve aksesuar varlıkları</sub>
 
-<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="chat2movie · 3B yönetmen stüdyosu ve çekim ön görselleştirmesi" width="80%" /></a><br /><sub>3B yönetmen stüdyosu ve çekim ön görselleştirmesi</sub>
+<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="vidsay · 3B yönetmen stüdyosu ve çekim ön görselleştirmesi" width="80%" /></a><br /><sub>3B yönetmen stüdyosu ve çekim ön görselleştirmesi</sub>
 
-<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="chat2movie · Üç açıdan karakter çizimleri ve görsel üretimi" width="80%" /></a><br /><sub>Üç açıdan karakter çizimleri ve görsel üretimi</sub>
+<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="vidsay · Üç açıdan karakter çizimleri ve görsel üretimi" width="80%" /></a><br /><sub>Üç açıdan karakter çizimleri ve görsel üretimi</sub>
 
-<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="chat2movie · Birden çok referans varlığıyla video üretimi" width="80%" /></a><br /><sub>Birden çok referans varlığıyla video üretimi</sub>
+<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="vidsay · Birden çok referans varlığıyla video üretimi" width="80%" /></a><br /><sub>Birden çok referans varlığıyla video üretimi</sub>
 
-<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="chat2movie · Düğüm menüsü ve gruplama işlemleri" width="80%" /></a><br /><sub>Düğüm menüsü ve gruplama işlemleri</sub>
+<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="vidsay · Düğüm menüsü ve gruplama işlemleri" width="80%" /></a><br /><sub>Düğüm menüsü ve gruplama işlemleri</sub>
 
-<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="chat2movie · Eklenti Pazarı" width="80%" /></a><br /><sub>Eklenti Pazarı</sub>
+<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="vidsay · Eklenti Pazarı" width="80%" /></a><br /><sub>Eklenti Pazarı</sub>
 
 </div>
 
@@ -243,22 +243,22 @@ Desteklenen diller: 简体中文, 繁體中文, English, 日本語, Русски
 
 | İşletim Sistemi | GitHub |
 | --- | --- |
-| Windows | [Sürümler](https://github.com/kandeng/chat2movie/releases) |
-| macOS | [Sürümler](https://github.com/kandeng/chat2movie/releases) |
-| Android ARM64 | [APK indir](https://github.com/kandeng/chat2movie/releases/latest) |
+| Windows | [Sürümler](https://github.com/kandeng/vidsay/releases) |
+| macOS | [Sürümler](https://github.com/kandeng/vidsay/releases) |
+| Android ARM64 | [APK indir](https://github.com/kandeng/vidsay/releases/latest) |
 
 Android uygulaması yalnızca ARM64 cihazları destekler. Sürüm sayfasından `toonflow-VERSION-android-arm64.apk` dosyasını indirip yükleyin. Uygulama yerel bir Bun arka ucu içerir ve bağımsız çalışabilir. Ana sayfadaki Cihaz Bağlantısı ile QR kodunu tarayarak veya bağlantı bilgilerini elle girerek paylaşımı etkinleştirilmiş bir bilgisayara veya uzak arka uca yerel ağ ya da internet üzerinden bağlanabilirsiniz.
 
 Windows yükleyicisi WebView2’yi otomatik olarak algılar ve kurar. Uygulama kurulumdan hemen sonra kapanırsa çalışma zamanını [WebView2 indirme sayfasından](https://developer.microsoft.com/microsoft-edge/webview2/) indirip elle kurun.
 
-macOS (Apple Silicon) üzerinde chat2movie’u Uygulamalar klasörüne sürükleyip doğrudan açın. Önceden terminal komutu çalıştırmanız gerekmez. macOS bir güvenlik uyarısı gösterirse aşağıdaki adımları sırayla uygulayın.
+macOS (Apple Silicon) üzerinde vidsay’u Uygulamalar klasörüne sürükleyip doğrudan açın. Önceden terminal komutu çalıştırmanız gerekmez. macOS bir güvenlik uyarısı gösterirse aşağıdaki adımları sırayla uygulayın.
 
 <details>
-<summary><strong>chat2movie macOS üzerinde kurulamıyor veya açılamıyorsa</strong></summary>
+<summary><strong>vidsay macOS üzerinde kurulamıyor veya açılamıyorsa</strong></summary>
 
-**1. Gizlilik ve Güvenlik bölümünde chat2movie’a izin verin**
+**1. Gizlilik ve Güvenlik bölümünde vidsay’a izin verin**
 
-Geliştiricinin doğrulanamadığını veya Apple’ın uygulamayı kötü amaçlı yazılımlara karşı denetleyemediğini belirten bir uyarı görürseniz önce chat2movie’u açmayı deneyin. Ardından Sistem Ayarları → Gizlilik ve Güvenlik bölümüne gidin, chat2movie’un engellendiğini belirten mesajı bulun, Yine de Aç’a tıklayın ve istenen onayı verin. [Apple’ın resmî yönergelerine](https://support.apple.com/zh-cn/102445) bakın.
+Geliştiricinin doğrulanamadığını veya Apple’ın uygulamayı kötü amaçlı yazılımlara karşı denetleyemediğini belirten bir uyarı görürseniz önce vidsay’u açmayı deneyin. Ardından Sistem Ayarları → Gizlilik ve Güvenlik bölümüne gidin, vidsay’un engellendiğini belirten mesajı bulun, Yine de Aç’a tıklayın ve istenen onayı verin. [Apple’ın resmî yönergelerine](https://support.apple.com/zh-cn/102445) bakın.
 
 **2. Karantina kısıtlaması hâlâ açılmasını engelliyorsa karantina niteliğini kaldırmayı deneyin**
 
@@ -296,8 +296,8 @@ Daha fazla bilgi için [Kullanıcı Kılavuzu’na](https://qcn7xdsqgc4z.feishu.
 Kaynak kodu klonlayın ve deponun kök dizininde şu komutları çalıştırın:
 
 ```sh
-git clone https://github.com/kandeng/chat2movie.git
-cd chat2movie
+git clone https://github.com/kandeng/vidsay.git
+cd vidsay
 docker compose up -d --build
 ```
 
@@ -350,8 +350,8 @@ bun --version
 Kaynak kodu klonlayın ve hizmeti başlatın:
 
 ```sh
-git clone https://github.com/kandeng/chat2movie.git
-cd chat2movie
+git clone https://github.com/kandeng/vidsay.git
+cd vidsay
 bun install --frozen-lockfile
 
 # Build bundled nodes, tools, Web, and Server
@@ -377,7 +377,7 @@ bun run start:server
 
 ### 4.5 Buluta Dağıtım
 
-İş ortağımız [AI Galaxy (智星云)](https://www.ai-galaxy.com/), kullanıma hazır bir ortam içeren, resmî olarak yetkilendirilmiş ticari chat2movie imajı sunar. Yönergeler için [görselli imaj dağıtım kılavuzuna](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1) bakın.
+İş ortağımız [AI Galaxy (智星云)](https://www.ai-galaxy.com/), kullanıma hazır bir ortam içeren, resmî olarak yetkilendirilmiş ticari vidsay imajı sunar. Yönergeler için [görselli imaj dağıtım kılavuzuna](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1) bakın.
 
 ---
 
@@ -407,19 +407,19 @@ Bu maliyetler bu örnek için kaydedilen tutarlardır ve yalnızca fikir vermek 
   </a>
 </p>
 
-TF-Router, chat2movie’un bizzat işlettiğimiz resmî model ağ geçididir. Kullanmanızı memnuniyetle karşılarız. Kaynak kodunun tamamı açıktır; kendiniz barındırabilir ve denetleyebilirsiniz: [HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router).
+TF-Router, vidsay’un bizzat işlettiğimiz resmî model ağ geçididir. Kullanmanızı memnuniyetle karşılarız. Kaynak kodunun tamamı açıktır; kendiniz barındırabilir ve denetleyebilirsiniz: [HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router).
 
 <details>
-<summary><strong>chat2movie Topluluğuna Bir Mektup (yayımlanma: 2026-06-08)</strong></summary>
+<summary><strong>vidsay Topluluğuna Bir Mektup (yayımlanma: 2026-06-08)</strong></summary>
 
-> ### chat2movie Topluluğuna Bir Mektup
+> ### vidsay Topluluğuna Bir Mektup
 > 130 gün.
 > Uzun bir süre değil, ama bazı şeyleri açıkça görmemize yetecek kadar uzun.
 > İlk kod satırımızı depoya gönderdiğimiz günden bugüne 130 gün geçti. 20 sürüm yayımladık, 800’den fazla commit yaptık ve 640,810 karakter içeren 213,765 satır kod yazdık.
 > İki yeniden yazım, bir sağlayıcı sistemi ve gurur duyduğumuz bir iş akışı.
 > Bunların yeterli olacağını düşünmüştük.
 > Ama olmadı.
-> Bazıları chat2movie’a kendi modülünü eklemek istediğini, ancak saatlerce uğraştıktan sonra bile kodu nasıl değiştireceğini anlayamadığını söyledi.
+> Bazıları vidsay’a kendi modülünü eklemek istediğini, ancak saatlerce uğraştıktan sonra bile kodu nasıl değiştireceğini anlayamadığını söyledi.
 > Bazıları topluluğun çok küçük olduğunu ve sorun yaşadığında yardım bulamadığını söyledi.
 > Bazıları da ticari koşullar yüzünden projelerini kullanıma alamadığını anlattı.
 > Sizi duyduk.
@@ -427,7 +427,7 @@ TF-Router, chat2movie’un bizzat işlettiğimiz resmî model ağ geçididir. Ku
 > Çok paramız olduğundan değil.
 > Bu işi yapmaya değer bulduğumuzdan.
 > Bu yüzden üçüncü bir yeniden yazıma karar verdik.
-> chat2movie’un her yeniden yazımı daha fazla açıklığa ve açık kaynağa doğru ilerledi.
+> vidsay’un her yeniden yazımı daha fazla açıklığa ve açık kaynağa doğru ilerledi.
 > Bu kez her şeyi açmayı seçtik.
 >
 > 1. MIT License
@@ -462,9 +462,9 @@ TF-Router, chat2movie’un bizzat işlettiğimiz resmî model ağ geçididir. Ku
 > Yeniden yazım zaman alıyor. Bu sırada sunucular çalışmaya devam ediyor, alan adlarının yenilenmesi gerekiyor, ekip gecelere kadar çalışıyor ve kahve pahalanıyor.
 > Yatırımımız, reklamımız veya gizli ticari planlarımız yok.
 > Ama başladığımız işi bitirmek için ayakta kalmamız gerekiyor.
-> Bu nedenle chat2movie’un resmî model ağ geçidi TF-Router’ı hayata geçirdik.
+> Bu nedenle vidsay’un resmî model ağ geçidi TF-Router’ı hayata geçirdik.
 > Açıkçası bu platform konusunda uzun süre tereddüt ettik.
-> Yapmak istediğimiz bir şey değildi. Bir ağ geçidi yüzünden insanların chat2movie’un artık “işi paraya döktüğünü” düşünmesini istemedik.
+> Yapmak istediğimiz bir şey değildi. Bir ağ geçidi yüzünden insanların vidsay’un artık “işi paraya döktüğünü” düşünmesini istemedik.
 > Bu yükü uzun süre taşıdık.
 > Fakat birçok kullanıcı Seedance 2.0 için onaylı erişim alamıyor, bize sürekli onu kullanmanın bir yolu olup olmadığını soruyordu.
 > Uzun süre düşündükten sonra sonunda kendimiz bir platform kurmaya karar verdik ve Volcengine ile yıllık bir Seedance çerçeve anlaşması imzaladık.
@@ -474,11 +474,11 @@ TF-Router, chat2movie’un bizzat işlettiğimiz resmî model ağ geçididir. Ku
 > Bize güvenmiyor musunuz? Sorun değil. Kodu okuyun, kendiniz kurun ve kendiniz çalıştırın.
 > Duruşumuz bu.
 > Denemeyi seçerseniz, şu anda bu işi sürdürebilmek için sahip olduğumuz tek yola güveninizi vermiş olacaksınız.
-> Seçmezseniz de sorun yok. chat2movie’u kullanmaya, bizi eleştirmeye ve özellik istemeye devam edin.
+> Seçmezseniz de sorun yok. vidsay’u kullanmaya, bizi eleştirmeye ve özellik istemeye devam edin.
 > Buradayız.
 > Son olarak içten bir söz:
 > Biz, yaratıcı araçların herkese ait olması gerektiğine inanan sıradan bir grup insanız.
-> chat2movie hiçbir zaman yalnızca bizim ürünümüz olmadı.
+> vidsay hiçbir zaman yalnızca bizim ürünümüz olmadı.
 > Birlikte yazdığımız hikâye oldu.
 > Üçüncü yeniden yazım bitiş çizgisi değil.
 > Yeniden başladığımız nokta.
@@ -494,7 +494,7 @@ TF-Router, chat2movie’un bizzat işlettiğimiz resmî model ağ geçididir. Ku
 
 Gruba davet asistanıyla iletişime geçmek için QR kodunu tarayın:
 
-<img src="../images/qr.png" alt="chat2movie topluluğu QR kodu" height="400"/>
+<img src="../images/qr.png" alt="vidsay topluluğu QR kodu" height="400"/>
 
 Simgeye tıklayarak Discord’a da katılabilirsiniz:
 
@@ -506,15 +506,15 @@ Veya davet bağlantısını kullanın: [https://discord.gg/HEjKmpNpAZ](https://d
 
 ## 8. 💌 Bize Ulaşın
 
-📧 E-posta: [ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=chat2movie咨询)
+📧 E-posta: [ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=vidsay咨询)
 
 ---
 
 ## 9. 📜 Açık Kaynak Lisansı
 
-chat2movie, [MIT License](../../LICENSE) kapsamında lisanslanmıştır. Üçüncü taraf bağımlılıklar ve varlıklar kendi lisanslarına ve telif hakkı bildirimlerine tabi olmaya devam eder.
+vidsay, [MIT License](../../LICENSE) kapsamında lisanslanmıştır. Üçüncü taraf bağımlılıklar ve varlıklar kendi lisanslarına ve telif hakkı bildirimlerine tabi olmaya devam eder.
 
-[![chat2movie Yıldız Geçmişi](https://api.star-history.com/svg?repos=kandeng/chat2movie&type=Date)](https://www.star-history.com/#kandeng/chat2movie&Date)
+[![vidsay Yıldız Geçmişi](https://api.star-history.com/svg?repos=kandeng/vidsay&type=Date)](https://www.star-history.com/#kandeng/vidsay&Date)
 
 > **Geriye yürümezlik maddesi**: v1.0.8 öncesi sürümleri AGPL-3.0 kapsamında kullanan kullanıcılar AGPL-3.0’a tabi olmaya devam eder. v1.0.8 ile v1.1.8 arasındaki sürümler Apache-2.0’a ve ek sözleşmesine tabi olmaya devam eder. Bu lisans değişikliği söz konusu kullanıcılar için geçerli değildir.
 
@@ -535,4 +535,4 @@ Telif Hakkı © 2026 北京爱阿科技有限公司
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="chat2movie alt bilgisi" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="vidsay alt bilgisi" width="100%" />

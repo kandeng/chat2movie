@@ -11,8 +11,8 @@ import { getAuth, initializeAuth } from "@/utils/auth";
 
 // ACT: 与 provision-matrix.ts 保持一致的演示口令；可用环境变量覆盖。
 const DEMO_LOCALPARTS = ["host", "friend1", "friend2"] as const;
-const DEMO_PASSWORD = process.env.CHAT2MOVIE_DEMO_PASSWORD || "chat2movie";
-const DEMO_EMAIL_DOMAIN = process.env.CHAT2MOVIE_DEMO_EMAIL_DOMAIN || "example.com";
+const DEMO_PASSWORD = process.env.VIDSAY_DEMO_PASSWORD || "vidsay";
+const DEMO_EMAIL_DOMAIN = process.env.VIDSAY_DEMO_EMAIL_DOMAIN || "example.com";
 
 // ACT: 解析到仓库根 data/auth.db —— 与 provision-matrix.ts 一致，scripts/ 到根为三级（../../../）。
 function authDbPath(): string {

@@ -1,6 +1,6 @@
 # 浏览器
 
-让 chat2movie Agent 操作本机 Chrome 或 Edge，并在工作区中实时查看正在操作的页面。
+让 vidsay Agent 操作本机 Chrome 或 Edge，并在工作区中实时查看正在操作的页面。
 
 ## 使用
 

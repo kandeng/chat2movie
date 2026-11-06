@@ -3,8 +3,8 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { locale, translate } from "@toonflow/i18n/vue";
-// ACT: 品牌 Logo 使用本仓库绘制的 logo_chat2movie.svg（双气泡+相机），替换原 Toonflow 图标。
-import logoUrl from "@/assets/logo_chat2movie.svg";
+// ACT: 品牌 Logo 使用本仓库绘制的 logo_vidsay.svg（双气泡+相机），替换原 Toonflow 图标。
+import logoUrl from "@/assets/logo_vidsay.svg";
 // ACT: 左栏与顶栏图标统一取自 src/icons（以 CSS mask 着色，跟随 currentColor）。
 import iconPlaza from "@/icons/photo.svg";
 import iconChat from "@/icons/chat.svg";
@@ -140,8 +140,8 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
         <!-- ACT: 品牌标识（Logo + 名称）水平中心落在「主面板左边界 ↔ host 图标最左缘」的中点；页面提示槽位仍挂在其正下方。 -->
         <div class="shellTopbarCenter" :style="brandX !== null ? { '--brand-x': `${brandX}px` } : undefined">
           <div class="shellBrand">
-            <el-image class="brandLogo" :src="logoUrl" fit="contain" alt="chat2movie" />
-            <span class="brandName">chat2movie</span>
+            <el-image class="brandLogo" :src="logoUrl" fit="contain" alt="vidsay" />
+            <span class="brandName">vidsay</span>
           </div>
           <div class="shellTopbarNotices">
             <div id="shell-notices" style="display: contents" />

@@ -8,7 +8,7 @@
               <!-- ACT: data URI 内含单引号，url() 必须加引号包裹，否则整条 mask 声明无效。 -->
               <span class="welcomeIcon" aria-hidden="true"><span class="welcomeLogo" :style="{ maskImage: `url(&quot;${logoUrl}&quot;)` }" /></span>
               <div>
-                <p class="welcomeLabel">你好，我是 chat2movie 助手</p>
+                <p class="welcomeLabel">你好，我是 vidsay 助手</p>
                 <h3>从一个想法开始</h3>
               </div>
             </div>

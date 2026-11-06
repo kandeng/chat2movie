@@ -33,7 +33,7 @@ export async function sendOtpEmail(email: string, otp: string, type: OtpType): P
     : "登录";
   await sendAuthEmail(
     email,
-    `【chat2movie】${purpose}验证码`,
+    `【vidsay】${purpose}验证码`,
     `您的${purpose}验证码是：${otp}\n\n验证码 10 分钟内有效。如非本人操作，请忽略本邮件。`,
   );
 }

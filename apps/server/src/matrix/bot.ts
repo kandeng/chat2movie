@@ -5,7 +5,7 @@ import { createVideoTrigger, type VideoTrigger } from "./trigger";
 import { startScheduler } from "./scheduler";
 import { getChatToVideoSettings } from "./settings";
 
-// ACT: Task 3 的机器人。以隐藏账号 @chat2movie_bot 登录 Synapse，同步目标房间时间线，
+// ACT: Task 3 的机器人。以隐藏账号 @vidsay_bot 登录 Synapse，同步目标房间时间线，
 // 监听「!video / 生成视频」指令，命中后调用 trigger 生成视频并回贴 m.video。
 // 设计原则与 admin.ts 一致：Synapse 不可用或未配置时静默降级，绝不拖垮主服务。
 

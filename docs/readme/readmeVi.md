@@ -1,7 +1,7 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=chat2movie&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="chat2movie" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=vidsay&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=50" alt="vidsay" width="100%" />
 
 <p>
-  <a href="https://github.com/kandeng/chat2movie">
+  <a href="https://github.com/kandeng/vidsay">
     <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" />
   </a>
 </p>
@@ -37,44 +37,44 @@
 <div align="center">
 
 <p align="center">
-  <img src="../images/logo.png" alt="Biểu trưng chat2movie" width="120" height="120" />
+  <img src="../images/logo.png" alt="Biểu trưng vidsay" width="120" height="120" />
 </p>
 
 <a href="https://git.io/typing-svg">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=chat2movie;AI%20Short%20Drama%20Studio;Turn%20Ideas%20into%20Stories" />
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=chat2movie;AI%20Short%20Drama%20Studio;Turn%20Ideas%20into%20Stories" alt="chat2movie · Xưởng phim ngắn AI · Biến cảm hứng thành câu chuyện có thể nhìn thấy" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=600&lines=vidsay;AI%20Short%20Drama%20Studio;Turn%20Ideas%20into%20Stories" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=000000&center=true&vCenter=true&width=600&lines=vidsay;AI%20Short%20Drama%20Studio;Turn%20Ideas%20into%20Stories" alt="vidsay · Xưởng phim ngắn AI · Biến cảm hứng thành câu chuyện có thể nhìn thấy" width="600" />
   </picture>
 </a>
 
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/stargazers">
-    <img src="https://img.shields.io/github/stars/kandeng/chat2movie?style=for-the-badge&logo=github" alt="Huy hiệu số sao" />
+  <a href="https://github.com/kandeng/vidsay/stargazers">
+    <img src="https://img.shields.io/github/stars/kandeng/vidsay?style=for-the-badge&logo=github" alt="Huy hiệu số sao" />
   </a>
   <a href="../../LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="Huy hiệu giấy phép MIT" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/releases">
-    <img src="https://img.shields.io/github/v/release/kandeng/chat2movie?style=for-the-badge" alt="Bản phát hành" />
+  <a href="https://github.com/kandeng/vidsay/releases">
+    <img src="https://img.shields.io/github/v/release/kandeng/vidsay?style=for-the-badge" alt="Bản phát hành" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/network/members">
-    <img src="https://img.shields.io/github/forks/kandeng/chat2movie?style=for-the-badge&logo=github&color=orange" alt="Huy hiệu số nhánh fork" />
+  <a href="https://github.com/kandeng/vidsay/network/members">
+    <img src="https://img.shields.io/github/forks/kandeng/vidsay?style=for-the-badge&logo=github&color=orange" alt="Huy hiệu số nhánh fork" />
   </a>
   <a href="https://discord.gg/HEjKmpNpAZ">
     <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord" />
   </a>
 </p>
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/issues">
-    <img src="https://img.shields.io/github/issues/kandeng/chat2movie?style=for-the-badge&color=F48D73" alt="Vấn đề" />
+  <a href="https://github.com/kandeng/vidsay/issues">
+    <img src="https://img.shields.io/github/issues/kandeng/vidsay?style=for-the-badge&color=F48D73" alt="Vấn đề" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/kandeng/chat2movie?style=for-the-badge&color=2088FF" alt="Người đóng góp" />
+  <a href="https://github.com/kandeng/vidsay/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/kandeng/vidsay?style=for-the-badge&color=2088FF" alt="Người đóng góp" />
   </a>
-  <a href="https://github.com/kandeng/chat2movie/commits">
-    <img src="https://img.shields.io/github/last-commit/kandeng/chat2movie?style=for-the-badge&color=blueviolet" alt="Commit gần nhất" />
+  <a href="https://github.com/kandeng/vidsay/commits">
+    <img src="https://img.shields.io/github/last-commit/kandeng/vidsay?style=for-the-badge&color=blueviolet" alt="Commit gần nhất" />
   </a>
 </p>
 <p align="center">
@@ -86,29 +86,29 @@
 
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Day" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=Vue" alt="kandeng/vidsay | Trendshift Vue Repository Of The Day" width="250" height="55" />
   </a>
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
-  </a>
-</p>
-<p align="center">
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="kandeng/chat2movie | Trendshift Vue Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Week" width="250" height="55" />
-  </a>
-  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="kandeng/chat2movie | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/daily?language=TypeScript" alt="kandeng/vidsay | Trendshift TypeScript Repository Of The Day" width="250" height="55" />
   </a>
 </p>
 <p align="center">
   <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
-    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="kandeng/chat2movie | Trendshift HTML Repository Of The Month" width="250" height="55" />
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=Vue" alt="kandeng/vidsay | Trendshift Vue Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Week" width="250" height="55" />
+  </a>
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/weekly?language=TypeScript" alt="kandeng/vidsay | Trendshift TypeScript Repository Of The Week" width="250" height="55" />
+  </a>
+</p>
+<p align="center">
+  <a href="https://trendshift.io/repositories/24197?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-24197#achievements" target="_blank" rel="noopener noreferrer">
+    <img src="https://trendshift.io/api/badge/trendshift/repositories/24197/monthly?language=HTML" alt="kandeng/vidsay | Trendshift HTML Repository Of The Month" width="250" height="55" />
   </a>
 </p>
 
@@ -123,12 +123,12 @@
     <tr>
       <td width="50%" align="center">
         <a href="../images/gStar.png">
-          <img src="../images/gStar.png" alt="Chứng nhận chat2movie AtomGit G-Star No.540" width="100%" />
+          <img src="../images/gStar.png" alt="Chứng nhận vidsay AtomGit G-Star No.540" width="100%" />
         </a>
       </td>
       <td width="50%" align="center">
         <a href="../images/gvp.jpg">
-          <img src="../images/gvp.jpg" alt="Chứng nhận chat2movie Gitee GVP" width="100%" />
+          <img src="../images/gvp.jpg" alt="Chứng nhận vidsay Gitee GVP" width="100%" />
         </a>
       </td>
     </tr>
@@ -136,7 +136,7 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/kandeng/chat2movie/releases">Tải ứng dụng</a> ·
+  <a href="https://github.com/kandeng/vidsay/releases">Tải ứng dụng</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/RXFqdgR2Xo0dXZxGfd0cZCGgnwf">Hướng dẫn sử dụng</a> ·
   <a href="https://api.toonflow.net/console/plugIn">Chợ plugin</a> ·
   <a href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd">Tài liệu nhà phát triển</a> ·
@@ -147,7 +147,7 @@
 
 ## 1. 💛 Tài trợ và hỗ trợ
 
-Xin cảm ơn các đối tác sau đã hỗ trợ dự án mã nguồn mở chat2movie.
+Xin cảm ơn các đối tác sau đã hỗ trợ dự án mã nguồn mở vidsay.
 
 <table>
   <tr>
@@ -189,7 +189,7 @@ Xin cảm ơn các đối tác sau đã hỗ trợ dự án mã nguồn mở cha
 
 ## 2. 🌟 Điểm nổi bật
 
-chat2movie là nền tảng sáng tạo AI mã nguồn mở dành cho sản xuất phim ngắn nhiều tập, phim truyện tranh và video ngắn, kết hợp kịch bản, tài nguyên và các đoạn video trên cùng một canvas vô hạn.
+vidsay là nền tảng sáng tạo AI mã nguồn mở dành cho sản xuất phim ngắn nhiều tập, phim truyện tranh và video ngắn, kết hợp kịch bản, tài nguyên và các đoạn video trên cùng một canvas vô hạn.
 
 | Khả năng | Mô tả |
 | --- | --- |
@@ -213,25 +213,25 @@ Các ngôn ngữ được hỗ trợ: 简体中文, 繁體中文, English, 日�
 
 <div align="center">
 
-<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="Trang chủ dự án và sáng tạo từ ý tưởng trong chat2movie" width="80%" /></a><br /><sub>Trang chủ dự án và sáng tạo từ ý tưởng</sub>
+<a href="../images/screenshots/projectHome.png"><img src="../images/screenshots/projectHome.png" alt="Trang chủ dự án và sáng tạo từ ý tưởng trong vidsay" width="80%" /></a><br /><sub>Trang chủ dự án và sáng tạo từ ý tưởng</sub>
 
-<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="Khởi động lần đầu và cấu hình nhanh chat2movie" width="80%" /></a><br /><sub>Khởi động lần đầu và cấu hình nhanh</sub>
+<a href="../images/screenshots/quickStart.png"><img src="../images/screenshots/quickStart.png" alt="Khởi động lần đầu và cấu hình nhanh vidsay" width="80%" /></a><br /><sub>Khởi động lần đầu và cấu hình nhanh</sub>
 
-<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="Canvas giao diện tối và trợ lý AI của chat2movie" width="80%" /></a><br /><sub>Canvas sáng tạo · Giao diện tối</sub>
+<a href="../images/screenshots/canvasDark.png"><img src="../images/screenshots/canvasDark.png" alt="Canvas giao diện tối và trợ lý AI của vidsay" width="80%" /></a><br /><sub>Canvas sáng tạo · Giao diện tối</sub>
 
-<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="Canvas giao diện sáng và trợ lý AI của chat2movie" width="80%" /></a><br /><sub>Canvas sáng tạo · Giao diện sáng</sub>
+<a href="../images/screenshots/canvasLight.png"><img src="../images/screenshots/canvasLight.png" alt="Canvas giao diện sáng và trợ lý AI của vidsay" width="80%" /></a><br /><sub>Canvas sáng tạo · Giao diện sáng</sub>
 
-<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="Canvas tài nguyên nhân vật, bối cảnh và đạo cụ của chat2movie" width="80%" /></a><br /><sub>Tài nguyên nhân vật, bối cảnh và đạo cụ</sub>
+<a href="../images/screenshots/assetCanvas.png"><img src="../images/screenshots/assetCanvas.png" alt="Canvas tài nguyên nhân vật, bối cảnh và đạo cụ của vidsay" width="80%" /></a><br /><sub>Tài nguyên nhân vật, bối cảnh và đạo cụ</sub>
 
-<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="Bàn đạo diễn 3D và xem trước cảnh quay trong chat2movie" width="80%" /></a><br /><sub>Bàn đạo diễn 3D và xem trước cảnh quay</sub>
+<a href="../images/screenshots/directorStudio.png"><img src="../images/screenshots/directorStudio.png" alt="Bàn đạo diễn 3D và xem trước cảnh quay trong vidsay" width="80%" /></a><br /><sub>Bàn đạo diễn 3D và xem trước cảnh quay</sub>
 
-<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="Tạo ảnh nhân vật từ ba góc nhìn trong chat2movie" width="80%" /></a><br /><sub>Nhân vật ở ba góc nhìn và tạo ảnh</sub>
+<a href="../images/screenshots/characterImageGeneration.png"><img src="../images/screenshots/characterImageGeneration.png" alt="Tạo ảnh nhân vật từ ba góc nhìn trong vidsay" width="80%" /></a><br /><sub>Nhân vật ở ba góc nhìn và tạo ảnh</sub>
 
-<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="Tạo video từ nhiều tư liệu tham chiếu trong chat2movie" width="80%" /></a><br /><sub>Tạo video từ nhiều tư liệu tham chiếu</sub>
+<a href="../images/screenshots/videoGeneration.png"><img src="../images/screenshots/videoGeneration.png" alt="Tạo video từ nhiều tư liệu tham chiếu trong vidsay" width="80%" /></a><br /><sub>Tạo video từ nhiều tư liệu tham chiếu</sub>
 
-<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="Menu nút và thao tác nhóm trong chat2movie" width="80%" /></a><br /><sub>Menu nút và thao tác nhóm</sub>
+<a href="../images/screenshots/nodeMenu.png"><img src="../images/screenshots/nodeMenu.png" alt="Menu nút và thao tác nhóm trong vidsay" width="80%" /></a><br /><sub>Menu nút và thao tác nhóm</sub>
 
-<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="Chợ plugin chat2movie" width="80%" /></a><br /><sub>Chợ plugin</sub>
+<a href="../images/screenshots/pluginMarket.png"><img src="../images/screenshots/pluginMarket.png" alt="Chợ plugin vidsay" width="80%" /></a><br /><sub>Chợ plugin</sub>
 
 </div>
 
@@ -243,22 +243,22 @@ Các ngôn ngữ được hỗ trợ: 简体中文, 繁體中文, English, 日�
 
 | Hệ điều hành | GitHub |
 | -------- | ------------------------------------------------------------ |
-| Windows | [Bản phát hành](https://github.com/kandeng/chat2movie/releases) |
-| macOS | [Bản phát hành](https://github.com/kandeng/chat2movie/releases) |
-| Android ARM64 | [Tải APK](https://github.com/kandeng/chat2movie/releases/latest) |
+| Windows | [Bản phát hành](https://github.com/kandeng/vidsay/releases) |
+| macOS | [Bản phát hành](https://github.com/kandeng/vidsay/releases) |
+| Android ARM64 | [Tải APK](https://github.com/kandeng/vidsay/releases/latest) |
 
 Ứng dụng Android chỉ hỗ trợ thiết bị ARM64. Tải và cài đặt `toonflow-VERSION-android-arm64.apk` từ trang phát hành. Ứng dụng tích hợp backend Bun cục bộ nên có thể chạy độc lập. Bạn cũng có thể dùng Kết nối thiết bị trên trang chủ để quét mã QR hoặc nhập thông tin kết nối tới máy tính hoặc backend từ xa đã bật chia sẻ, qua mạng nội bộ hoặc internet.
 
 Trình cài đặt Windows tự động kiểm tra và cài đặt WebView2. Nếu ứng dụng đóng đột ngột ngay khi mở sau khi cài đặt, hãy truy cập [trang tải WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) để cài đặt môi trường chạy theo cách thủ công.
 
-Trên macOS (Apple Silicon), chỉ cần kéo chat2movie vào “Ứng dụng” rồi mở trực tiếp, không cần chạy lệnh trong Terminal trước. Nếu hệ thống hiển thị cảnh báo bảo mật, hãy thực hiện theo thứ tự sau.
+Trên macOS (Apple Silicon), chỉ cần kéo vidsay vào “Ứng dụng” rồi mở trực tiếp, không cần chạy lệnh trong Terminal trước. Nếu hệ thống hiển thị cảnh báo bảo mật, hãy thực hiện theo thứ tự sau.
 
 <details>
 <summary><strong>Cách xử lý khi không thể cài đặt hoặc mở trên macOS</strong></summary>
 
-**1. Cho phép chat2movie trong “Quyền riêng tư & Bảo mật”**
+**1. Cho phép vidsay trong “Quyền riêng tư & Bảo mật”**
 
-Nếu thấy thông báo “không thể xác minh nhà phát triển” hoặc “Apple không thể kiểm tra xem ứng dụng có chứa phần mềm độc hại hay không”, trước tiên hãy thử mở chat2movie, rồi vào “Cài đặt hệ thống → Quyền riêng tư & Bảo mật”. Tìm thông báo chat2movie bị chặn, nhấp “Vẫn mở” và xác nhận theo hướng dẫn. Xem [hướng dẫn chính thức của Apple](https://support.apple.com/zh-cn/102445) để biết chi tiết.
+Nếu thấy thông báo “không thể xác minh nhà phát triển” hoặc “Apple không thể kiểm tra xem ứng dụng có chứa phần mềm độc hại hay không”, trước tiên hãy thử mở vidsay, rồi vào “Cài đặt hệ thống → Quyền riêng tư & Bảo mật”. Tìm thông báo vidsay bị chặn, nhấp “Vẫn mở” và xác nhận theo hướng dẫn. Xem [hướng dẫn chính thức của Apple](https://support.apple.com/zh-cn/102445) để biết chi tiết.
 
 **2. Nếu vẫn không mở được do hạn chế cách ly của hệ thống, hãy thử xóa thuộc tính cách ly**
 
@@ -296,8 +296,8 @@ Trước tiên, cài Git, [Docker Engine](https://docs.docker.com/engine/install
 Sau khi sao chép mã nguồn, chạy tại thư mục gốc của kho mã:
 
 ```sh
-git clone https://github.com/kandeng/chat2movie.git
-cd chat2movie
+git clone https://github.com/kandeng/vidsay.git
+cd vidsay
 docker compose up -d --build
 ```
 
@@ -350,8 +350,8 @@ bun --version
 Sao chép mã nguồn và khởi động:
 
 ```sh
-git clone https://github.com/kandeng/chat2movie.git
-cd chat2movie
+git clone https://github.com/kandeng/vidsay.git
+cd vidsay
 bun install --frozen-lockfile
 
 # Build các nút, công cụ, Web và Server tích hợp sẵn
@@ -377,7 +377,7 @@ Khi thấy thông báo “Khởi động dịch vụ thành công” (`服务启
 
 ### 4.5 Triển khai trên nền tảng đám mây
 
-Nền tảng đối tác [AI-Galaxy (智星云)](https://www.ai-galaxy.com/) cung cấp image chat2movie thương mại được ủy quyền chính thức, cho phép sử dụng trực tiếp môi trường đã cài sẵn. Xem các bước cụ thể trong [hướng dẫn triển khai image có hình minh họa](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1).
+Nền tảng đối tác [AI-Galaxy (智星云)](https://www.ai-galaxy.com/) cung cấp image vidsay thương mại được ủy quyền chính thức, cho phép sử dụng trực tiếp môi trường đã cài sẵn. Xem các bước cụ thể trong [hướng dẫn triển khai image có hình minh họa](https://mp.weixin.qq.com/s/lq9X1ovQ1_TKeXMOLgicKg?scene=1).
 
 ---
 
@@ -407,19 +407,19 @@ https://github.com/user-attachments/assets/2d9fddac-dfdf-4640-b030-b09d7f7287e9
   </a>
 </p>
 
-TF-Router là nền tảng trung chuyển mô hình chính thức do chat2movie tự vận hành. Chúng tôi chào đón bạn sử dụng. Toàn bộ mã nguồn nền tảng đã được mở, có thể tự triển khai và kiểm tra: [HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router).
+TF-Router là nền tảng trung chuyển mô hình chính thức do vidsay tự vận hành. Chúng tôi chào đón bạn sử dụng. Toàn bộ mã nguồn nền tảng đã được mở, có thể tự triển khai và kiểm tra: [HBAI-Ltd/TF-Router](https://github.com/HBAI-Ltd/TF-Router).
 
 <details>
-<summary><strong>Thư gửi cộng đồng chat2movie (đăng ngày 2026-06-08)</strong></summary>
+<summary><strong>Thư gửi cộng đồng vidsay (đăng ngày 2026-06-08)</strong></summary>
 
-> ### Thư gửi cộng đồng chat2movie
+> ### Thư gửi cộng đồng vidsay
 > 130 ngày.
 > Không dài, nhưng đủ để chúng tôi nhìn rõ một số điều.
 > Từ lần gửi dòng mã đầu tiên đến hôm nay, chúng tôi đã đi qua 130 ngày, phát hành 20 phiên bản, thực hiện hơn 800 commits, viết 213,765 dòng mã với 640,810 ký tự.
 > Hai lần tái cấu trúc, một hệ thống nhà cung cấp và một quy trình làm việc mà chúng tôi tự hào.
 > Chúng tôi từng nghĩ như vậy đã đủ.
 > Nhưng vẫn chưa đủ.
-> Có người nói với chúng tôi rằng họ muốn thêm mô-đun riêng vào chat2movie, nhưng sửa mã mãi vẫn không hiểu.
+> Có người nói với chúng tôi rằng họ muốn thêm mô-đun riêng vào vidsay, nhưng sửa mã mãi vẫn không hiểu.
 > Có người nói cộng đồng quá nhỏ, khi gặp vấn đề không biết tìm ai.
 > Có người nói các điều khoản thương mại khiến dự án của họ không thể triển khai thực tế.
 > Chúng tôi đã lắng nghe.
@@ -427,7 +427,7 @@ TF-Router là nền tảng trung chuyển mô hình chính thức do chat2movie 
 > Không phải vì chúng tôi có nhiều tiền.
 > Mà vì chúng tôi tin việc này đáng làm.
 > Vì vậy, chúng tôi quyết định tái cấu trúc lần thứ ba.
-> Mỗi lần tái cấu trúc chat2movie đều hướng tới mã nguồn mở và sự cởi mở nhiều hơn.
+> Mỗi lần tái cấu trúc vidsay đều hướng tới mã nguồn mở và sự cởi mở nhiều hơn.
 > Lần này, chúng tôi chọn: mở hoàn toàn.
 > 　
 > 1. MIT License
@@ -462,9 +462,9 @@ TF-Router là nền tảng trung chuyển mô hình chính thức do chat2movie 
 > Tái cấu trúc cần thời gian. Trong khoảng thời gian đó, máy chủ vẫn chạy, tên miền vẫn cần gia hạn, cả đội vẫn thức khuya, và cà phê vẫn tăng giá.
 > Chúng tôi không có vốn đầu tư, không quảng cáo và không có kế hoạch kinh doanh ngầm nào.
 > Nhưng chúng tôi cần tồn tại thì mới có thể tiếp tục hoàn thành việc này.
-> Vì vậy, chúng tôi đã ra mắt TF-Router, “nền tảng trung chuyển chính thức của chat2movie”.
+> Vì vậy, chúng tôi đã ra mắt TF-Router, “nền tảng trung chuyển chính thức của vidsay”.
 > Thành thật mà nói, chúng tôi đã do dự về nền tảng này rất lâu.
-> Đây không phải nền tảng chúng tôi muốn làm. Chúng tôi không muốn chỉ vì một dịch vụ trung chuyển mà mọi người nghĩ chat2movie bắt đầu chạy theo kiếm tiền.
+> Đây không phải nền tảng chúng tôi muốn làm. Chúng tôi không muốn chỉ vì một dịch vụ trung chuyển mà mọi người nghĩ vidsay bắt đầu chạy theo kiếm tiền.
 > Chúng tôi đã mang nỗi băn khoăn đó rất lâu.
 > Nhưng nhiều người dùng không có quyền truy cập theo danh sách cho phép nên không dùng được Seedance 2.0, và liên tục hỏi chúng tôi có cách nào không.
 > Chúng tôi suy nghĩ rất lâu, cuối cùng không còn cách khác nên quyết định tự xây dựng, đồng thời trực tiếp ký hợp đồng khung hằng năm về Seedance với Volcengine.
@@ -474,11 +474,11 @@ TF-Router là nền tảng trung chuyển mô hình chính thức do chat2movie 
 > Bạn không tin chúng tôi? Không sao, bạn có thể tự xem mã, tự triển khai và tự vận hành.
 > Đó là quan điểm của chúng tôi.
 > Nếu bạn sẵn lòng dùng thử, đó là một lá phiếu tín nhiệm dành cho cách duy nhất hiện giúp chúng tôi duy trì hoạt động.
-> Nếu không muốn, cũng không sao. Hãy tiếp tục dùng chat2movie, tiếp tục phê bình và tiếp tục đề xuất tính năng.
+> Nếu không muốn, cũng không sao. Hãy tiếp tục dùng vidsay, tiếp tục phê bình và tiếp tục đề xuất tính năng.
 > Chúng tôi vẫn ở đây.
 > Cuối cùng, xin nói một điều thật lòng.
 > Chúng tôi chỉ là một nhóm người bình thường tin rằng “công cụ sáng tạo nên thuộc về tất cả mọi người”.
-> chat2movie chưa bao giờ là sản phẩm chỉ của riêng chúng tôi.
+> vidsay chưa bao giờ là sản phẩm chỉ của riêng chúng tôi.
 > Đó là câu chuyện chúng ta cùng viết.
 > Lần tái cấu trúc thứ ba không phải điểm kết thúc.
 > Mà là nơi chúng tôi bắt đầu lại.
@@ -494,7 +494,7 @@ TF-Router là nền tảng trung chuyển mô hình chính thức do chat2movie 
 
 Trợ lý hỗ trợ tham gia nhóm:
 
-<img src="../images/qr.png" alt="Mã QR cộng đồng chat2movie" height="400"/>
+<img src="../images/qr.png" alt="Mã QR cộng đồng vidsay" height="400"/>
 
 Bạn cũng có thể nhấp vào biểu tượng để tham gia Discord:
 
@@ -506,15 +506,15 @@ Hoặc nhấp vào liên kết mời: [https://discord.gg/HEjKmpNpAZ](https://di
 
 ## 8. 💌 Liên hệ
 
-📧 Email: [ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=chat2movie咨询)
+📧 Email: [ltlctools@outlook.com](mailto:ltlctools@outlook.com?subject=vidsay咨询)
 
 ---
 
 ## 9. 📜 Giấy phép mã nguồn mở
 
-chat2movie sử dụng [giấy phép MIT](../../LICENSE). Các gói phụ thuộc và tư liệu bên thứ ba tuân theo giấy phép và thông báo bản quyền tương ứng.
+vidsay sử dụng [giấy phép MIT](../../LICENSE). Các gói phụ thuộc và tư liệu bên thứ ba tuân theo giấy phép và thông báo bản quyền tương ứng.
 
-[![Lịch sử số sao của chat2movie](https://api.star-history.com/svg?repos=kandeng/chat2movie&type=Date)](https://www.star-history.com/#kandeng/chat2movie&Date)
+[![Lịch sử số sao của vidsay](https://api.star-history.com/svg?repos=kandeng/vidsay&type=Date)](https://www.star-history.com/#kandeng/vidsay&Date)
 
 > **Điều khoản không hồi tố**: Người dùng sử dụng theo AGPL-3.0 trước khi v1.0.8 được phát hành tiếp tục tuân theo AGPL-3.0; các phiên bản v1.0.8 ~ v1.1.8 tiếp tục tuân theo Apache-2.0 cùng thỏa thuận bổ sung, không chịu ảnh hưởng của thay đổi giấy phép này.
 
@@ -535,4 +535,4 @@ Bản quyền © 2026 北京爱阿科技有限公司
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="Chân trang chat2movie" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=90&section=footer" alt="Chân trang vidsay" width="100%" />

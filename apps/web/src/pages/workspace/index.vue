@@ -86,7 +86,7 @@
                       href="https://docs.qq.com/smartsheet/form/EmvmQBrmlPmr%2Fss_vsqk2v%2FvhiGzE?tab=ss_vsqk2v"
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="chat2movie 需求/BUG反馈表"
+                      title="vidsay 需求/BUG反馈表"
                       @click="helpVisible = false">
                       汇报 BUG
                     </el-button>
@@ -98,12 +98,12 @@
             </el-tooltip>
           </div>
         </el-card>
-        <el-tooltip v-if="!agentVisible" content="chat2movie Agent" placement="top" :showArrow="false" :hideAfter="0">
+        <el-tooltip v-if="!agentVisible" content="vidsay Agent" placement="top" :showArrow="false" :hideAfter="0">
           <el-button
             class="agentButton"
             :class="{ standalone: activePanel !== 'canvas' }"
             :aria-expanded="agentVisible"
-            aria-label="chat2movie Agent"
+            aria-label="vidsay Agent"
             aria-controls="agentPanel"
             @click="agentVisible = !agentVisible">
             <!-- ACT: data URI 内含单引号，url() 必须加引号包裹，否则整条 mask 声明无效。 -->
@@ -200,7 +200,7 @@ const contacts = {
   community: {
     title: "加入交流群",
     url: "https://work.weixin.qq.com/u/vc36adcc89845edcbe?v=5.0.3.63936&bb=85b8d228e8",
-    tip: "chat2movie 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。",
+    tip: "vidsay 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。",
   },
   business: {
     title: "商务合作",

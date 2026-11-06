@@ -1,9 +1,9 @@
 <template>
   <div class="about">
     <div class="brand">
-      <div class="brandMark"><img class="brandLogo" :src="logoUrl" alt="chat2movie Logo" /></div>
+      <div class="brandMark"><img class="brandLogo" :src="logoUrl" alt="vidsay Logo" /></div>
       <div class="brandInfo">
-        <h3>chat2movie</h3>
+        <h3>vidsay</h3>
         <div class="brandMeta">
           <span v-if="currentVersion">v{{ currentVersion }}</span>
         </div>
@@ -11,7 +11,7 @@
     </div>
 
     <el-card class="infoCard repositoryCard" shadow="never">
-      <a class="repositoryLink" :href="repositoryUrl" target="_blank" rel="noopener noreferrer" aria-label="GitHub 仓库：kandeng/chat2movie">
+      <a class="repositoryLink" :href="repositoryUrl" target="_blank" rel="noopener noreferrer" aria-label="GitHub 仓库：kandeng/vidsay">
         <icon-brand-github class="repositoryIcon" :size="22" aria-hidden="true" />
         <div class="repositoryInfo">
           <span class="repositoryTitle">GitHub 仓库</span>
@@ -38,9 +38,9 @@
             bgColor="#ffffff"
             borderless
             role="img"
-            aria-label="chat2movie 交流群二维码" />
+            aria-label="vidsay 交流群二维码" />
           <div class="tips">
-            chat2movie 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。
+            vidsay 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。
           </div>
         </el-popover>
       </div>
@@ -63,7 +63,7 @@
             bgColor="#ffffff"
             borderless
             role="img"
-            aria-label="chat2movie 商务合作二维码" />
+            aria-label="vidsay 商务合作二维码" />
         </el-popover>
       </h3>
       <div v-if="sponsors.length" class="sponsorGrid" @keydown.esc="closeSponsor">
@@ -107,7 +107,7 @@ import logoUrl from "@toonflow/assets/logo.svg";
 import tf, { type TfSponsor } from "@/lib/tf";
 
 const messageMarkdown = defineAsyncComponent(() => import("@/components/messageMarkdown.vue"));
-const repositoryUrl = "https://github.com/kandeng/chat2movie";
+const repositoryUrl = "https://github.com/kandeng/vidsay";
 const communityUrl = "https://work.weixin.qq.com/u/vc36adcc89845edcbe?v=5.0.3.63936&bb=85b8d228e8";
 // ACT: 客户端（桌面/移动）已移除，网页版本号直接取构建时注入的应用版本。
 const currentVersion = import.meta.env.appVersion as string | undefined;

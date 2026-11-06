@@ -1,16 +1,16 @@
 {
-  "name": "chat2movie",
+  "name": "vidsay",
   "version": "2.0.0",
-  "description": "chat2movie 是一款 AI 短剧漫剧工具，能够利用 AI 技术将小说自动转化为剧本，并结合 AI 生成的图片和视频，实现高效的短剧创作。",
+  "description": "vidsay 是一款 AI 短剧漫剧工具，能够利用 AI 技术将小说自动转化为剧本，并结合 AI 生成的图片和视频，实现高效的短剧创作。",
   "author": "HBAI-Ltd <ltlctools@outlook.com>",
   "license": "MIT",
-  "homepage": "https://github.com/kandeng/chat2movie#readme",
+  "homepage": "https://github.com/kandeng/vidsay#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kandeng/chat2movie.git"
+    "url": "git+https://github.com/kandeng/vidsay.git"
   },
   "bugs": {
-    "url": "https://github.com/kandeng/chat2movie/issues",
+    "url": "https://github.com/kandeng/vidsay/issues",
     "email": "ltlctools@outlook.com"
   },
   "type": "module",

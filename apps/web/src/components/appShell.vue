@@ -141,7 +141,7 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
         <div class="shellTopbarCenter" :style="brandX !== null ? { '--brand-x': `${brandX}px` } : undefined">
           <div class="shellBrand">
             <el-image class="brandLogo" :src="logoUrl" fit="contain" alt="vidsay" />
-            <span class="brandName">vidsay</span>
+            <span class="brandName">vidsay<span class="brandMotto">: {{ translate("一段视频胜千言") }}</span></span>
           </div>
           <div class="shellTopbarNotices">
             <div id="shell-notices" style="display: contents" />
@@ -232,6 +232,15 @@ watch([() => auth.signedIn, () => auth.avatarUrl, locale], () => { void nextTick
     letter-spacing: -0.5px;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  // ACT: 品牌口号紧跟品牌名（冒号相连）：字号更小、字重更轻、颜色更淡；窄屏随品牌名一起省略。
+  .brandMotto {
+    margin-left: 3px;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--el-text-color-secondary);
   }
 }
 

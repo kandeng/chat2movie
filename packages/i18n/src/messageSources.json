@@ -245,8 +245,7 @@
   ],
   "文本": [
     "apps/web/src/components/agent/mentionMenu.vue",
-    "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
-    "apps/server/src/utils/ai/initialize.ts"
+    "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue"
   ],
   "整数": [
     "apps/web/src/components/agent/mentionMenu.vue"
@@ -262,7 +261,6 @@
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/server/src/utils/ai/initialize.ts",
     "apps/server/src/utils/media/generation.ts"
   ],
   "遮罩": [
@@ -273,7 +271,6 @@
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/server/src/utils/ai/initialize.ts",
     "apps/server/src/utils/media/generation.ts"
   ],
   "音频": [
@@ -281,7 +278,6 @@
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/server/src/utils/ai/initialize.ts",
     "apps/server/src/utils/media/generation.ts"
   ],
   "文件": [
@@ -992,6 +988,9 @@
     "apps/web/src/components/appShell.vue",
     "apps/web/src/pages/workspace/components/workspaceMenu.vue"
   ],
+  "一段视频胜千言": [
+    "apps/web/src/components/appShell.vue"
+  ],
   "账户": [
     "apps/web/src/components/appShell.vue",
     "apps/web/src/pages/account/index.vue"
@@ -1596,13 +1595,11 @@
   "媒体供应商配置格式无效": [
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
-    "apps/web/src/pages/hello/index.vue"
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "当前供应商配置格式无效": [
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
-    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
-    "apps/web/src/pages/hello/index.vue"
+    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue"
   ],
   "读取最新模型失败": [
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue"
@@ -2856,6 +2853,9 @@
   "获取模型列表失败，请检查 API Key 后重试": [
     "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
   ],
+  "请填写 API 地址": [
+    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
+  ],
   "已保存的供应商配置格式不正确": [
     "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue",
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
@@ -3674,9 +3674,6 @@
   "GitHub 仓库": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
-  "官方中转平台 TF-Router": [
-    "apps/web/src/components/settings/panels/about.vue"
-  ],
   "微信交流群": [
     "apps/web/src/components/settings/panels/about.vue"
   ],
@@ -3995,19 +3992,7 @@
     "apps/web/src/pages/hello/index.vue",
     "apps/web/src/lib/i18n.ts"
   ],
-  "登录 TF-Router": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
   "配置语言模型": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "正在配置文本模型和媒体模型…": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "TF-Router 登录与注册": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "重试配置": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "开始使用": [
@@ -4016,49 +4001,16 @@
   "快速开始": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "选择登录TF-Router可直接自动配置，无需任何复杂操作，即可开始创作。": [
+  "vidsay 已内置 AI-Router 模型路由，可直接开始创作；你也可以添加自己的私有模型提供商。": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "登录 TF-Router 自动配置": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "添加私有提供商": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "或": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "稍后配置": [
+  "稍后配置，直接进入": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "© {0} vidsay · 保留所有权利。": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "保存引导状态失败，请重试": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "注册失败": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "登录失败": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "注册成功，请继续登录以自动配置模型": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "登录未返回有效的 API Key，请重新登录": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "读取媒体供应商失败，请重试配置": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "语言模型配置格式无效": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "TF-Router API Key 已配置完成": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "自动配置失败，请重试": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "账户分类": [
@@ -6322,6 +6274,9 @@
   "请输入房间 ID 或别名": [
     "apps/web/src/composables/useMatrixChat.ts"
   ],
+  "[media] 物化配置供应商失败：": [
+    "apps/server/src/app.ts"
+  ],
   "[auth] 账号数据库初始化失败：": [
     "apps/server/src/app.ts"
   ],
@@ -7843,13 +7798,11 @@
   "图片附件的 Base64 数据无效": [
     "apps/server/src/utils/ai/files.ts"
   ],
-  "未获取到文本模型，保留原有列表": [
-    "apps/server/src/utils/ai/initialize.ts"
+  "供应商": [
+    "apps/server/src/utils/ai/initialize.ts",
+    "apps/server/src/utils/plugins/install.ts"
   ],
   "未知错误": [
-    "apps/server/src/utils/ai/initialize.ts"
-  ],
-  "媒体": [
     "apps/server/src/utils/ai/initialize.ts"
   ],
   "只能读取普通素材文件": [
@@ -8460,9 +8413,6 @@
   "下载文件名“{0}”不符合 {1} 类型规范，文件名示例：{2}；改名后请重新生成下载链接": [
     "apps/server/src/utils/plugins/install.ts"
   ],
-  "供应商": [
-    "apps/server/src/utils/plugins/install.ts"
-  ],
   "文件扩展元数据无效，请使用扩展脚手架重新构建，且文件名必须与扩展 ID 一致": [
     "apps/server/src/utils/plugins/ext.ts"
   ],
@@ -8602,6 +8552,15 @@
     "apps/server/src/utils/media/provider.ts"
   ],
   "媒体供应商“{0}”已安装，请在「设置 → 媒体模型」中编辑，或先删除后重新安装。": [
+    "apps/server/src/utils/media/provider.ts"
+  ],
+  "适配器模板语法错误：{0}": [
+    "apps/server/src/utils/media/provider.ts"
+  ],
+  "适配器模板须通过 export default 导出对象": [
+    "apps/server/src/utils/media/provider.ts"
+  ],
+  "适配器模板须直接导出对象字面量": [
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商文件不存在": [

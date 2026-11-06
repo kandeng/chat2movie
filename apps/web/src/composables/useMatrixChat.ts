@@ -442,6 +442,22 @@ async function sendText(body: string) {
   refreshRooms();
 }
 
+// ACT: 截图发送：上传二进制到 Matrix 内容仓库，再发 m.image 事件。
+async function sendImage(file: File, name: string, width: number, height: number) {
+  if (!client || !activeRoomId.value) throw new Error(translate("尚未连接到聊天服务"));
+  const uploaded = await client.uploadContent(file, { name, type: file.type });
+  const mxc = typeof uploaded === "string" ? uploaded : (uploaded as { content_uri?: string })?.content_uri;
+  if (!mxc) throw new Error(translate("上传失败，请稍后重试"));
+  await client.sendMessage(activeRoomId.value, {
+    msgtype: sdk.MsgType.Image,
+    body: name,
+    url: mxc,
+    info: { mimetype: file.type, size: file.size, w: width, h: height },
+  });
+  refreshTimeline();
+  refreshRooms();
+}
+
 let typingTimer: ReturnType<typeof setTimeout> | null = null;
 function noteTyping() {
   if (!client || !activeRoomId.value) return;
@@ -482,6 +498,6 @@ export function useMatrixChat() {
     timeline, videos, typingNames,
     bootstrap, teardown, refreshRooms,
     setActiveRoom, createRoom, joinRoom, acceptInvite,
-    sendText, noteTyping, markRead,
+    sendText, sendImage, noteTyping, markRead,
   };
 }

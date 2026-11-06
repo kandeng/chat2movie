@@ -3227,5 +3227,15 @@
   "一段视频胜千言": "Bir video bin kelimeye bedel.",
   "一键生成": "Tek adımda oluştur",
   "分步生成": "Adım adım oluştur",
-  "一键生成视频": "Tek adımda video oluştur"
+  "一键生成视频": "Tek adımda video oluştur",
+  "放下画笔": "Kalemi bırak",
+  "该群聊还没有视频": "Bu grupta henüz video yok",
+  "滑动定位": "Kaydır",
+  "截图并发送到群聊": "Ekran görüntüsü al ve gruba gönder",
+  "墨色": "Mürekkep rengi",
+  "切换群聊": "Grup değiştir",
+  "清除标记": "İşaretleri temizle",
+  "上传失败，请稍后重试": "Yükleme başarısız, lütfen daha sonra tekrar deneyin",
+  "输入文字，Enter 落笔，Esc 取消": "Metin yazın, Enter ile yerleştirin, Esc ile iptal edin",
+  "下载截图": "Ekran görüntüsünü indir"
 }

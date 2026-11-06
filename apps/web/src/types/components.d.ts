@@ -77,6 +77,7 @@ declare module 'vue' {
     FfmpegRequired: typeof import('./../components/settings/ffmpegRequired.vue')['default']
     General: typeof import('./../components/settings/panels/general/index.vue')['default']
     IconArrowGuide: typeof import('@tabler/icons-vue')['IconArrowGuide']
+    IconBell: typeof import('@tabler/icons-vue')['IconBell']
     IconBorderRadius: typeof import('@tabler/icons-vue')['IconBorderRadius']
     IconExternalLink: typeof import('@tabler/icons-vue')['IconExternalLink']
     IconFolders: typeof import('@tabler/icons-vue')['IconFolders']

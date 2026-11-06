@@ -48,11 +48,13 @@
     "apps/web/src/components/videoPlayer.vue"
   ],
   "播放": [
-    "apps/web/src/components/videoPlayer.vue"
+    "apps/web/src/components/videoPlayer.vue",
+    "apps/web/src/pages/chat/components/videoStage.vue"
   ],
   "暂停": [
     "apps/web/src/components/videoPlayer.vue",
-    "apps/web/src/components/singleAgentDialog.vue"
+    "apps/web/src/components/singleAgentDialog.vue",
+    "apps/web/src/pages/chat/components/videoStage.vue"
   ],
   "播放速度": [
     "apps/web/src/components/videoPlayer.vue"
@@ -270,6 +272,7 @@
     "apps/web/src/components/agent/mentionMenu.vue",
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
+    "apps/web/src/pages/chat/index.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
     "apps/server/src/utils/media/generation.ts"
   ],
@@ -4102,31 +4105,38 @@
   "资料更新失败，请稍后重试": [
     "apps/web/src/pages/account/index.vue"
   ],
+  "该群聊还没有视频": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "输入文字，Enter 落笔，Esc 取消": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "滑动定位": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "墨色": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "清除标记": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "放下画笔": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "截图并发送到群聊": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "下载截图": [
+    "apps/web/src/pages/chat/components/videoStage.vue"
+  ],
+  "上传失败，请稍后重试": [
+    "apps/web/src/pages/chat/components/videoStage.vue",
+    "apps/web/src/composables/useMatrixChat.ts"
+  ],
   "登录后即可参与群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
-  "群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "新建群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "加入群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "还没有群聊，点右上角新建一个。": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "待接受邀请": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "邀请你加入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "加入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "{0} 位成员": [
+  "切换群聊": [
     "apps/web/src/pages/chat/index.vue"
   ],
   "已连接": [
@@ -4138,7 +4148,19 @@
   "主持人": [
     "apps/web/src/pages/chat/index.vue"
   ],
-  "从左侧选择一个群聊开始。": [
+  "待接受邀请": [
+    "apps/web/src/pages/chat/index.vue"
+  ],
+  "加入": [
+    "apps/web/src/pages/chat/index.vue"
+  ],
+  "新建群聊": [
+    "apps/web/src/pages/chat/index.vue"
+  ],
+  "加入群聊": [
+    "apps/web/src/pages/chat/index.vue"
+  ],
+  "还没有群聊，点右上角新建一个。": [
     "apps/web/src/pages/chat/index.vue"
   ],
   "还没有消息，发送第一条开始讨论吧。": [

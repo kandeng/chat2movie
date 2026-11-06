@@ -1,5 +1,5 @@
 <template>
-  <main class="chat" :style="{ '--room-w': roomWidth + 'px' }">
+  <main class="chat" :style="{ '--chat-w': chatWidth + 'px' }">
     <!-- ACT: 未登录时整页只给出登录引导；登录态由顶栏/账户页共用的 loginDialog 提供。 -->
     <section v-if="!auth.signedIn" class="signedOut">
       <el-empty :description="translate('登录后即可参与群聊')">
@@ -8,11 +8,48 @@
     </section>
 
     <template v-else>
-      <!-- 左栏：房间列表（邀请置顶，可显式加入） -->
-      <aside class="roomPanel">
-        <div class="roomPanelHeader">
-          <span class="roomPanelTitle">{{ translate("群聊") }}</span>
-          <div class="roomPanelActions">
+      <!-- 左栏：视频播放与截图舞台 -->
+      <videoStage :items="videoItems" v-model="selectedVideoId" />
+
+      <!-- ACT: 可拖拽竖直分隔条：按住左右移动实时改右栏（聊天框）宽度。 -->
+      <div class="chatResize" :class="{ dragging: resizing }" @pointerdown="onResizeDown" />
+
+      <!-- 右栏：当前房间的消息流与输入区 -->
+      <section class="chatPanel">
+        <header class="chatHeader">
+          <el-select
+            class="roomSelect"
+            :model-value="activeRoomId || undefined"
+            :placeholder="translate('切换群聊')"
+            :disabled="!ready"
+            @update:model-value="setActiveRoom">
+            <el-option v-for="room in joinedRooms" :key="room.id" :label="room.name" :value="room.id" />
+          </el-select>
+          <span class="chatStatus">
+            <el-tag v-if="chatError" type="danger" size="small" effect="plain">{{ translate("连接失败") }}</el-tag>
+            <el-tag v-else-if="connecting" type="info" size="small" effect="plain">{{ translate("连接中…") }}</el-tag>
+            <el-tag v-else-if="ready" type="success" size="small" effect="plain">{{ translate("已连接") }}</el-tag>
+            <el-tag v-else type="info" size="small" effect="plain">{{ translate("未连接") }}</el-tag>
+            <el-tag v-if="isHost" type="warning" size="small" effect="plain">{{ translate("主持人") }}</el-tag>
+          </span>
+          <div class="chatHeaderActions">
+            <el-popover v-if="invites.length" placement="bottom-end" :width="260" trigger="click">
+              <template #reference>
+                <el-badge :value="invites.length" :max="9" class="inviteBadge">
+                  <button class="roomAction" type="button" :aria-label="translate('待接受邀请')">
+                    <icon-bell :size="18" aria-hidden="true" />
+                  </button>
+                </el-badge>
+              </template>
+              <ul class="inviteList">
+                <li v-for="room in invites" :key="room.id">
+                  <span class="inviteName">{{ room.name }}</span>
+                  <el-button size="small" type="primary" plain :loading="busyRoom === room.id" :disabled="!ready" @click="accept(room.id)">
+                    {{ translate("加入") }}
+                  </el-button>
+                </li>
+              </ul>
+            </el-popover>
             <el-tooltip :content="translate('新建群聊')" placement="bottom" :show-after="100">
               <button class="roomAction" type="button" :disabled="!ready" :aria-label="translate('新建群聊')" @click="createVisible = true">
                 <icon-plus :size="18" aria-hidden="true" />
@@ -24,59 +61,11 @@
               </button>
             </el-tooltip>
           </div>
-        </div>
-
-        <el-scrollbar class="roomScroll">
-          <p v-if="!rooms.length" class="roomEmpty">{{ translate("还没有群聊，点右上角新建一个。") }}</p>
-          <ul v-if="invites.length" class="roomList">
-            <li class="roomListLabel">{{ translate("待接受邀请") }}</li>
-            <li v-for="room in invites" :key="room.id" class="roomRow invite">
-              <div class="roomItem">
-                <span class="roomName">{{ room.name }}</span>
-                <span class="roomSub">{{ translate("邀请你加入") }}</span>
-              </div>
-              <el-button class="inviteJoin" size="small" type="primary" plain :loading="busyRoom === room.id" :disabled="!ready" @click="accept(room.id)">
-                {{ translate("加入") }}
-              </el-button>
-            </li>
-          </ul>
-          <ul v-if="joinedRooms.length" class="roomList">
-            <li v-for="room in joinedRooms" :key="room.id" class="roomRow">
-              <button class="roomItem" type="button" :class="{ active: room.id === activeRoomId }" @click="setActiveRoom(room.id)">
-                <span class="roomName">{{ room.name }}</span>
-                <span class="roomSub">
-                  <span v-if="room.topic" class="roomTopic">{{ room.topic }}</span>
-                  <span v-else class="roomMembers">{{ room.memberCount }} 位成员</span>
-                </span>
-              </button>
-              <span v-if="room.unread" class="roomUnread">{{ room.unread > 99 ? "99+" : room.unread }}</span>
-            </li>
-          </ul>
-        </el-scrollbar>
-      </aside>
-
-      <!-- ACT: 可拖拽竖直分隔条：按住左右移动实时改左栏（群聊列表）宽度。 -->
-      <div class="chatResize" :class="{ dragging: resizing }" @pointerdown="onResizeDown" />
-
-      <!-- 右栏：当前房间的消息流与输入区 -->
-      <section class="chatPanel">
-        <header class="chatHeader">
-          <div class="chatTitle">
-            <h1>{{ roomName || translate("群聊") }}</h1>
-            <span class="chatStatus">
-              <el-tag v-if="chatError" type="danger" size="small" effect="plain">{{ translate("连接失败") }}</el-tag>
-              <el-tag v-else-if="connecting" type="info" size="small" effect="plain">{{ translate("连接中…") }}</el-tag>
-              <el-tag v-else-if="ready" type="success" size="small" effect="plain">{{ translate("已连接") }}</el-tag>
-              <el-tag v-else type="info" size="small" effect="plain">{{ translate("未连接") }}</el-tag>
-              <span v-if="ready" class="chatWho">{{ auth.displayName }}</span>
-              <el-tag v-if="isHost" type="warning" size="small" effect="plain">{{ translate("主持人") }}</el-tag>
-            </span>
-          </div>
         </header>
 
         <el-scrollbar ref="scroller" class="chatBody">
           <div class="messageList">
-            <p v-if="!activeRoomId" class="emptyHint">{{ translate("从左侧选择一个群聊开始。") }}</p>
+            <p v-if="!activeRoomId" class="emptyHint">{{ translate("还没有群聊，点右上角新建一个。") }}</p>
             <p v-else-if="!timeline.length" class="emptyHint">{{ translate("还没有消息，发送第一条开始讨论吧。") }}</p>
             <div v-for="msg in timeline" :key="msg.id" class="messageRow" :class="{ mine: msg.mine, anchored: anchoredId === msg.id }" :data-event-id="msg.id">
               <!-- ACT: 圆形头像置于气泡外侧（他人左/自己右），替代原先气泡内的发送者名字；无头像时用首字母占位圆。 -->
@@ -88,7 +77,10 @@
                 <div class="meta">
                   <span class="time">{{ formatTime(msg.ts) }}</span>
                 </div>
-                <video v-if="msg.msgtype === 'm.video' && msg.url" class="media" :src="msg.url" controls />
+                <button v-if="msg.msgtype === 'm.video' && msg.url" type="button" class="videoCard" :class="{ active: msg.id === selectedVideoId }" @click="selectedVideoId = msg.id">
+                  <span class="videoCardIcon" :style="{ '--tool-icon': `url(&quot;${iconMovieFilm}&quot;)` }" aria-hidden="true" />
+                  <span class="videoCardName">{{ msg.body || translate("视频") }}</span>
+                </button>
                 <el-image v-else-if="msg.msgtype === 'm.image' && msg.url" class="media" :src="msg.url" fit="contain" :preview-src-list="[msg.url]" />
                 <p class="text">{{ msg.body }}</p>
               </div>
@@ -183,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, type ScrollbarInstance } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
@@ -193,8 +185,10 @@ import iconUserGroup from "@/icons/user_group.svg";
 import iconFileUpload from "@/icons/file_upload.svg";
 import iconOneShot from "@/icons/generator_one_shot.svg";
 import iconStepByStep from "@/icons/generator_step_by_step.svg";
+import iconMovieFilm from "@/icons/movie_film.svg";
 import { useAuthStore } from "@/stores/auth";
 import { useMatrixChat } from "@/composables/useMatrixChat";
+import videoStage from "./components/videoStage.vue";
 
 // ACT: 群聊页（计划 Task 3）——左栏房间列表 + 右栏会话。
 // 客户端是模块级单例：离开本页不再 teardown，登录态消失时由 useMatrixChat 内部的 auth 监听负责断开。
@@ -202,8 +196,8 @@ const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
 const {
-  ready, connecting, error: chatError, rooms, joinedRooms, invites,
-  activeRoomId, roomName, isHost, timeline, typingNames,
+  ready, connecting, error: chatError, joinedRooms, invites,
+  activeRoomId, isHost, timeline, typingNames,
   bootstrap, setActiveRoom, createRoom, joinRoom, acceptInvite,
   sendText, noteTyping,
 } = useMatrixChat();
@@ -220,27 +214,28 @@ const joinTarget = ref("");
 const busyRoom = ref("");
 const actionBusy = ref(false);
 
-// ── 房间列表与会话区之间的分隔条拖拽 ──
-// ACT: pointerdown 记下起始宽度与起始 X，pointermove 用增量实时夹紧到 [ROOM_MIN, ROOM_MAX]，
-// pointerup（含组件卸载）统一摘掉全局监听，避免残留。
-const ROOM_MIN = 200;
-const ROOM_MAX = 420;
-const roomWidth = ref(260);
+// ── 视频舞台选择状态 ──
+const selectedVideoId = ref("");
+const videoItems = computed(() =>
+  timeline.value.filter(m => m.msgtype === "m.video" && m.url).map(m => ({ id: m.id, url: m.url!, name: m.body })),
+);
+
+// ── 视频舞台与聊天区之间的分隔条拖拽 ──
+// ACT: pointerdown 记下起始 X，pointermove 用窗口宽度 - clientX 算出右栏宽度，夹紧到 [320, vw*0.55]。
+const CHAT_MIN = 320;
+const chatWidth = ref(400);
 const resizing = ref(false);
-let resizeStartX = 0;
-let resizeStartW = 0;
 
 function onResizeDown(event: PointerEvent) {
   event.preventDefault();
   resizing.value = true;
-  resizeStartX = event.clientX;
-  resizeStartW = roomWidth.value;
   document.addEventListener("pointermove", onResizeMove);
   document.addEventListener("pointerup", onResizeUp);
 }
 function onResizeMove(event: PointerEvent) {
   if (!resizing.value) return;
-  roomWidth.value = Math.min(ROOM_MAX, Math.max(ROOM_MIN, resizeStartW + event.clientX - resizeStartX));
+  const max = Math.round(window.innerWidth * 0.55);
+  chatWidth.value = Math.min(max, Math.max(CHAT_MIN, window.innerWidth - event.clientX));
 }
 function onResizeUp() {
   if (!resizing.value) return;
@@ -399,8 +394,8 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .chat {
   display: grid;
-  // ACT: 三列：房间列表（宽度由拖拽变量 --room-w 决定）+ 4px 分隔条 + 会话区。
-  grid-template-columns: var(--room-w, 260px) 4px minmax(0, 1fr);
+  // ACT: 三列：视频舞台（弹性占满）+ 4px 分隔条 + 聊天框（宽度由拖拽变量 --chat-w 决定）。
+  grid-template-columns: minmax(0, 1fr) 4px var(--chat-w, 400px);
   height: 100%;
   background: var(--el-bg-color);
   color: var(--el-text-color-primary);
@@ -416,17 +411,7 @@ onMounted(async () => {
   min-height: 0;
 }
 
-.roomPanel {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-width: 0;
-  min-height: 0;
-  // ACT: 背景比最左图标栏（96% bg + 4% text）再深一倍（92% bg + 8% text），形成层级对比；随主题变量自动适配深/浅色。
-  background: color-mix(in srgb, var(--el-bg-color) 92%, var(--el-text-color-primary));
-  border-inline-end: 1px solid var(--el-border-color-lighter);
-}
-
-// ACT: 分隔条平时透明（视觉上是 roomPanel 的 1px 边框），悬停/拖拽时亮主色给出反馈。
+// ACT: 分隔条平时透明，悬停/拖拽时亮主色给出反馈。
 .chatResize {
   width: 4px;
   cursor: col-resize;
@@ -434,26 +419,6 @@ onMounted(async () => {
   transition: background 0.15s ease;
 
   &:hover, &.dragging { background: var(--el-color-primary); }
-}
-
-.roomPanelHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 12px 12px 16px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-
-  .roomPanelTitle {
-    font-size: 15px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .roomPanelActions {
-    display: flex;
-    gap: 4px;
-  }
 }
 
 .roomAction {
@@ -474,88 +439,6 @@ onMounted(async () => {
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.roomScroll {
-  min-height: 0;
-  padding: 8px;
-}
-
-.roomEmpty {
-  margin: 24px 8px;
-  color: var(--el-text-color-secondary);
-  font-size: 13px;
-  text-align: center;
-}
-
-.roomList {
-  margin: 0 0 12px;
-  padding: 0;
-  list-style: none;
-}
-
-.roomListLabel {
-  padding: 6px 8px;
-  color: var(--el-text-color-secondary);
-  font-size: 12px;
-}
-
-.roomRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 2px;
-}
-
-.roomItem {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  padding: 8px 10px;
-  border: 0;
-  border-radius: var(--ui-radius);
-  background: transparent;
-  color: inherit;
-  text-align: start;
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  &:hover { background: var(--el-fill-color); }
-  &.active { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
-
-  .roomName {
-    overflow: hidden;
-    font-size: 14px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .roomSub {
-    overflow: hidden;
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-}
-
-// ACT: 邀请行是 div 而非 button（按钮里不能再嵌「加入」按钮）。
-.roomRow.invite .roomItem { cursor: default; &:hover { background: transparent; } }
-
-.inviteJoin { flex-shrink: 0; }
-
-.roomUnread {
-  flex-shrink: 0;
-  min-width: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: var(--el-color-primary);
-  color: #fff;
-  font-size: 11px;
-  line-height: 18px;
-  text-align: center;
-}
-
 .chatPanel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
@@ -566,37 +449,58 @@ onMounted(async () => {
 .chatHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
-  // ACT: 固定为与顶栏同高（shell 的 --shell-page-header-h），左栏首枚图标靠同一变量与这里的群聊名称垂直居中对齐。
+  gap: 10px;
   height: var(--shell-page-header-h, 56px);
-  padding: 0 16px;
+  padding: 0 12px;
   border-bottom: 1px solid var(--el-border-color-lighter);
 
-  .chatTitle {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .roomSelect {
+    flex-shrink: 1;
     min-width: 0;
-
-    h1 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    max-width: 180px;
   }
 
   .chatStatus {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
-  .chatWho {
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
+  .chatHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-inline-start: auto;
+    flex-shrink: 0;
+  }
+
+  .inviteBadge {
+    :deep(.el-badge__content) { z-index: 1; }
+  }
+}
+
+.inviteList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+
+    &:not(:last-child) { border-bottom: 1px solid var(--el-border-color-lighter); }
+  }
+
+  .inviteName {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 
@@ -685,6 +589,52 @@ onMounted(async () => {
       max-width: 100%;
       border-radius: calc(var(--ui-radius) * 0.75);
       margin-bottom: 4px;
+    }
+
+    // ACT: 视频卡片：可点击加载到左侧舞台播放，选中时高亮边框。
+    .videoCard {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 4px;
+      border: 1px solid var(--el-border-color);
+      border-radius: calc(var(--ui-radius) * 0.75);
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      text-align: start;
+      transition: border-color 0.15s ease, background 0.15s ease;
+
+      &:hover { background: var(--el-fill-color); }
+      &.active {
+        border-color: var(--el-color-primary);
+        background: var(--el-color-primary-light-9);
+      }
+    }
+
+    .videoCardIcon {
+      display: block;
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      background-color: currentColor;
+      mask-image: var(--tool-icon);
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+      -webkit-mask-image: var(--tool-icon);
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: contain;
+    }
+
+    .videoCardName {
+      overflow: hidden;
+      font-size: 13px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .text {

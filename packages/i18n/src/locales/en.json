@@ -3345,5 +3345,15 @@
   "一段视频胜千言": "One video says more than a thousand words.",
   "一键生成": "One Shot",
   "分步生成": "Step by Step",
-  "一键生成视频": "Generate video in one shot"
+  "一键生成视频": "Generate video in one shot",
+  "放下画笔": "Put down pen",
+  "该群聊还没有视频": "No videos in this group yet",
+  "滑动定位": "Seek",
+  "截图并发送到群聊": "Screenshot & send to group",
+  "墨色": "Ink color",
+  "切换群聊": "Switch group",
+  "清除标记": "Clear marks",
+  "上传失败，请稍后重试": "Upload failed, please try again later",
+  "输入文字，Enter 落笔，Esc 取消": "Type text, Enter to place, Esc to cancel",
+  "下载截图": "Download screenshot"
 }

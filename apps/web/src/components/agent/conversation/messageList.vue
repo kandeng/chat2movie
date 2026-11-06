@@ -35,33 +35,40 @@
           class="messageRow"
           :style="{ transform: `translateY(${row.start}px)` }"
           :class="{ userMessage: item.role === 'user', editingMessage: editingId === item.id }">
-          <chat-item :role="item.role" :variant="item.role === 'user' ? 'base' : 'text'" :textLoading="!!item.streaming && !compacting && !item.parts?.some(part => part.type === 'tool' || part.content)" animation="moving" @vue:updated="measureMessage($event.el?.parentElement ?? null)">
-            <template #content>
-              <div class="messageContent">
-                <span v-if="item.role === 'user' && item.delivery?.mode === 'steer'" class="steeringLabel" title="当前任务的补充引导，已完成的操作不会撤销"><icon-corner-down-right :size="14" aria-hidden="true" />引导</span>
-                <div v-if="item.report" class="reportHeader"><icon-users-group :size="14" />{{ item.report.name }} 上报</div>
-                <div v-if="item.agentMessage" class="reportHeader"><icon-users-group :size="14" />来自 {{ item.agentMessage.fromName }} 的消息</div>
-                <template v-for="part in item.parts" :key="part.id">
-                  <chat-reasoning v-if="part.type === 'thinking' && part.content" class="messageReasoning" :collapsed="part.collapsed ?? true" expandIconPlacement="left" @update:collapsed="part.collapsed = $event">
-                    <template #expandIcon><component :is="(part.collapsed ?? true) ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" /></template>
-                    <template #header>
-                      <span class="reasoningHeader">
-                        <icon-atom :size="14" />
-                        <span>思考</span>
-                        <span v-if="part.duration !== undefined" class="thinkingDuration">{{ part.duration.toFixed(1) }} 秒</span>
-                      </span>
-                    </template>
-                    <messageMarkdown v-if="!(part.collapsed ?? true)" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
-                  </chat-reasoning>
-                  <toolMessage v-else-if="part.type === 'tool' && !isBrowserTool(part.tool)" v-model:collapsed="part.collapsed" :tool="part.tool" :directory="directory" @copy="emit('copy', $event)" />
-                  <messageMarkdown v-else-if="part.type === 'text' && part.content" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
-                </template>
-                <attachmentList v-if="item.attachments?.length" :attachments="item.attachments" :directory="directory" />
-                <div v-if="item.role === 'user'" class="messageText"><mentionContent :content="item.content" :mentions="item.mentions" :directory="directory" /></div>
-                <div v-if="item.error" class="messageError" role="alert">{{ item.error }}</div>
-              </div>
-            </template>
-          </chat-item>
+          <div class="rowLine">
+            <chat-item :role="item.role" :variant="item.role === 'user' ? 'base' : 'text'" :textLoading="!!item.streaming && !compacting && !item.parts?.some(part => part.type === 'tool' || part.content)" animation="moving" @vue:updated="measureMessage($event.el?.parentElement ?? null)">
+              <template #content>
+                <div class="messageContent">
+                  <span v-if="item.role === 'user' && item.delivery?.mode === 'steer'" class="steeringLabel" title="当前任务的补充引导，已完成的操作不会撤销"><icon-corner-down-right :size="14" aria-hidden="true" />引导</span>
+                  <div v-if="item.report" class="reportHeader"><icon-users-group :size="14" />{{ item.report.name }} 上报</div>
+                  <div v-if="item.agentMessage" class="reportHeader"><icon-users-group :size="14" />来自 {{ item.agentMessage.fromName }} 的消息</div>
+                  <template v-for="part in item.parts" :key="part.id">
+                    <chat-reasoning v-if="part.type === 'thinking' && part.content" class="messageReasoning" :collapsed="part.collapsed ?? true" expandIconPlacement="left" @update:collapsed="part.collapsed = $event">
+                      <template #expandIcon><component :is="(part.collapsed ?? true) ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" /></template>
+                      <template #header>
+                        <span class="reasoningHeader">
+                          <icon-atom :size="14" />
+                          <span>思考</span>
+                          <span v-if="part.duration !== undefined" class="thinkingDuration">{{ part.duration.toFixed(1) }} 秒</span>
+                        </span>
+                      </template>
+                      <messageMarkdown v-if="!(part.collapsed ?? true)" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
+                    </chat-reasoning>
+                    <toolMessage v-else-if="part.type === 'tool' && !isBrowserTool(part.tool)" v-model:collapsed="part.collapsed" :tool="part.tool" :directory="directory" @copy="emit('copy', $event)" />
+                    <messageMarkdown v-else-if="part.type === 'text' && part.content" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
+                  </template>
+                  <attachmentList v-if="item.attachments?.length" :attachments="item.attachments" :directory="directory" />
+                  <div v-if="item.role === 'user'" class="messageText"><mentionContent :content="item.content" :mentions="item.mentions" :directory="directory" /></div>
+                  <div v-if="item.error" class="messageError" role="alert">{{ item.error }}</div>
+                </div>
+              </template>
+            </chat-item>
+            <!-- ACT: 用户气泡右侧圆形头像，与 Chat 页自己消息的头像同源同规格；无头像时首字母占位。 -->
+            <span v-if="item.role === 'user'" class="msgAvatar" :aria-label="auth.displayName">
+              <img v-if="auth.avatarUrl" :src="auth.avatarUrl" :alt="auth.displayName" />
+              <span v-else class="initial">{{ auth.displayName.charAt(0) }}</span>
+            </span>
+          </div>
           <div v-if="!item.streaming" class="messageActions">
             <template v-if="editingId === item.id">
               <el-button text size="small" :disabled="busy || deletingId !== undefined || voiceActive" @click="emit('cancelEdit')"><icon-x :size="14" />取消</el-button>
@@ -98,6 +105,7 @@ import messageMarkdown from "@/components/messageMarkdown.vue";
 import attachmentList from "../attachmentList.vue";
 import mentionContent from "../mentionContent.vue";
 import { mentionPlainText } from "../mentionText";
+import { useAuthStore } from "@/stores/auth";
 import toolMessage from "../toolMessage.vue";
 import type { AgentMessage } from "../types";
 import "tdesign-vue-next/es/style/index.css";
@@ -105,6 +113,8 @@ import "@tdesign-vue-next/chat/es/style/index.css";
 
 const props = defineProps<{ messages: AgentMessage[]; directory?: string; active: boolean; disabled: boolean; locked: boolean; busy: boolean; remoteRunning: boolean; compacting: boolean; editingId?: string; deletingId?: string; voiceActive: boolean }>();
 const emit = defineEmits<{ fillPrompt: [prompt: string]; copy: [content: string]; edit: [message: AgentMessage]; delete: [message: AgentMessage]; cancelEdit: [] }>();
+// ACT: 头像/昵称取自 auth  store（与 Chat 页自己消息的头像同一 blob 源）。
+const auth = useAuthStore();
 const browserMessages = computed(() => {
   const groups = new Map<string, { id: string; tools: AgentToolCall[] }>();
   const taskIds = new Map<string, string>();
@@ -315,6 +325,44 @@ const welcomeSuggestions = [
       width: 100%;
       box-sizing: border-box;
       padding: 0 12px 12px;
+
+      // ACT: 气泡与头像横向排布：气泡组件占剩余宽度（用户气泡内部仍右对齐），头像贴气泡右侧底对齐。
+      .rowLine {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 0;
+
+        .t-chat__inner {
+          flex: 1;
+          min-width: 0;
+        }
+      }
+
+      // ACT: 圆形头像规格与 Chat 页 .msgAvatar 一致：32px 圆、img 覆盖、无头像首字母占位。
+      .msgAvatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--el-fill-color);
+        color: var(--el-text-color-regular);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .initial {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
 
       .messageActions {
         display: flex;

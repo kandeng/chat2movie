@@ -120,27 +120,33 @@ Rendering is **hybrid**, split along the faithful / imaginative line:
   previsualization) → **generative image / video models**, grounded by the Scene IR's
   entities and style tokens.
 
-**Capability model.** Five pluggable layers:
+**Capability model & priority.** Vidsay targets the **lightweight,
+everyday-expression end first** — the casual “react / explain in a short video”
+case — and **defers the professional engineering tail** (CAD, fields,
+simulation). Five pluggable layers, each tagged **now** (lightweight must-haves)
+vs **later** (pro tail):
 
-- **Renderables** — schematic / block diagrams, cutaway & cross-section geometry,
-  data visualization, math / symbolic animation, maps & geospatial, timelines &
-  process flows, particle / field visualization, 2.5D parallax, photoreal scenes,
-  characters / avatars, whiteboard / sketch, vector icons, mask / highlight &
-  pointer overlays, and side-by-side / A-B comparison.
-- **Audio** — TTS narration (+ voice cloning), character dialogue / voices, BGM,
-  synchronized SFX, prosodic emphasis alignment, ducking, and captions / subtitles
-  (ASR).
-- **Film grammar & assembly** — virtual camera (orbit / zoom / exploded view /
-  depth-of-field), shot primitives, graphic match cuts, transitions, beat / rhythm
-  mapping, and multi-view (PiP / tiled) layout.
-- **Grounding & consistency** — parameter binding, entity / object registry,
-  constraint solver (units, scale, aspect ratio, fonts), reference intake
-  (image / CAD / CSV / PDF), citation anchors, reusable style tokens, and asset /
-  instance reuse.
-- **Interaction (user-in-the-loop)** — scrubbable timeline preview, direct
-  manipulation on the canvas, keyframe editor, region / mask prompt override,
-  per-clip version branching & selective re-render, modular asset export
-  (GIF / MP4 / SVG / GLB), and an optional **interactive web scene**.
+- **Renderables** — *now:* annotation / kinetic text, mask / highlight & pointer
+  overlays, side-by-side / A-B comparison, whiteboard / sketch, 2.5D parallax,
+  vector icons. *later:* schematic / block diagrams, cutaway & cross-section
+  geometry, data visualization, math / symbolic animation, maps & geospatial,
+  timelines & process flows, particle / field visualization, photoreal scenes,
+  characters / avatars.
+- **Audio** — *now:* TTS narration (+ voice cloning), BGM, synchronized SFX,
+  narration↔visual sync, captions / subtitles (ASR). *later:* character dialogue /
+  voices, prosodic emphasis alignment, ducking presets.
+- **Film grammar & assembly** — *now:* transitions, shot primitives, beat / rhythm
+  mapping. *later:* virtual camera (orbit / zoom / exploded view /
+  depth-of-field), graphic match cuts, multi-view (PiP / tiled) layout.
+- **Grounding & consistency** — *now:* reusable style tokens, image reference
+  intake, asset / instance reuse. *later:* parameter binding, entity / object
+  registry, constraint solver (units, scale, aspect ratio, fonts), CAD / CSV / PDF
+  reference intake, citation anchors.
+- **Interaction (user-in-the-loop)** — *now:* per-clip version branching &
+  selective re-render, region / mask prompt override. *later:* scrubbable timeline
+  preview, direct manipulation on the canvas, keyframe editor, modular asset
+  export (GIF / MP4 / SVG / GLB), and the **interactive web scene** — a separate
+  runtime-player product surface, scoped later (not an MP4 feature).
 
 **The prompt-to-video pipeline.** Turn a short prompt into a **short video** —
 from a single quick clip up to a **multi-clip composite (≈2–5 min)** — with

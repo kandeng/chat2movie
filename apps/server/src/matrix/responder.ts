@@ -6,7 +6,7 @@ import type { AgentEvent } from "@/agent/runtime/types";
 import { createCanvasContext } from "@/agent/bridge/canvas";
 import { createWorkflowProposalTools } from "@/agent/tools/workflowProposal";
 import { createSpokeConsentTools } from "@/agent/tools/spokeConsent";
-import { ensureRoomAgentCwd } from "./agentWorkspace";
+import { ensureRoomCanvas } from "./agentWorkspace";
 import { getRoomAgentModel } from "./settings";
 import { loadRoomGrants } from "./grants";
 import { getSpokeCanvas, hasSpoke, sendSpokeCanvasCall } from "./spoke";
@@ -58,7 +58,8 @@ export function createResponder(client: sdk.MatrixClient, _botUserId: string): R
       await client.sendNotice(roomId, "尚未配置可用的文本模型，AI 客服暂时无法回复。").catch(() => {});
       return;
     }
-    const cwd = await ensureRoomAgentCwd(roomId);
+    // ACT: 单画布 1:1:1 绑定（Task 6）——本轮开始确保房间工作区存在并已播种一个画布（幂等）。
+    const cwd = await ensureRoomCanvas(roomId);
     // ACT: 计划 Task 13 —— 本轮开始先加载房间授权表到缓存，使随后的 getSpokeCanvas/sendSpokeCanvasCall
     // 能同步按 driveSpokes 门控：只有已授权驱动的用户设备才会被选为主画布辐条、才会被编排器驱动。
     await loadRoomGrants(roomId).catch(() => {});

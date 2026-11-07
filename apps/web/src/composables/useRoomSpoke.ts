@@ -17,8 +17,8 @@ export type RoomGraph = { nodes: unknown[]; edges: unknown[] };
 // 服务器编排器提交图后广播的事件；各辐条按 revision 幂等收敛。
 type GraphEvent = { type: "graph"; revision: number; graph: RoomGraph };
 type SpokeEvent = CanvasCallEvent | GraphEvent | { type: "ready" } | { type: "replaced" };
-// 只读/视图态/画布级操作不改变当前工作流的语义图，执行后无需上报提交。
-const NON_GRAPH_OPS = new Set(["selectNodes", "transcribeAudio", "fitCanvas", "addCanvas", "switchCanvas", "renameCanvas"]);
+// 只读/视图态操作不改变当前工作流的语义图，执行后无需上报提交。（单画布模型 Task 5：已移除 addCanvas/switchCanvas/renameCanvas。）
+const NON_GRAPH_OPS = new Set(["selectNodes", "transcribeAudio", "fitCanvas"]);
 // ACT: 计划 Task 11 —— 语义图指纹（仅 nodes/edges），用于判定收敛到的权威图是否就是本机提交的提案。
 function semanticKey(graph: RoomGraph): string {
   return JSON.stringify({ nodes: graph.nodes ?? [], edges: graph.edges ?? [] });

@@ -643,6 +643,8 @@
   "合并分组": "Merge groups",
   "琥珀橙": "Amber Orange",
   "画布": "Canvas",
+  "切换到画布": "Switch to canvas",
+  "切换到文档": "Switch to document",
   "画布保存失败": "Canvas save failed",
   "画布保存已取消": "Canvas save canceled",
   "画布不存在，请重新获取画布列表": "The canvas does not exist, please obtain the canvas list again.",

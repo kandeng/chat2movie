@@ -291,8 +291,7 @@
   ],
   "画布": [
     "apps/web/src/components/agent/mentionMenu.vue",
-    "apps/web/src/components/settings/panels/mcp/index.vue",
-    "apps/web/src/pages/workspace/index.vue"
+    "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "数据": [
     "apps/web/src/components/agent/mentionMenu.vue"
@@ -539,8 +538,6 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
-    "apps/web/src/pages/workspace/components/workspaceMenu.vue",
     "apps/web/src/pages/home/workspacePicker.vue",
     "apps/web/src/lib/i18n.ts"
   ],
@@ -809,7 +806,6 @@
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "请输入 1–80 个字符的对话名称": [
@@ -897,7 +893,6 @@
     "apps/web/src/components/settings/panels/developer/index.vue",
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/home/workspacePicker.vue",
     "apps/web/src/lib/canvasShortcuts.ts"
   ],
@@ -991,8 +986,7 @@
     "apps/web/src/components/appShell.vue"
   ],
   "设置": [
-    "apps/web/src/components/appShell.vue",
-    "apps/web/src/pages/workspace/components/workspaceMenu.vue"
+    "apps/web/src/components/appShell.vue"
   ],
   "一段视频胜千言": [
     "apps/web/src/components/appShell.vue"
@@ -1065,8 +1059,7 @@
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "文档": [
-    "apps/web/src/components/settings/panels/mcp/index.vue",
-    "apps/web/src/pages/workspace/index.vue"
+    "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "画布与节点操作需要 vidsay 界面保持打开。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
@@ -4432,7 +4425,6 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "在当前目录新建文件夹": [
@@ -4506,7 +4498,6 @@
   "重命名": [
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "工作区": [
@@ -4852,20 +4843,17 @@
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
   "文件夹名称": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
   ],
   "预览（也可双击素材）": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
   ],
   "更多 {0}": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue"
   ],
   "更多": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
   ],
   "关闭音频预览": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
@@ -4979,12 +4967,10 @@
     "apps/web/src/pages/workspace/panels/canvas/components/selectionHandle.vue"
   ],
   "移动到": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue"
   ],
   "移动到目录": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue"
   ],
   "下载": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
@@ -5003,8 +4989,7 @@
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue"
   ],
   "创建并移动": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue"
   ],
   "请输入名称": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetMenu.vue",
@@ -5268,27 +5253,6 @@
   "分组缩放失败": [
     "apps/web/src/pages/workspace/panels/canvas/components/groupNode.vue"
   ],
-  "项目名称": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "切换画布": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "搜索画布": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "新建画布文件夹": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "新增画布": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "新画布名称": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布名称": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
   "供应商余额": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
@@ -5304,30 +5268,6 @@
   "刷新 {0} 余额": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
-  "请先移出或删除文件夹内的内容": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "未命名工作区": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "选择画布": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布根目录": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "读取文件夹失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "搜索画布失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "读取移动目录失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "读取画布失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
   "请先选择工作目录": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue",
@@ -5341,6 +5281,12 @@
   "工作目录已切换，本次画布操作已停止": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
+  "文件夹名称不是有效文件名": [
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+  ],
+  "画布名称不是有效文件名": [
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+  ],
   "画布不存在，请重新获取画布列表": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
@@ -5348,72 +5294,7 @@
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue"
   ],
-  "切换画布失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "项目里需要保留至少一个画布。你可以先新建一个，再删除这个画布。": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
-    "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue",
-    "apps/server/src/utils/workspace/files.ts"
-  ],
-  "确定删除画布“{0}”吗？对应的“{1}”文件及仅由这个画布使用的素材也会删除，其他画布共用的素材会保留。删除后无法恢复。": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "删除画布": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "无法确认画布“{0}”的素材引用，已停止后续删除操作。": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布已变更，请重新选择": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布已删除，但 {0} 个素材目录清理失败：{1}": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布已删除": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "删除画布失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "新增画布失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "“assets”是保留的节点素材目录名称，请使用其他文件夹名称。": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "“.agent”是保留的 Agent 数据目录名称，请使用其他文件夹名称。": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "创建文件夹失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "工作区文件管理尚未就绪": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "移动失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "新文件夹将创建在画布根目录": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "确定删除文件夹“{0}”？": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "删除文件夹": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "文件夹操作失败": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "文件夹名称不是有效文件名": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "画布名称不是有效文件名": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
-  ],
-  "重命名画布失败": [
+  "读取画布失败": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
   "工作区已关闭": [
@@ -5455,6 +5336,10 @@
   ],
   "请提供目标文件名": [
     "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue"
+  ],
+  "项目里需要保留至少一个画布。你可以先新建一个，再删除这个画布。": [
+    "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue",
+    "apps/server/src/utils/workspace/files.ts"
   ],
   "节点已删除，请重新选择": [
     "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue",
@@ -5630,9 +5515,6 @@
   "节点剪贴数据缺少工作目录，请重新复制": [
     "apps/web/src/pages/workspace/panels/canvas/nodeClipboard.ts"
   ],
-  "画布已再次切换，请重新发送消息": [
-    "apps/web/src/pages/workspace/panels/canvas/useCanvasTools.ts"
-  ],
   "画布已不可用，请重新发送消息": [
     "apps/web/src/pages/workspace/panels/canvas/useCanvasTools.ts"
   ],
@@ -5702,13 +5584,10 @@
   "从下方调整对话高度": [
     "apps/web/src/pages/workspace/components/floatingAgent.vue"
   ],
-  "退出项目": [
-    "apps/web/src/pages/workspace/components/workspaceMenu.vue"
+  "切换到文档": [
+    "apps/web/src/pages/workspace/index.vue"
   ],
-  "是否退出当前项目并返回首页？": [
-    "apps/web/src/pages/workspace/components/workspaceMenu.vue"
-  ],
-  "切换面板": [
+  "切换到画布": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "一键生成视频": [
@@ -5817,6 +5696,9 @@
     "apps/web/src/pages/workspace/index.vue"
   ],
   "已同步到客服 Agent 已同意的最新版本": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "无法解析房间工作区": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "已更新协作授权": [
@@ -7097,9 +6979,16 @@
     "apps/server/src/routes/agent.ts"
   ],
   "请先登录网站账号": [
+    "apps/server/src/routes/matrix/spoke/workspace.ts",
     "apps/server/src/routes/matrix/spoke/grants.ts",
     "apps/server/src/routes/matrix/token.ts",
     "apps/server/src/routes/matrix/agent.ts"
+  ],
+  "未配置 Synapse，无法解析房间工作区": [
+    "apps/server/src/routes/matrix/spoke/workspace.ts"
+  ],
+  "你不是该房间成员，无法访问其工作区": [
+    "apps/server/src/routes/matrix/spoke/workspace.ts"
   ],
   "未配置 Synapse，无法代签 Matrix 令牌": [
     "apps/server/src/routes/matrix/token.ts"

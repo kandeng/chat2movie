@@ -20,7 +20,7 @@ const inputSchema = z.object({
   resendFrom: z.string().min(1).max(128).optional(),
   streamingBehavior: z.enum(["steer", "followUp"]).optional(),
   canvas: z.strictObject({
-    // 允许空 id：尚未打开画布时前端仍会带上画布上下文，Agent 可据此调用 addCanvas/getCanvas。
+    // 允许空 id：尚未打开画布时前端仍会带上画布上下文，Agent 可据此调用 getCanvas（单画布模型，无 addCanvas）。
     id: z.string().max(256),
     tools: z.array(z.strictObject({
       nodeId: z.string().min(1).max(256),

@@ -24,20 +24,19 @@
         :fileAction="performFileAction"
         :saveNode="saveDocumentNode" />
     </keep-alive>
-    <workspaceMenu class="workspaceMenu" @openSettings="openSettings" />
     <div class="workspaceTools">
-      <el-segmented :modelValue="activePanel" class="panelSwitcher" :options="panelOptions" size="small" aria-label="切换面板" @change="switchPanel">
-        <template #default="{ item }">
-          <span class="panelOption">
-            <component :is="item.icon" :size="15" aria-hidden="true" />
-            {{ item.label }}
-          </span>
-        </template>
-      </el-segmented>
       <!-- ACT: 就地模式切换器（Task 4）：在 step-by-step（本页 /studio）与 one-shot（/chat）之间切换，带当前房间过去。
            放在 .workspaceTools（宽 = 100% - --agentWidth）右上角，停靠态下也不会被侧边聊天框遮挡。 -->
       <modeSwitcher class="modeSwitch" mode="step-by-step" />
       <div class="bottomTools">
+        <!-- ACT: 画布/文档底部切换按钮（Task 2）：移除顶部 el-segmented 后，用底部单按钮在画布与文档之间来回切换。 -->
+        <el-card class="panelToggle" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
+          <el-tooltip :content="activePanel === 'canvas' ? '切换到文档' : '切换到画布'" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+            <el-button class="toggleButton" text :aria-label="activePanel === 'canvas' ? '切换到文档' : '切换到画布'" @click="togglePanel">
+              <component :is="activePanel === 'canvas' ? IconFileText : IconVector" :size="18" aria-hidden="true" />
+            </el-button>
+          </el-tooltip>
+        </el-card>
         <!-- ACT: 主持人的生成入口（Task 6）：从聊天框移到工作室画布工具区，仅 step-by-step 且主持人可见。 -->
         <el-card v-if="isHost && activeRoomId" class="generateMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
           <div class="generateMenuContent" role="group" :aria-label="translate('视频生成')">
@@ -195,9 +194,9 @@
 </template>
 
 <script setup lang="ts">
-import { translate } from "@toonflow/i18n/vue";
+import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, provide, ref, shallowRef, watch, type ComponentPublicInstance } from "vue";
-import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import axios from "axios";
 import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase, IconUpload, IconRefresh, IconRestore, IconShieldLock } from "@tabler/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -214,7 +213,6 @@ import { loadRoomGrants, roomGrant, roomGrantSaving, saveRoomGrant } from "@/sto
 import { localModelConfig } from "@/stores/localModels";
 import canvasPanel from "./panels/canvas/canvasHost.vue";
 import type { DocumentNodeOptions } from "./panels/canvas/canvasFiles";
-import workspaceMenu from "./components/workspaceMenu.vue";
 import floatingAgent from "./components/floatingAgent.vue";
 import modeSwitcher from "@/components/modeSwitcher.vue";
 // ACT: 收起态画布底部按钮的图标改用客服图标（与助手欢迎语头像一致）。
@@ -242,11 +240,8 @@ onScopeDispose(() => {
 const workspaceStore = useWorkspaceStore();
 const auth = useAuthStore();
 const route = useRoute();
-const router = useRouter();
 // ACT: Matrix 房间状态（模块级单例）：activeRoomId 驱动辐条连接与生成入口，isHost 决定主持人专属控件可见性。
 const { activeRoomId, isHost, sendText } = useMatrixChat();
-// ACT: 设置已改为整页路由（对齐群聊页布局）；工作区的「设置」入口直接跳转 /settings。
-function openSettings() { void router.push("/settings"); }
 
 // ACT: 计划 Task 4 —— 从群聊主持人的「自动生成视频 / 分步生成视频」按钮跳转过来时，
 // 把生成意图与归属账号落到 workspace store，并标记当前项目的归属。
@@ -281,6 +276,36 @@ async function syncGraphToCommitted() {
 // ACT: 计划 Task 13 —— 每用户协作授权：进入/切换房间时拉取本人授权；开关切换时回写服务器（身份由会话校验）。
 const hasLocalModel = computed(() => !!localModelConfig.value);
 watch(activeRoomId, room => { void loadRoomGrants(room); }, { immediate: true });
+
+// ACT: 计划 Task 7 —— 一间房 ↔ 一个服务器工作区 ↔ 一个画布。活动房间变化时向服务器解析该房间的工作区
+// 目录（不存在则自动创建并播种一个空画布），并把它作为当前打开的项目；切换房间前先保存当前画布/文档，
+// 避免未落盘的编辑丢失。左导航 /studio、modeSwitcher ?room= 与广场深链都经由 activeRoomId 收敛到这里。
+const roomBindLifetime = new AbortController();
+onScopeDispose(() => roomBindLifetime.abort(new Error("工作区已关闭")));
+let boundRoom = "";
+watch(activeRoomId, async room => {
+  if (!auth.signedIn || !room || room === boundRoom) return;
+  const signal = AbortSignal.any([roomBindLifetime.signal, AbortSignal.timeout(30000)]);
+  try {
+    // 切换到新房间的工作区之前，先把当前画布/文档保存落盘。
+    await flushSave();
+    signal.throwIfAborted();
+    const response = await fetch(`/api/matrix/spoke/workspace?room=${encodeURIComponent(room)}`, {
+      headers: { "x-toonflow-workspace": "1", "Accept-Language": locale.value },
+      signal,
+    });
+    const json = await response.json().catch(() => null) as { code?: number; data?: { directory?: string }; message?: string } | null;
+    const directory = json?.data?.directory;
+    if (!response.ok || json?.code !== 200 || !directory) throw new Error(json?.message || "无法解析房间工作区");
+    signal.throwIfAborted();
+    boundRoom = room;
+    if (directory !== workspaceStore.project?.directory) await workspaceStore.openProject(directory, directory, signal);
+  } catch (error) {
+    if (signal.aborted) return;
+    boundRoom = "";
+    console.warn("[workspace] 绑定房间工作区失败：", room, error);
+  }
+}, { immediate: true });
 async function updateGrant(patch: { driveSpokes?: boolean; invokeLocalModels?: boolean }) {
   const next = {
     driveSpokes: patch.driveSpokes ?? roomGrant.driveSpokes,
@@ -292,10 +317,6 @@ async function updateGrant(patch: { driveSpokes?: boolean; invokeLocalModels?: b
 }
 
 useProviderBalances();
-const panelOptions = [
-  { label: "画布", value: "canvas", icon: IconVector },
-  { label: "文档", value: "document", icon: IconFileText },
-];
 const agentVisible = ref(true);
 const agentWidth = ref(0);
 const helpVisible = ref(false);
@@ -463,6 +484,9 @@ async function switchPanel(value: string | number | boolean) {
   }
 }
 
+// ACT: 底部单按钮切换（Task 2）：在画布与文档之间来回切换，替代原顶部 el-segmented。
+function togglePanel() { void switchPanel(activePanel.value === "canvas" ? "document" : "canvas"); }
+
 function readDocumentNode(directory: string, canvasPath: string, nodeId: string) {
   if (!canvasPanelRef.value) throw new Error("画布尚未就绪");
   return canvasPanelRef.value.readDocumentNode(directory, canvasPath, nodeId);
@@ -518,11 +542,10 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
   height: 100%;
   background-color: var(--el-bg-color);
 
-  :deep(.workspaceMenu > .el-card),
   :deep(.canvasMenu),
   :deep(.balanceCard),
   :deep(.canvasControlsCard),
-  .panelSwitcher,
+  .panelToggle,
   .toolMenu,
   .syncMenu,
   .generateMenu {
@@ -545,47 +568,12 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
     }
   }
 
-  .workspaceMenu {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 5;
-  }
-
   .workspaceTools {
     position: absolute;
     inset: 0;
     width: calc(100% - var(--agentWidth, 0px));
     container: workspaceTools / inline-size;
     pointer-events: none;
-
-    .panelSwitcher {
-      --el-border-radius-base: var(--ui-radius-large);
-      --el-segmented-color: var(--el-text-color-secondary);
-      --el-segmented-item-selected-color: var(--el-color-white);
-      --el-segmented-item-selected-bg-color: var(--el-color-primary);
-      --el-segmented-item-hover-bg-color: color-mix(in srgb, var(--el-color-primary) 10%, transparent);
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      z-index: 5;
-      min-height: 28px;
-      padding: 2px;
-      border: 1px solid var(--el-border-color-light);
-      font-size: 12px;
-      transform: translateX(-50%);
-      pointer-events: auto;
-
-      .panelOption {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 0 2px;
-        line-height: 22px;
-        font-weight: 500;
-      }
-    }
 
     .modeSwitch {
       position: absolute;
@@ -605,6 +593,18 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
       gap: 8px;
       transform: translateX(-50%);
       pointer-events: auto;
+
+      .panelToggle {
+        flex-shrink: 0;
+        transition: none;
+
+        .toggleButton {
+          width: 28px;
+          height: 28px;
+          margin: 0;
+          padding: 0;
+        }
+      }
 
       .toolMenu {
         flex-shrink: 0;

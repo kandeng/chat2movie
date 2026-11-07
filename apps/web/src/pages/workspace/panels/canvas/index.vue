@@ -391,7 +391,6 @@ const createCanvasContext = useCanvasTools({
     return canvasMenuRef.value;
   },
   getCanvasBinding: () => ({ id: canvasId.value, signal: canvasController.signal }),
-  resolveCanvasContext: id => props.resolveCanvasContext?.(id),
 });
 function getCanvasContext() {
   return canvasId.value || canvasMenuRef.value?.initialized ? createCanvasContext(canvasId.value, canvasController.signal, workspaceController.signal) : undefined;

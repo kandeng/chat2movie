@@ -1,5 +1,5 @@
-import { mkdir, readFile, writeAtomic } from "@toonflow/file";
-import { dirname, join, resolve } from "node:path";
+import { mkdir, readFile, readdir, writeFile, writeAtomic } from "@toonflow/file";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import conf from "@/utils/conf";
 
 // ACT: 群聊 Agent 的工作区与会话解析器。每个 Matrix 房间绑定一个服务器侧独立工作区
@@ -28,10 +28,46 @@ export async function ensureRoomAgentCwd(roomId: string): Promise<string> {
   return cwd;
 }
 
+// chat-agent 工作区根目录（所有房间工作区的父目录）。
+export function chatAgentRoot(): string {
+  return resolve(workspacesRoot(), "chat-agent");
+}
+
+// 判断某个已解析的工作区目录是否属于「房间 Agent 工作区」（chat-agent/<roomId> 或其子目录）。
+// 用于把编排器私有状态文件（workflow.json/grants.json）从 Studio 文件树中隐藏。
+export function isRoomAgentWorkspace(directory: string): boolean {
+  if (!directory) return false;
+  const rel = relative(chatAgentRoot(), directory);
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+
 // ACT: 房间的「已提交工作流图」。服务器侧 pi-coding Agent 是唯一权威写入者：
 // 用户画布上的改动先作为本地提案，只有 Agent 同意后才提交到这里，再广播给所有 spoke。
 // 图以画布 JSON 形式落盘，revision 内嵌在根对象里，写入时做乐观并发校验。
 export const WORKFLOW_FILE = "workflow.json";
+
+// 编排器（服务器侧 customer_service Agent）的私有状态文件：与用户画布同处房间工作区根目录，
+// 但不属于用户可见/可编辑的产物，需从文件树中排除（画布枚举天然排除：它们没有 toonflowCanvas 标记）。
+export const ORCHESTRATOR_STATE_FILES = new Set([WORKFLOW_FILE, "grants.json"]);
+
+// 单画布 1:1:1 绑定（Task 6）：确保房间工作区里至少存在一个画布文件。
+// 房间根目录除编排器状态文件外没有任何 .json 时，播种一个空白且格式有效的画布（画布N.json）。
+// 用独占创建（flag "wx"）避免覆盖并发播种或用户已有内容；返回房间工作区绝对路径。
+export async function ensureRoomCanvas(roomId: string): Promise<string> {
+  const cwd = await ensureRoomAgentCwd(roomId);
+  const entries = await readdir(cwd, { withFileTypes: true }).catch(() => []);
+  const hasCanvas = entries.some(entry => entry.isFile() && /\.json$/i.test(entry.name) && !ORCHESTRATOR_STATE_FILES.has(entry.name));
+  if (hasCanvas) return cwd;
+  const canvas = `${JSON.stringify({ toonflowCanvas: true, nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } }, null, 2)}\n`;
+  for (let number = 1; ; number++) {
+    try {
+      await writeFile(join(cwd, `画布${number}.json`), canvas, { flag: "wx" });
+      return cwd;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+    }
+  }
+}
 
 export type RoomWorkflow = { revision: number; graph: Record<string, unknown> };
 

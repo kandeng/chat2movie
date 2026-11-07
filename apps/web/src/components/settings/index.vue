@@ -44,6 +44,7 @@ const settingsPanels = [
     component: defineAsyncComponent(() => import("./panels/languageModel/index.vue")),
   },
   { id: "mediaModel", label: "媒体模型", component: defineAsyncComponent(() => import("./panels/mediaModel/index.vue")) },
+  { id: "localModel", label: "本地模型", component: defineAsyncComponent(() => import("./panels/localModel/index.vue")) },
   {
     id: "pluginMarket",
     label: "插件市场",

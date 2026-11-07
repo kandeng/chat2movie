@@ -28,7 +28,7 @@ const topNav: { path: string; label: string; icon: string; size?: number }[] = [
   { path: "/home", label: "广场", icon: iconPlaza, size: 24 },
   // ACT: 群聊气泡为椭圆+小点，光学尺寸偏小；单独放大到 22px 的 110%（24.2px）以对齐 recorder 的视觉重量。
   { path: "/chat", label: "一键生成", icon: iconChat, size: 24.2 },
-  { path: "/workspace", label: "分步生成", icon: iconStudio },
+  { path: "/studio", label: "分步生成", icon: iconStudio },
 ];
 const bottomNav = [
   { path: "/account", label: "账户", icon: iconAccount },

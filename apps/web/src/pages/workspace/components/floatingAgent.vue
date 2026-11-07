@@ -27,27 +27,37 @@
         tabindex="0"
         @pointerdown.stop="startInteraction($event, handle.edge)"
         @keydown="resizeWithKeyboard($event, handle.edge)" />
-      <agent v-model="visible">
-        <template #menuActions>
-          <el-button
-            text
-            circle
-            :aria-label="docked ? '切换为悬浮' : '停靠到右侧'"
-            :title="docked ? '切换为悬浮' : '停靠到右侧'"
-            @click="docked = !docked">
-            <icon-app-window-bottom-right v-if="docked" :size="17" aria-hidden="true" />
-            <icon-layout-sidebar-right v-else :size="17" aria-hidden="true" />
-          </el-button>
-        </template>
-      </agent>
+      <div class="agentDock">
+        <header class="agentMenu">
+          <span class="agentTitle">{{ translate("群聊") }}</span>
+          <div class="agentMenuActions">
+            <el-button
+              text
+              circle
+              :aria-label="docked ? '切换为悬浮' : '停靠到右侧'"
+              :title="docked ? '切换为悬浮' : '停靠到右侧'"
+              @click="docked = !docked">
+              <icon-app-window-bottom-right v-if="docked" :size="17" aria-hidden="true" />
+              <icon-layout-sidebar-right v-else :size="17" aria-hidden="true" />
+            </el-button>
+            <el-button text circle aria-label="关闭" title="关闭" @click="visible = false">
+              <icon-x :size="17" aria-hidden="true" />
+            </el-button>
+          </div>
+        </header>
+        <!-- ACT: 工作室（step-by-step）的聊天框现在与群聊页共用同一个房间时间线组件（计划 Task 3/4）：
+             内嵌态隐藏主持人生成入口（由页面模式切换器接管），内容与 Chat 页完全一致。 -->
+        <groupChat class="agentBody" embedded mode="step-by-step" />
+      </div>
     </aside>
   </teleport>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref, shallowRef, watch } from "vue";
-import { IconLayoutSidebarRight, IconAppWindowBottomRight } from "@tabler/icons-vue";
-import agent from "@/components/agent/index.vue";
+import { IconLayoutSidebarRight, IconAppWindowBottomRight, IconX } from "@tabler/icons-vue";
+import { translate } from "@toonflow/i18n/vue";
+import groupChat from "@/components/groupChat.vue";
 
 const visible = defineModel<boolean>({ default: false });
 const emit = defineEmits<{ resize: [width: number] }>();
@@ -212,19 +222,61 @@ onBeforeUnmount(() => {
     box-shadow: none;
   }
 
-  :deep(.agent) {
-    border-radius: inherit;
+  :deep(.el-button) {
+    color: var(--el-text-color-regular);
   }
-  &:not(.docked) :deep(.agentMenu) {
-    cursor: grab;
+
+  .agentDock {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .agentMenu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 6px 0 12px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
     touch-action: none;
+  }
+
+  &:not(.docked) .agentMenu {
+    cursor: grab;
   }
 
   &.dragging {
     user-select: none;
-    :deep(.agentMenu) {
+    .agentMenu {
       cursor: grabbing;
     }
+  }
+
+  .agentTitle {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .agentMenuActions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .agentBody {
+    flex: 1;
+    min-height: 0;
   }
 
   .resizeHandle {

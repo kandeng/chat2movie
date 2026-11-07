@@ -39,7 +39,8 @@
     "apps/web/src/components/modelPopover.vue",
     "apps/web/src/components/loginDialog.vue",
     "apps/web/src/pages/workspace/panels/document/components/editorTab.vue",
-    "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
+    "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue",
+    "apps/web/src/pages/workspace/components/floatingAgent.vue"
   ],
   "视频加载失败": [
     "apps/web/src/components/videoPlayer.vue"
@@ -272,7 +273,7 @@
     "apps/web/src/components/agent/mentionMenu.vue",
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
-    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/components/groupChat.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
     "apps/server/src/utils/media/generation.ts"
   ],
@@ -530,7 +531,7 @@
     "apps/web/src/components/settings/panels/developer/systemPromptDialog.vue",
     "apps/web/src/components/settings/panels/developer/index.vue",
     "apps/web/src/components/settings/tfRechargeDialog.vue",
-    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/components/groupChat.vue",
     "apps/web/src/pages/workspace/panels/document/components/openWithDialog.vue",
     "apps/web/src/pages/workspace/panels/document/components/extView.vue",
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
@@ -793,6 +794,7 @@
   "保存": [
     "apps/web/src/components/agent/menu.vue",
     "apps/web/src/components/settings/panels/mcp/index.vue",
+    "apps/web/src/components/settings/panels/localModel/index.vue",
     "apps/web/src/components/settings/panels/personalization.vue",
     "apps/web/src/components/settings/panels/mediaModel/editProviderDialog.vue",
     "apps/web/src/components/settings/panels/pluginMarket/a2aSettingsDialog.vue",
@@ -943,7 +945,8 @@
     "apps/web/src/components/agent/conversation.vue"
   ],
   "当前页面没有激活的画布": [
-    "apps/web/src/components/agent/conversation.vue"
+    "apps/web/src/components/agent/conversation.vue",
+    "apps/web/src/composables/useRoomSpoke.ts"
   ],
   "画布操作失败": [
     "apps/web/src/components/agent/conversation.vue",
@@ -1014,10 +1017,12 @@
     "apps/web/src/components/appShell.vue"
   ],
   "一键生成": [
-    "apps/web/src/components/appShell.vue"
+    "apps/web/src/components/appShell.vue",
+    "apps/web/src/components/modeSwitcher.vue"
   ],
   "分步生成": [
-    "apps/web/src/components/appShell.vue"
+    "apps/web/src/components/appShell.vue",
+    "apps/web/src/components/modeSwitcher.vue"
   ],
   "已退出登录": [
     "apps/web/src/components/appShell.vue",
@@ -1068,6 +1073,7 @@
   ],
   "服务地址": [
     "apps/web/src/components/settings/panels/mcp/index.vue",
+    "apps/web/src/components/settings/panels/localModel/index.vue",
     "apps/web/src/components/settings/panels/pluginMarket/a2aSettingsDialog.vue",
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
   ],
@@ -1138,6 +1144,99 @@
   ],
   "{0}已复制": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
+  ],
+  "浏览器直连本地模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "让本设备的辐条直接调用防火墙内的 OpenAI 兼容模型（如本机或局域网内的推理服务），请求不经过 vidsay 服务端。 此配置仅保存在当前浏览器（localStorage），不会上传，也不会同步到其他设备——因为每台设备可达的内网地址不同。": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "名称（可选）": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "本地模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue",
+    "apps/web/src/components/settings/index.vue"
+  ],
+  "本地模型名称": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "本地服务地址": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "填写 OpenAI 兼容根地址（含 /v1）；生成时会自动追加 /chat/completions，获取模型时追加 /models。": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "API Key（可选）": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "本地服务密钥": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "模型列表": [
+    "apps/web/src/components/settings/panels/localModel/index.vue",
+    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
+    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue",
+    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
+  ],
+  "获取模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue",
+    "apps/web/src/components/settings/panels/mediaModel/index.vue",
+    "apps/web/src/components/settings/panels/languageModel/index.vue"
+  ],
+  "清空": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "手动添加模型 ID，如 qwen2.5:7b": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "模型 ID": [
+    "apps/web/src/components/settings/panels/localModel/index.vue",
+    "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
+    "apps/web/src/components/settings/panels/mediaModel/providerAgentDialog.vue",
+    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
+    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue",
+    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
+  ],
+  "添加": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "模型 {0} 的显示名": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "移除模型 {0}": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "尚未添加模型。可点击「获取模型」自动探测，或在上方手动填写模型 ID。": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "停用本地模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "连不上本地模型？": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "浏览器直连受三重限制：本地服务必须放行本应用来源的 CORS；若本应用通过 HTTPS 访问，浏览器会拦截对 HTTP 本地端点的混合内容请求（需为本地服务配置 TLS，或改用本地代理）；访问私网地址还可能触发私有网络访问（PNA）预检。": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "兜底方案：在本机运行一个「瘦本地代理」——它监听浏览器可达的地址，为响应补上 CORS 头并把请求原样转发到真实模型端点； 然后把代理地址填入上方「服务地址」即可。该代理需按具体部署单独验证。": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "该模型已在列表中": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "已获取 {0} 个模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "获取模型失败，请重试": [
+    "apps/web/src/components/settings/panels/localModel/index.vue",
+    "apps/web/src/components/settings/panels/mediaModel/index.vue"
+  ],
+  "已保存本地模型配置": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
+  ],
+  "已停用浏览器直连本地模型": [
+    "apps/web/src/components/settings/panels/localModel/index.vue"
   ],
   "画布快捷键": [
     "apps/web/src/components/settings/panels/general/canvasShortcuts.vue"
@@ -1625,10 +1724,6 @@
     "apps/web/src/components/settings/panels/mediaModel/index.vue",
     "apps/web/src/components/settings/panels/languageModel/index.vue"
   ],
-  "获取模型": [
-    "apps/web/src/components/settings/panels/mediaModel/index.vue",
-    "apps/web/src/components/settings/panels/languageModel/index.vue"
-  ],
   "编辑模型": [
     "apps/web/src/components/settings/panels/mediaModel/index.vue",
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue"
@@ -1657,9 +1752,6 @@
   "模型列表已更新": [
     "apps/web/src/components/settings/panels/mediaModel/index.vue"
   ],
-  "获取模型失败，请重试": [
-    "apps/web/src/components/settings/panels/mediaModel/index.vue"
-  ],
   "删除失败，请重试": [
     "apps/web/src/components/settings/panels/mediaModel/index.vue",
     "apps/web/src/components/settings/panels/languageModel/index.vue"
@@ -1678,13 +1770,6 @@
   ],
   "模型显示名称": [
     "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
-    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
-  ],
-  "模型 ID": [
-    "apps/web/src/components/settings/panels/mediaModel/modelEditorDialog.vue",
-    "apps/web/src/components/settings/panels/mediaModel/providerAgentDialog.vue",
-    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
-    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue",
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
   ],
   "模型类型": [
@@ -1905,11 +1990,6 @@
     "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
     "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
   ],
-  "模型列表": [
-    "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
-    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue",
-    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
-  ],
   "添加方式": [
     "apps/web/src/components/settings/panels/mediaModel/addCustomProviderDialog.vue",
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
@@ -2128,7 +2208,7 @@
   ],
   "连接中…": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue",
-    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/components/groupChat.vue",
     "apps/web/src/pages/home/index.vue"
   ],
   "测试连接": [
@@ -2386,7 +2466,7 @@
   ],
   "连接失败": [
     "apps/web/src/components/settings/panels/pluginMarket/agentConnectDialog.vue",
-    "apps/web/src/pages/chat/index.vue"
+    "apps/web/src/components/groupChat.vue"
   ],
   "远程 Agent 已连接": [
     "apps/web/src/components/settings/panels/pluginMarket/agentConnectDialog.vue"
@@ -2443,7 +2523,7 @@
   ],
   "创建": [
     "apps/web/src/components/settings/panels/pluginMarket/skillEditorDialog.vue",
-    "apps/web/src/pages/chat/index.vue",
+    "apps/web/src/components/groupChat.vue",
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
@@ -3877,6 +3957,92 @@
   "正在加载项目": [
     "apps/web/src/components/loadingPage.vue"
   ],
+  "切换群聊": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "已连接": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "未连接": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "主持人": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "待接受邀请": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "加入": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "新建群聊": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "加入群聊": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "还没有群聊，点右上角新建一个。": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "还没有消息，发送第一条开始讨论吧。": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "{0} 正在输入…": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "输入消息，Enter 发送，Shift+Enter 换行": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "消息输入": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "发送": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "团队": [
+    "apps/web/src/components/groupChat.vue",
+    "apps/server/src/utils/plugins/install.ts"
+  ],
+  "上传文件": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "群聊名称": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "例如：我的剧组": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "邀请成员": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "用户名以逗号分隔，例如 friend1, friend2": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "房间 ID 或别名": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "发送失败": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "群聊已创建": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "创建群聊失败": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "加入群聊失败": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "团队功能将在后续任务接入": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "附件上传将在后续任务接入": [
+    "apps/web/src/components/groupChat.vue"
+  ],
+  "无法连接 Matrix/Synapse，请确认本地 Synapse 已启动且已配置 config.json 的 synapse 块": [
+    "apps/web/src/components/groupChat.vue",
+    "apps/web/src/pages/home/index.vue"
+  ],
   "模型与思考强度设置": [
     "apps/web/src/components/modelPopover.vue"
   ],
@@ -3989,6 +4155,9 @@
   ],
   "请选择已配置的文本模型": [
     "apps/web/src/components/singleAgentDialog.vue"
+  ],
+  "切换视图模式": [
+    "apps/web/src/components/modeSwitcher.vue"
   ],
   "返回": [
     "apps/web/src/pages/hello/index.vue",
@@ -4135,98 +4304,6 @@
   ],
   "登录后即可参与群聊": [
     "apps/web/src/pages/chat/index.vue"
-  ],
-  "切换群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "已连接": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "未连接": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "主持人": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "待接受邀请": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "加入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "新建群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "加入群聊": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "还没有群聊，点右上角新建一个。": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "还没有消息，发送第一条开始讨论吧。": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "{0} 正在输入…": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "输入消息，Enter 发送，Shift+Enter 换行": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "消息输入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "发送": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "一键生成视频": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "分步生成视频": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "团队": [
-    "apps/web/src/pages/chat/index.vue",
-    "apps/server/src/utils/plugins/install.ts"
-  ],
-  "上传文件": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "群聊名称": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "例如：我的剧组": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "邀请成员": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "用户名以逗号分隔，例如 friend1, friend2": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "房间 ID 或别名": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "发送失败": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "群聊已创建": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "创建群聊失败": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "加入群聊失败": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "团队功能将在后续任务接入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "附件上传将在后续任务接入": [
-    "apps/web/src/pages/chat/index.vue"
-  ],
-  "无法连接 Matrix/Synapse，请确认本地 Synapse 已启动且已配置 config.json 的 synapse 块": [
-    "apps/web/src/pages/chat/index.vue",
-    "apps/web/src/pages/home/index.vue"
   ],
   "所选扩展未启用或不支持此文件类型": [
     "apps/web/src/pages/workspace/panels/document/extensions.ts"
@@ -5164,7 +5241,8 @@
     "apps/web/src/pages/workspace/panels/canvas/components/canvasEmpty.vue"
   ],
   "视频生成": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasEmpty.vue"
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasEmpty.vue",
+    "apps/web/src/pages/workspace/index.vue"
   ],
   "音频生成": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasEmpty.vue"
@@ -5606,6 +5684,9 @@
   "AI 对话": [
     "apps/web/src/pages/workspace/components/floatingAgent.vue"
   ],
+  "群聊": [
+    "apps/web/src/pages/workspace/components/floatingAgent.vue"
+  ],
   "切换为悬浮": [
     "apps/web/src/pages/workspace/components/floatingAgent.vue"
   ],
@@ -5628,6 +5709,63 @@
     "apps/web/src/pages/workspace/components/workspaceMenu.vue"
   ],
   "切换面板": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "一键生成视频": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "分步生成视频": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "工作流同步": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "有未同步的本地改动，点击提交更新提案": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "当前没有未同步的本地改动": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "更新工作流": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "更新": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "回滚到客服 Agent 已同意的最新版本": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "同步工作流": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "同步": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "重新应用上次被覆盖的本地改动": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "恢复本地改动": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "恢复": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "协作授权": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "授权": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "授权后，客服 Agent 才能在本房间驱动你的设备与调用你的本地模型。授权按账号记录，随时可关闭。": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "允许驱动我的设备（画布/节点操作）": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "允许调用我的本地模型": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "尚未在「设置 → 本地模型」配置可用的本地模型。": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "画布工具": [
@@ -5670,6 +5808,21 @@
     "apps/web/src/pages/workspace/index.vue"
   ],
   "已按分步生成模式准备工作室": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "已提交更新提案，等待讨论与客服 Agent 审核": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "提交更新提案失败，请确认工作室已连接房间": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "已同步到客服 Agent 已同意的最新版本": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "已更新协作授权": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
+  "更新协作授权失败，请确认已登录且工作室已连接房间": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "此联系方式仅用于商务合作接洽，不提供问题答疑。使用问题欢迎在交流群交流，需求与 BUG 可通过反馈表提交。感谢理解。": [
@@ -6289,6 +6442,24 @@
   "请输入密码": [
     "apps/web/src/stores/auth.ts"
   ],
+  "请先填写本地服务地址": [
+    "apps/web/src/stores/localModels.ts"
+  ],
+  "无法连接本地端点（{0}）：可能是 CORS 未放行本应用来源、混合内容被浏览器拦截，或需要私有网络访问授权；可在本地运行一个转发代理后将其地址填入。原始错误：{1}": [
+    "apps/web/src/stores/localModels.ts"
+  ],
+  "获取模型失败（HTTP {0}）": [
+    "apps/web/src/stores/localModels.ts"
+  ],
+  "本地端点未返回可用模型": [
+    "apps/web/src/stores/localModels.ts"
+  ],
+  "辐条连接失败（{0}）": [
+    "apps/web/src/composables/useRoomSpoke.ts"
+  ],
+  "工作室已关闭": [
+    "apps/web/src/composables/useRoomSpoke.ts"
+  ],
   "尚未连接到聊天服务": [
     "apps/web/src/composables/useMatrixChat.ts"
   ],
@@ -6794,11 +6965,20 @@
   "[matrix] 触发视频生成失败:": [
     "apps/server/src/matrix/bot.ts"
   ],
+  "[matrix] AI 客服回复失败:": [
+    "apps/server/src/matrix/bot.ts"
+  ],
   "[matrix] 停止机器人失败:": [
     "apps/server/src/matrix/bot.ts"
   ],
+  "工作流已被更新，请先同步到最新版本再提交": [
+    "apps/server/src/matrix/agentWorkspace.ts"
+  ],
   "[matrix] 未配置 synapse.botUserId，AI 客服无法入群": [
     "apps/server/src/matrix/agent.ts"
+  ],
+  "提案不存在或已被处理": [
+    "apps/server/src/matrix/graphProposal.ts"
   ],
   "根据本次群聊生成一段简洁的示意视频。": [
     "apps/server/src/matrix/trigger.ts"
@@ -6823,6 +7003,12 @@
   ],
   "[matrix] 视频生成失败:": [
     "apps/server/src/matrix/trigger.ts"
+  ],
+  "尚未配置可用的文本模型，AI 客服暂时无法回复。": [
+    "apps/server/src/matrix/responder.ts"
+  ],
+  "画布辐条已断开，请确认工作室标签页仍然打开": [
+    "apps/server/src/matrix/responder.ts"
   ],
   "TOONFLOW_SERVER_PORT 必须是 1–65535 之间的整数": [
     "apps/server/src/index.ts"
@@ -6906,7 +7092,12 @@
   "请选择节点输出": [
     "apps/server/src/routes/agent/mentionSource.ts"
   ],
+  "函数参数必须是 object JSON Schema": [
+    "apps/server/src/routes/matrix/spoke/state.ts",
+    "apps/server/src/routes/agent.ts"
+  ],
   "请先登录网站账号": [
+    "apps/server/src/routes/matrix/spoke/grants.ts",
     "apps/server/src/routes/matrix/token.ts",
     "apps/server/src/routes/matrix/agent.ts"
   ],
@@ -7135,9 +7326,6 @@
   ],
   "工具增量必须提供结果": [
     "apps/server/src/routes/singleAgent/toolResult.ts"
-  ],
-  "函数参数必须是 object JSON Schema": [
-    "apps/server/src/routes/agent.ts"
   ],
   "排队或引导需要指定当前任务标识，请刷新对话后重试": [
     "apps/server/src/routes/agent.ts"

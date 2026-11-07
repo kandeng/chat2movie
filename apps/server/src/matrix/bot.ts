@@ -2,8 +2,9 @@ import * as sdk from "matrix-js-sdk";
 import { getSynapseConfig } from "@/utils/appConfig";
 import { brokerToken, isConfigured } from "@/utils/matrix/admin";
 import { createVideoTrigger, type VideoTrigger } from "./trigger";
+import { createResponder, type RoomResponder } from "./responder";
 import { startScheduler } from "./scheduler";
-import { getChatToVideoSettings } from "./settings";
+import { getChatToVideoSettings, getRoomAgentSettings } from "./settings";
 
 // ACT: Task 3 的机器人。以隐藏账号 @vidsay_bot 登录 Synapse，同步目标房间时间线，
 // 监听「!video / 生成视频」指令，命中后调用 trigger 生成视频并回贴 m.video。
@@ -11,18 +12,20 @@ import { getChatToVideoSettings } from "./settings";
 
 let stop: (() => void) | null = null;
 let activeTrigger: VideoTrigger | null = null;
+let activeResponder: RoomResponder | null = null;
 
 // ACT: 供「设置 → 聊天转视频」面板查询机器人运行状态，并复用同一 trigger 做手动生成。
 export function getMatrixBotState(): { running: boolean; trigger: VideoTrigger | null } {
   return { running: Boolean(stop), trigger: activeTrigger };
 }
 
-// 启动机器人；返回停止函数。未配置 Synapse 或未启用时返回 null（不抛错）。
+// 启动机器人；返回停止函数。未配置 Synapse，或两个功能（聊天转视频 / 房间 Agent）都未启用时返回 null（不抛错）。
 export async function startMatrixBot(): Promise<(() => void) | null> {
   if (stop) return stop;
   if (!isConfigured()) return null;
   const settings = getChatToVideoSettings();
-  if (!settings.enabled) return null;
+  const roomAgent = getRoomAgentSettings();
+  if (!settings.enabled && !roomAgent.enabled) return null;
   const synapse = getSynapseConfig();
   const botUserId = synapse.botUserId;
   if (!botUserId) {
@@ -42,6 +45,8 @@ export async function startMatrixBot(): Promise<(() => void) | null> {
   });
   const trigger = createVideoTrigger(client, botUserId);
   activeTrigger = trigger;
+  const responder = roomAgent.enabled ? createResponder(client, botUserId) : null;
+  activeResponder = responder;
   const command = settings.command.toLowerCase();
   // ACT: 首次同步（PREPARED 之前）会回放历史事件，用 prepared 标志 + toStartOfTimeline 过滤，避免机器人对旧指令重复出片。
   let prepared = false;
@@ -59,8 +64,16 @@ export async function startMatrixBot(): Promise<(() => void) | null> {
     // ACT: 原型只服务 config.json 指定的单一房间；未指定 roomId 时对所有房间生效。
     if (synapse.roomId && roomId !== synapse.roomId) return;
     const lower = body.toLowerCase();
-    if (!lower.startsWith(command) && !lower.includes("生成视频")) return;
-    void trigger.trigger(roomId).catch(err => console.error("[matrix] 触发视频生成失败:", err));
+    // ACT: 聊天转视频指令优先走 trigger；其余消息交给房间编排 Agent（customer_service）。
+    if (settings.enabled && (lower.startsWith(command) || lower.includes("生成视频"))) {
+      void trigger.trigger(roomId).catch(err => console.error("[matrix] 触发视频生成失败:", err));
+      return;
+    }
+    if (responder) {
+      const sender = event.getSender() ?? "";
+      const senderName = client.getRoom(roomId)?.getMember(sender)?.name ?? sender;
+      void responder.respond(roomId, body, senderName).catch(err => console.error("[matrix] AI 客服回复失败:", err));
+    }
   });
 
   client.on(sdk.ClientEvent.Sync, (state: sdk.SyncState) => {
@@ -70,13 +83,14 @@ export async function startMatrixBot(): Promise<(() => void) | null> {
   await client.startClient({ initialSyncLimit: 30 });
   // ACT: 确保机器人已在目标房间。用机器人自己的令牌走标准 /join（已加入时是空操作），
   // 不再用 Admin 强制拉人：演示房间由 host 创建，管理员并不在房内，那个接口会 403。
-  if (synapse.roomId) await client.joinRoom(synapse.roomId).catch(() => {});
+  if (synapse.roomId) await client.joinRoom(synapse.roomId).catch(() => { });
   const stopScheduler = startScheduler(trigger, { ...settings.schedule, roomId: synapse.roomId });
 
   const stopFn = () => {
     stopScheduler();
     try { client.stopClient(); } catch (err) { console.error("[matrix] 停止机器人失败:", err); }
     activeTrigger = null;
+    activeResponder = null;
     if (stop === stopFn) stop = null;
   };
   stop = stopFn;

@@ -96,7 +96,7 @@ export function registerAnonymousData() {
 
   function recordPage() {
     if (!collecting) return;
-    const event = ({ "/hello": "page.hello", "/home": "page.home", "/workspace": "page.workspace" } as Record<string, string>)[
+    const event = ({ "/hello": "page.hello", "/home": "page.home", "/workspace": "page.workspace", "/studio": "page.workspace" } as Record<string, string>)[
       router.currentRoute.value.path
     ];
     if (event) events[event] = (events[event] ?? 0) + 1;

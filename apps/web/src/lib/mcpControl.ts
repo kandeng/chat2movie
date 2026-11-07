@@ -133,10 +133,10 @@ export function useMcpControl() {
             const openedDirectory = workspaceStore.project?.directory;
             calls.set(request.callId, controller);
             callSignal.throwIfAborted();
-            await router.push("/workspace");
+            await router.push("/studio");
             await waitForControlValue(() => workspaceControl.value, callSignal);
             callSignal.throwIfAborted();
-            if (router.currentRoute.value.path !== "/workspace" || workspaceStore.project?.directory !== openedDirectory) throw new Error("工作区打开已取消");
+            if (router.currentRoute.value.path !== "/studio" || workspaceStore.project?.directory !== openedDirectory) throw new Error("工作区打开已取消");
             result = getState();
           } else {
             const control = workspaceControl.value;

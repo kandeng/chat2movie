@@ -156,6 +156,7 @@ import {
   type Edge,
   type GraphEdge,
   type GraphNode,
+  type FlowExportObject,
   type EdgeMouseEvent,
   type NodeTypesObject,
   type XYPosition,
@@ -244,6 +245,11 @@ const flow = useVueFlow(props.runtimeKey);
 const nodeDocument: NodeDocumentContext = { targets: shallowReactive(new Map()), mounts: new Map(), states: shallowReactive(new Map()) };
 const canvasDirty = ref(false);
 const canvasSaveError = ref("");
+// ACT: 计划 Task 11 —— 本地语义编辑信号：仅当用户在画布上真正改动语义图（增删/连线/改名/移动）时自增，
+// 供辐条判定「待处理覆盖层」（pending overlay）。远端已提交图收敛（applyGraphSnapshot）与初次装载不计入，
+// 通过 suppressEditSignal 抑制，避免把权威态回落误判成本地未同步改动。
+const localEditSignal = ref(0);
+let suppressEditSignal = false;
 const documentObservers = new Set<() => void>();
 onScopeDispose(() => { for (const release of documentObservers) release(); });
 provide("nodeDocument", nodeDocument);
@@ -392,7 +398,25 @@ function getCanvasContext() {
 }
 const canvasReady = computed(() => !!canvasId.value && !nodeListLoading.value && nodeLoads.size === 0);
 provide("canvas", getCanvasContext);
-defineExpose({ canvasId, canvasReady, getCanvasContext, addNodeAtPointer, readDocumentNode, saveDocumentNode, mountDocumentNode, observeDocumentNode, prepareCanvasDelete, flushSave: flushCanvasSave, cancelSave: cancelCanvasSave,
+// ACT: 计划 Task 10 —— 图扇出。getGraphSnapshot 序列化当前实时语义图（仅 nodes/edges，剔除渲染态 interactionWidth），
+// 供辐条在编排器变更后上报提交；applyGraphSnapshot 把已提交图收敛式落回实时画布（不动视口，视图态保持每设备本地）。
+function getGraphSnapshot(): { nodes: unknown[]; edges: unknown[] } | undefined {
+  if (!canvasId.value) return undefined;
+  const snapshot = toObject();
+  return { nodes: snapshot.nodes, edges: snapshot.edges.map(({ interactionWidth, ...edge }) => edge) };
+}
+function applyGraphSnapshot(graph: { nodes: unknown[]; edges: unknown[] }) {
+  if (!canvasId.value || !Array.isArray(graph?.nodes) || !Array.isArray(graph?.edges)) return;
+  // ACT: 计划 Task 11 —— 远端权威图收敛：抑制本次 setNodes/setEdges 触发的本地编辑信号（post-flush 监听器内），
+  // 使辐条不会把这次回落当成用户未同步改动；nextTick 在 post-flush 队列排空后恢复计数。
+  suppressEditSignal = true;
+  flow.setNodes(graph.nodes as FlowExportObject["nodes"]);
+  flow.setEdges((graph.edges as FlowExportObject["edges"]).map(({ interactionWidth, ...edge }) => edge));
+  // 收敛后的图落盘到本地画布文件；不记入撤销历史（远端提交是权威态，不应被本地 undo 回退）。
+  scheduleCanvasSave();
+  void nextTick(() => { suppressEditSignal = false; });
+}
+defineExpose({ canvasId, canvasReady, getCanvasContext, getGraphSnapshot, applyGraphSnapshot, localEditSignal, addNodeAtPointer, readDocumentNode, saveDocumentNode, mountDocumentNode, observeDocumentNode, prepareCanvasDelete, flushSave: flushCanvasSave, cancelSave: cancelCanvasSave,
   openNodeSearch: () => nodeSearchRef.value?.open(),
   getCanvases: (signal?: AbortSignal) => {
     if (!canvasMenuRef.value) throw new Error("画布菜单尚未就绪");
@@ -699,6 +723,8 @@ function scheduleCanvasSave() {
 function scheduleCanvasChange() {
   scheduleCanvasSave();
   canvasHistory.record();
+  // ACT: 计划 Task 11 —— 仅用户驱动的语义改动才自增本地编辑信号（远端收敛/初次装载经 suppressEditSignal 抑制）。
+  if (!suppressEditSignal) localEditSignal.value++;
 }
 
 const elementSaveWatchers = new Map<Node | Edge, () => void>();

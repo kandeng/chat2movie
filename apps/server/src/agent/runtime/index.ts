@@ -5,7 +5,7 @@ import {
   createAgentSession,
   SessionManager,
 } from "@earendil-works/pi-coding-agent";
-import type { SessionEntry } from "@earendil-works/pi-coding-agent";
+import type { SessionEntry, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import type { CanvasContext, QuestionContext } from "@toonflow/tools-scaffold/runtime";
 import type { AgentEvent, AgentMention, AgentPeerMessage, AgentToolCall } from "@/agent/runtime/types";
 import { agentMentionsSchema, mentionPrompt, snapshotMentions, validateMentionTokens } from "@/agent/runtime/mentions";
@@ -47,6 +47,9 @@ type AgentOptions = {
   streamingBehavior?: "steer" | "followUp";
   canvas?: CanvasContext;
   question?: QuestionContext;
+  // ACT: 计划 Task 11 —— 调用方注入的房间级额外工具（如编排器的工作流提案工具），
+  // 与插件/内置工具一起装配进本轮会话；名称冲突时抛错，避免覆盖内置能力。
+  extraTools?: ToolDefinition[];
   signal?: AbortSignal;
   onCancel?: () => void;
   onCanvasCancel?: (reason: Error) => void;
@@ -68,6 +71,7 @@ export async function run(
     streamingBehavior,
     canvas,
     question,
+    extraTools,
     signal,
     onCancel,
     onCanvasCancel,
@@ -172,6 +176,11 @@ export async function run(
     unregister = registerAgentSession(history.getSessionFile()!, active);
     if (!runId) unregisterRun = registerAgentRun({ runId: active.runId, directory: Promise.resolve(cwd), abort: active.abort, finished: finished.promise });
     const tools = await createAgentTools(cwd, canvas, question);
+    // ACT: 计划 Task 11 —— 注入调用方提供的房间级工具（如工作流提案的 list/commit/reject）。
+    for (const tool of extraTools ?? []) {
+      if (tools.some(existing => existing.name === tool.name)) throw new Error(`工具名称 ${tool.name} 已被占用`);
+      tools.push(tool);
+    }
     if (isMemoryEnabled()) {
       const memoryTool = createMemoryTool();
       if (tools.some(tool => tool.name === memoryTool.name)) throw new Error("工具名称 memory 已被内置全局记忆工具占用");

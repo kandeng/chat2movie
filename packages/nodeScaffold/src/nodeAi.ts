@@ -71,6 +71,26 @@ const modelCacheKey = Symbol.for("toonflow.nodeModels");
 const modelCacheHost = globalThis as typeof globalThis & { [modelCacheKey]?: Map<string, Promise<unknown[]>> };
 const modelCache = modelCacheHost[modelCacheKey] ??= new Map<string, Promise<unknown[]>>();
 
+// ACT: 计划 Task 12 —— 浏览器直连的本地 OpenAI 兼容端点配置：按用户存放在浏览器本地（localStorage），
+// 经 globalThis 符号在所有独立 UMD 之间共享。仅「传输层」与服务端 /api/ai/generate 不同，
+// 其余复用 nodeAi 既有的 pi-ai 客户端（createAssistantMessageEventStream + runAgentLoop）。
+export const LOCAL_PROVIDER_ID = "browser-local";
+export type LocalModelEntry = { id: string; label: string; contextWindow?: number; maxOutputTokens?: number };
+export type LocalModelConfig = { label?: string; baseUrl: string; apiKey?: string; models: LocalModelEntry[] };
+const localConfigKey = Symbol.for("toonflow.localModelConfig");
+const localConfigHost = globalThis as typeof globalThis & { [localConfigKey]?: { config?: LocalModelConfig } };
+const localConfigStore = localConfigHost[localConfigKey] ??= {};
+export function setLocalModelConfig(config: LocalModelConfig | undefined) {
+  localConfigStore.config = config && config.baseUrl.trim() && config.models.length
+    ? { ...config, baseUrl: config.baseUrl.trim(), models: config.models.filter(model => model.id.trim()) }
+    : undefined;
+  if (typeof window !== "undefined") window.dispatchEvent(new Event("toonflow:provider-config-changed"));
+}
+export function getLocalModelConfig(): LocalModelConfig | undefined {
+  const config = localConfigStore.config;
+  return config && config.models.length ? config : undefined;
+}
+
 type MediaPriceCache = {
   prices: Map<string, { expires: number; value: Promise<NodeMediaPrice | null> }>;
   requestedAt: Map<string, number>;
@@ -271,13 +291,161 @@ async function requestModel(input: NodeAiRequest, context: Context, model: Model
   return stream;
 }
 
+// ACT: 计划 Task 12 —— 浏览器直连本地模型的 OpenAI 兼容 Chat Completions 传输层。
+type OpenAiUsage = { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+type OpenAiChatMessage = { role: string; content?: unknown; tool_calls?: { id: string; type: "function"; function: { name: string; arguments: string } }[]; tool_call_id?: string };
+
+function resolveLocalChatUrl(config: LocalModelConfig): string {
+  const base = config.baseUrl.replace(/\/+$/, "");
+  return /\/chat\/completions$/.test(base) ? base : `${base}/chat/completions`;
+}
+
+function toLocalUsage(usage?: OpenAiUsage) {
+  const input = usage?.prompt_tokens ?? 0;
+  const output = usage?.completion_tokens ?? 0;
+  return { input, output, cacheRead: 0, cacheWrite: 0, totalTokens: usage?.total_tokens ?? input + output, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } };
+}
+
+function parseToolArguments(raw: string): Record<string, unknown> {
+  if (!raw.trim()) return {};
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as Record<string, unknown> : { value: parsed };
+  } catch {
+    return { arguments: raw };
+  }
+}
+
+function buildLocalChatMessages(context: Context): OpenAiChatMessage[] {
+  const messages: OpenAiChatMessage[] = [];
+  if (context.systemPrompt?.trim()) messages.push({ role: "system", content: context.systemPrompt });
+  for (const message of context.messages) {
+    if (message.role === "user") {
+      if (typeof message.content === "string") { messages.push({ role: "user", content: message.content }); continue; }
+      messages.push({ role: "user", content: message.content.map(part => part.type === "text"
+        ? { type: "text", text: part.text }
+        : { type: "image_url", image_url: { url: `data:${part.mimeType};base64,${part.data}` } }) });
+      continue;
+    }
+    if (message.role === "assistant") {
+      const text = message.content.filter(part => part.type === "text").map(part => part.text).join("");
+      const toolCalls = message.content.filter(part => part.type === "toolCall");
+      const entry: OpenAiChatMessage = { role: "assistant", content: text || null };
+      if (toolCalls.length) entry.tool_calls = toolCalls.map(part => ({ id: part.id, type: "function", function: { name: part.name, arguments: JSON.stringify(part.arguments ?? {}) } }));
+      messages.push(entry);
+      continue;
+    }
+    const text = message.content.filter(part => part.type === "text").map(part => part.text).join("");
+    messages.push({ role: "tool", tool_call_id: message.toolCallId, content: text });
+  }
+  return messages;
+}
+
+async function requestLocalModel(input: NodeAiRequest, context: Context, model: Model<NodeAiModel["protocol"]>, signal: AbortSignal) {
+  const { onEvent } = input;
+  const stream = createAssistantMessageEventStream();
+  try {
+    const config = getLocalModelConfig();
+    if (!config) throw new Error("尚未配置浏览器直连的本地模型端点，请在设置的「本地模型」中填写本地服务地址");
+    signal.throwIfAborted();
+    const body: Record<string, unknown> = { model: model.id, stream: true, stream_options: { include_usage: true }, messages: buildLocalChatMessages(context) };
+    if (context.tools?.length) {
+      body.tools = context.tools.map(tool => ({ type: "function", function: { name: tool.name, description: tool.description, parameters: tool.parameters } }));
+      body.tool_choice = "auto";
+    }
+    let response: Response;
+    try {
+      response = await fetch(resolveLocalChatUrl(config), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(config.apiKey?.trim() ? { Authorization: `Bearer ${config.apiKey.trim()}` } : {}) },
+        body: JSON.stringify(body), signal,
+      });
+    } catch (error) {
+      if (signal.aborted) throw error;
+      // ACT: fetch 抛 TypeError 通常意味着 CORS 未放行本应用来源、混合内容（HTTPS 页面访问 HTTP 本地端点）被拦截，
+      // 或 Private Network Access 预检失败；此时改用本地转发代理（见设置面板与 docs 说明）。
+      throw new Error(`无法连接本地模型端点（${config.baseUrl}）：可能是 CORS 未放行本应用来源、混合内容被浏览器拦截，或需要私有网络访问授权；可在本地运行一个转发代理后将其地址填入「本地模型」设置。原始错误：${error instanceof Error ? error.message : String(error)}`);
+    }
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      throw new Error(`本地模型请求失败（HTTP ${response.status}）${detail ? `：${detail.slice(0, 500)}` : ""}`);
+    }
+    if (!response.body) throw new Error("本地模型未返回数据流");
+    const reader = response.body.pipeThrough(new TextDecoderStream()).pipeThrough(new EventSourceParserStream()).getReader();
+    let text = "";
+    let reasoning = "";
+    const toolCalls = new Map<number, { id: string; name: string; args: string }>();
+    let finishReason = "";
+    let usage: OpenAiUsage | undefined;
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        signal.throwIfAborted();
+        if (done) break;
+        const data = value.data.trim();
+        if (!data) continue;
+        if (data === "[DONE]") break;
+        const chunk = JSON.parse(data) as { choices?: { delta?: { content?: string; reasoning_content?: string; reasoning?: string; tool_calls?: { index?: number; id?: string; function?: { name?: string; arguments?: string } }[] }; finish_reason?: string | null }[]; usage?: OpenAiUsage };
+        if (chunk.usage) usage = chunk.usage;
+        const choice = chunk.choices?.[0];
+        if (!choice) continue;
+        const delta = choice.delta ?? {};
+        if (typeof delta.content === "string" && delta.content) { text += delta.content; onEvent?.({ type: "text", delta: delta.content }); }
+        const think = delta.reasoning_content ?? delta.reasoning;
+        if (typeof think === "string" && think) { reasoning += think; onEvent?.({ type: "reasoning", delta: think }); }
+        for (const call of delta.tool_calls ?? []) {
+          const index = call.index ?? toolCalls.size;
+          const acc = toolCalls.get(index) ?? { id: "", name: "", args: "" };
+          if (call.id) acc.id = call.id;
+          if (call.function?.name) acc.name += call.function.name;
+          if (call.function?.arguments) acc.args += call.function.arguments;
+          toolCalls.set(index, acc);
+        }
+        if (choice.finish_reason) finishReason = choice.finish_reason;
+      }
+    } finally {
+      await reader.cancel().catch(() => {});
+      reader.releaseLock();
+    }
+    const calls = [...toolCalls.values()].filter(call => call.name);
+    const content: AssistantMessage["content"] = [];
+    if (reasoning) content.push({ type: "thinking", thinking: reasoning });
+    if (text) content.push({ type: "text", text });
+    for (const call of calls) content.push({ type: "toolCall", id: call.id || crypto.randomUUID(), name: call.name, arguments: parseToolArguments(call.args) });
+    if (!content.length) throw new Error("本地模型未返回任何内容，请确认端点与模型名称是否正确");
+    const stopReason = calls.length ? "toolUse" : finishReason === "length" ? "length" : "stop";
+    const message: AssistantMessage = {
+      role: "assistant", content, api: model.api, provider: model.provider, model: model.id,
+      usage: toLocalUsage(usage), stopReason, timestamp: Date.now(),
+    };
+    stream.push({ type: "start", partial: { ...message, content: [], stopReason: "pending" } });
+    stream.push({ type: "done", reason: stopReason, message });
+  } catch (error) {
+    const reason = signal.aborted ? "aborted" : "error";
+    stream.push({ type: "error", reason, error: {
+      role: "assistant", content: [], api: model.api, provider: model.provider, model: model.id, timestamp: Date.now(),
+      stopReason: reason, errorMessage: error instanceof Error ? error.message : "本地模型请求失败",
+      usage: toLocalUsage(),
+    } });
+  }
+  return stream;
+}
+
 export function useNodeAi() {
   const controller = new AbortController();
   onScopeDispose(() => controller.abort());
   const requestSignal = (signal?: AbortSignal) => signal ? AbortSignal.any([controller.signal, signal]) : controller.signal;
 
   async function getModels(signal?: AbortSignal) {
-    return readModels<NodeAiModel>("/api/ai/models", requestSignal(signal));
+    const remote = await readModels<NodeAiModel>("/api/ai/models", requestSignal(signal));
+    // ACT: 计划 Task 12 —— 合并浏览器直连的本地模型；它们不经过服务端，仅在本地端点可达时使用。
+    const local = getLocalModelConfig();
+    if (!local) return remote;
+    const localModels: NodeAiModel[] = local.models.map(model => ({
+      providerId: LOCAL_PROVIDER_ID, providerLabel: local.label?.trim() || "本地模型", modelId: model.id, label: model.label || model.id,
+      protocol: "openai-completions", contextWindow: model.contextWindow, maxOutputTokens: model.maxOutputTokens,
+    }));
+    return [...remote, ...localModels];
   }
 
   async function getMediaModels(signal?: AbortSignal) {
@@ -428,7 +596,9 @@ export function useNodeAi() {
         const text = (event.result as AgentToolResult<unknown>).content.filter(part => part.type === "text").map(part => part.text).join("\n");
         onEvent({ type: "toolEnd", id: event.toolCallId, name: event.toolName, result: event.isError ? text : JSON.parse(text), isError: event.isError });
       }
-    }, callSignal, (_model, context) => requestModel(input, context, model, callSignal));
+    }, callSignal, (_model, context) => providerId === LOCAL_PROVIDER_ID
+      ? requestLocalModel(input, context, model, callSignal)
+      : requestModel(input, context, model, callSignal));
     callSignal.throwIfAborted();
     const message = messages.findLast((message): message is AssistantMessage => message.role === "assistant");
     if (!message) throw new Error("AI 未返回结果");

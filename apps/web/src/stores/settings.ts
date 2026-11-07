@@ -3,6 +3,7 @@ import { normalizeLocale } from "@toonflow/i18n";
 import { computed, nextTick, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
+import { localModelChoices } from "@/stores/localModels";
 import { canvasShortcutFields, defaultCanvasShortcuts, getShortcutBindings, isShortcutAllowed, normalizeShortcut, type CanvasShortcuts } from "@/lib/canvasShortcuts";
 import { normalizeNodeMenu, type StoredNodeMenuItem } from "@toonflow/server/nodeMenu";
 import type { ReasoningEfforts, ThinkingLevel } from "@toonflow/server/modelReasoning";
@@ -99,10 +100,14 @@ export const customProviders = computed<CustomProvider[]>(() => Array.isArray(se
 
 type ResolvedAiModel = { providerId: string; modelId: string; reasoningLevels: ThinkingLevel[] };
 const resolvedModelReasoning = ref<Partial<Record<string, ThinkingLevel[]>>>({});
-export const modelChoices = computed(() => customProviders.value.flatMap(provider => provider.models.map(model => ({
-  value: JSON.stringify([provider.id, model.id]), providerId: provider.id, modelId: model.id, label: model.label, contextWindow: model.contextWindow,
-  reasoningLevels: resolvedModelReasoning.value[JSON.stringify([provider.id, model.id])],
-}))));
+export const modelChoices = computed(() => [
+  ...customProviders.value.flatMap(provider => provider.models.map(model => ({
+    value: JSON.stringify([provider.id, model.id]), providerId: provider.id, modelId: model.id, label: model.label, contextWindow: model.contextWindow,
+    reasoningLevels: resolvedModelReasoning.value[JSON.stringify([provider.id, model.id])],
+  }))),
+  // ACT: 计划 Task 12 —— 追加浏览器直连的本地模型，使其可在模型选择器中被选中。
+  ...localModelChoices.value,
+]);
 
 function applyModelReasoning(models: ResolvedAiModel[]) {
   resolvedModelReasoning.value = Object.fromEntries(models.map(model => [JSON.stringify([model.providerId, model.modelId]), model.reasoningLevels]));

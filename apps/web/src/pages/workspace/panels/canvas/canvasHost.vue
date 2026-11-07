@@ -406,6 +406,11 @@ const mentionSource: MentionCanvasSource = {
 defineExpose({ canvasId, canvasReady, canvasListReady, getCanvasContext, readDocumentNode, readDocumentNodes, focusDocumentNode, saveDocumentNode, mountDocumentNode, observeDocumentNode, resolveDocumentNodeFile, performFileAction, flushSave, cancelSave,
   addNodeAtPointer: () => activeInstance.value?.addNodeAtPointer(),
   openNodeSearch: () => activeInstance.value?.openNodeSearch(),
+  // ACT: 计划 Task 10 —— 图扇出：委托给当前激活画布实例做语义图快照/收敛应用。
+  getGraphSnapshot: () => activeInstance.value?.getGraphSnapshot(),
+  applyGraphSnapshot: (graph: { nodes: unknown[]; edges: unknown[] }) => activeInstance.value?.applyGraphSnapshot(graph),
+  // ACT: 计划 Task 11 —— 本地语义编辑信号：委托当前激活画布实例，供辐条判定待处理覆盖层。
+  localEditSignal: computed(() => activeInstance.value?.localEditSignal ?? 0),
   mentionSource,
   get saveBusy() { return fileActionBusy || [...instances.values()].some(panel => panel.saveBusy); },
 });

@@ -1,4 +1,5 @@
 import conf from "@/utils/conf";
+import { listAiModels } from "@/utils/ai";
 
 // ACT: 聊天转视频原型的设置读取器。设置存于 data/settings.json 的 chatToVideo 块，
 // 由「设置 → 通讯 → 聊天转视频」面板写入；服务端各模块（bot/trigger/scheduler）共用此归一化结果。
@@ -51,4 +52,24 @@ export function getChatToVideoSettings(): ChatToVideoSettings {
       timezone: typeof schedule.timezone === "string" ? schedule.timezone.trim() : "",
     },
   };
+}
+
+// ACT: 房间编排 Agent（customer_service）的设置。它是每个 Matrix 房间的服务器侧 pi-coding 大脑，
+// 与「聊天转视频」相互独立：可以只开 Agent、只开视频，或两者都开。
+export type RoomAgentSettings = { enabled: boolean; providerId: string; modelId: string };
+
+// 读取并归一化房间 Agent 设置。providerId/modelId 未显式配置时留空，由 getRoomAgentModel 回退到首个可用模型。
+export function getRoomAgentSettings(): RoomAgentSettings {
+  const raw = conf.get("settings", {}).roomAgent;
+  const value = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : {};
+  return { enabled: value.enabled !== false, providerId: text(value.providerId, ""), modelId: text(value.modelId, "") };
+}
+
+// 解析房间 Agent 实际使用的文本模型：优先用设置里指定的，否则回退到「设置」中已配置的首个文本模型。
+// 没有任何可用模型时返回 null，调用方据此在房间里给出降级提示，而不是抛错拖垮机器人。
+export function getRoomAgentModel(): { providerId: string; modelId: string } | null {
+  const { providerId, modelId } = getRoomAgentSettings();
+  if (providerId && modelId) return { providerId, modelId };
+  const first = listAiModels()[0];
+  return first ? { providerId: first.providerId, modelId: first.modelId } : null;
 }

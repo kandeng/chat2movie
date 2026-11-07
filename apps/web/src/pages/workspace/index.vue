@@ -34,7 +34,71 @@
           </span>
         </template>
       </el-segmented>
+      <!-- ACT: 就地模式切换器（Task 4）：在 step-by-step（本页 /studio）与 one-shot（/chat）之间切换，带当前房间过去。
+           放在 .workspaceTools（宽 = 100% - --agentWidth）右上角，停靠态下也不会被侧边聊天框遮挡。 -->
+      <modeSwitcher class="modeSwitch" mode="step-by-step" />
       <div class="bottomTools">
+        <!-- ACT: 主持人的生成入口（Task 6）：从聊天框移到工作室画布工具区，仅 step-by-step 且主持人可见。 -->
+        <el-card v-if="isHost && activeRoomId" class="generateMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
+          <div class="generateMenuContent" role="group" :aria-label="translate('视频生成')">
+            <el-tooltip :content="translate('一键生成视频')" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="generateButton" :aria-label="translate('一键生成视频')" @click="startPipeline('auto')">
+                <span class="generateIcon" :style="{ '--tool-icon': `url(&quot;${iconOneShot}&quot;)` }" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+            <el-tooltip :content="translate('分步生成视频')" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="generateButton" :aria-label="translate('分步生成视频')" @click="startPipeline('step')">
+                <span class="generateIcon" :style="{ '--tool-icon': `url(&quot;${iconStepByStep}&quot;)` }" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+          </div>
+        </el-card>
+        <!-- ACT: 计划 Task 11 —— 工作流同步控件（画布权威/冲突策略的入口）：本地改动为待处理覆盖层，
+             「更新」提交提案并自动发房间讨论消息，「同步」回滚到客服 Agent 已同意的最新版本，「恢复」重新应用被覆盖的改动。 -->
+        <el-card v-if="activePanel === 'canvas' && activeRoomId" class="syncMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
+          <div class="syncMenuContent" role="group" :aria-label="translate('工作流同步')">
+            <el-tooltip :content="graphPending ? '有未同步的本地改动，点击提交更新提案' : '当前没有未同步的本地改动'" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="syncButton pending" text type="primary" :disabled="!graphPending" aria-label="更新工作流" @click="submitGraphUpdate">
+                <IconUpload :size="16" aria-hidden="true" />
+                <span class="syncLabel">更新</span>
+                <span v-if="graphPending" class="pendingDot" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="回滚到客服 Agent 已同意的最新版本" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="syncButton" text aria-label="同步工作流" @click="syncGraphToCommitted">
+                <IconRefresh :size="16" aria-hidden="true" />
+                <span class="syncLabel">同步</span>
+              </el-button>
+            </el-tooltip>
+            <el-tooltip v-if="graphCanReapply" content="重新应用上次被覆盖的本地改动" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="syncButton" text aria-label="恢复本地改动" @click="reapplyProposal">
+                <IconRestore :size="16" aria-hidden="true" />
+                <span class="syncLabel">恢复</span>
+              </el-button>
+            </el-tooltip>
+            <!-- ACT: 计划 Task 13 —— 协作授权：用户明确同意后，客服 Agent 才能驱动本机画布/节点与调用本机本地模型。授权按账号记账，随时可关。 -->
+            <el-popover trigger="click" placement="top-end" :width="300" popperClass="grantPopover">
+              <template #reference>
+                <el-button class="syncButton" text :type="roomGrant.driveSpokes || roomGrant.invokeLocalModels ? 'primary' : 'default'" aria-label="协作授权">
+                  <IconShieldLock :size="16" aria-hidden="true" />
+                  <span class="syncLabel">授权</span>
+                </el-button>
+              </template>
+              <div class="grantMenu">
+                <p class="grantIntro">授权后，客服 Agent 才能在本房间驱动你的设备与调用你的本地模型。授权按账号记录，随时可关闭。</p>
+                <label class="grantRow">
+                  <span class="grantLabel">允许驱动我的设备（画布/节点操作）</span>
+                  <el-switch :model-value="roomGrant.driveSpokes" :loading="roomGrantSaving" @change="value => updateGrant({ driveSpokes: !!value })" />
+                </label>
+                <label class="grantRow">
+                  <span class="grantLabel" :class="{ disabled: !hasLocalModel }">允许调用我的本地模型</span>
+                  <el-switch :model-value="roomGrant.invokeLocalModels" :disabled="!hasLocalModel" :loading="roomGrantSaving" @change="value => updateGrant({ invokeLocalModels: !!value })" />
+                </label>
+                <p v-if="!hasLocalModel" class="grantHint">尚未在「设置 → 本地模型」配置可用的本地模型。</p>
+              </div>
+            </el-popover>
+          </div>
+        </el-card>
         <el-card v-if="activePanel === 'canvas'" class="toolMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
           <div class="toolMenuContent" role="toolbar" aria-label="画布工具">
             <el-tooltip content="添加节点" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
@@ -135,7 +199,7 @@ import { translate } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, provide, ref, shallowRef, watch, type ComponentPublicInstance } from "vue";
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import axios from "axios";
-import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase } from "@tabler/icons-vue";
+import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase, IconUpload, IconRefresh, IconRestore, IconShieldLock } from "@tabler/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { QRCode } from "tdesign-vue-next";
 import { useWorkspaceStore } from "@/stores/workspace";
@@ -143,12 +207,21 @@ import { useAuthStore } from "@/stores/auth";
 import { registerWorkspaceControl, waitForControlValue } from "@/lib/mcpControl";
 import anonymousData from "@/lib/anonymousData";
 import { useProviderBalances } from "@/lib/providerBilling";
+import { useMatrixChat } from "@/composables/useMatrixChat";
+import { useRoomSpoke } from "@/composables/useRoomSpoke";
+// ACT: 计划 Task 13 —— 每用户授权（consent）状态与本地模型配置：本地模型能力仅在授权 invokeLocalModels 后才向编排器广告。
+import { loadRoomGrants, roomGrant, roomGrantSaving, saveRoomGrant } from "@/stores/roomGrants";
+import { localModelConfig } from "@/stores/localModels";
 import canvasPanel from "./panels/canvas/canvasHost.vue";
 import type { DocumentNodeOptions } from "./panels/canvas/canvasFiles";
 import workspaceMenu from "./components/workspaceMenu.vue";
 import floatingAgent from "./components/floatingAgent.vue";
+import modeSwitcher from "@/components/modeSwitcher.vue";
 // ACT: 收起态画布底部按钮的图标改用客服图标（与助手欢迎语头像一致）。
 import agentLogoUrl from "@/icons/customer_service.svg";
+// ACT: 主持人生成入口图标（Task 6，自聊天框迁入工作室画布工具区）。
+import iconOneShot from "@/icons/generator_one_shot.svg";
+import iconStepByStep from "@/icons/generator_step_by_step.svg";
 
 const documentPanel = defineAsyncComponent(() => import("./panels/document/index.vue"));
 
@@ -170,21 +243,53 @@ const workspaceStore = useWorkspaceStore();
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
+// ACT: Matrix 房间状态（模块级单例）：activeRoomId 驱动辐条连接与生成入口，isHost 决定主持人专属控件可见性。
+const { activeRoomId, isHost, sendText } = useMatrixChat();
 // ACT: 设置已改为整页路由（对齐群聊页布局）；工作区的「设置」入口直接跳转 /settings。
 function openSettings() { void router.push("/settings"); }
 
 // ACT: 计划 Task 4 —— 从群聊主持人的「自动生成视频 / 分步生成视频」按钮跳转过来时，
 // 把生成意图与归属账号落到 workspace store，并标记当前项目的归属。
 // 真正的自动/分步流水线属于后续任务，这里只负责意图落地与归属记录。
-function seedPipelineFromQuery() {
-  const mode = route.query.mode;
-  if (mode !== "auto" && mode !== "step") return;
-  const roomId = typeof route.query.room === "string" ? route.query.room : "";
+function seedPipeline(mode: "auto" | "step", roomId: string) {
   workspaceStore.setPipeline({ mode, roomId, ownerId: auth.myUserId, createdAt: Date.now() });
   if (workspaceStore.project && auth.myUserId) workspaceStore.markProjectOwner(workspaceStore.project.directory, auth.myUserId);
   ElMessage.success(mode === "auto" ? "已按自动生成模式准备工作室" : "已按分步生成模式准备工作室");
 }
+function seedPipelineFromQuery() {
+  const mode = route.query.mode;
+  if (mode !== "auto" && mode !== "step") return;
+  seedPipeline(mode, typeof route.query.room === "string" ? route.query.room : "");
+}
 watch(() => [route.query.mode, route.query.room], seedPipelineFromQuery, { immediate: true });
+// ACT: 计划 Task 6 —— 主持人在工作室画布工具区直接触发生成（聊天框已移除该入口，保持纯净）。
+function startPipeline(mode: "auto" | "step") {
+  seedPipeline(mode, activeRoomId.value);
+}
+
+// ACT: 计划 Task 11 —— 工作流同步动作：把本地待处理覆盖层提交为更新提案 / 回滚到已提交权威版本。
+async function submitGraphUpdate() {
+  const id = await proposeUpdate();
+  if (id) ElMessage.success("已提交更新提案，等待讨论与客服 Agent 审核");
+  else ElMessage.error("提交更新提案失败，请确认工作室已连接房间");
+}
+async function syncGraphToCommitted() {
+  await synchronize();
+  ElMessage.success("已同步到客服 Agent 已同意的最新版本");
+}
+
+// ACT: 计划 Task 13 —— 每用户协作授权：进入/切换房间时拉取本人授权；开关切换时回写服务器（身份由会话校验）。
+const hasLocalModel = computed(() => !!localModelConfig.value);
+watch(activeRoomId, room => { void loadRoomGrants(room); }, { immediate: true });
+async function updateGrant(patch: { driveSpokes?: boolean; invokeLocalModels?: boolean }) {
+  const next = {
+    driveSpokes: patch.driveSpokes ?? roomGrant.driveSpokes,
+    invokeLocalModels: patch.invokeLocalModels ?? roomGrant.invokeLocalModels,
+  };
+  const ok = await saveRoomGrant(next);
+  if (ok) ElMessage.success("已更新协作授权");
+  else ElMessage.error("更新协作授权失败，请确认已登录且工作室已连接房间");
+}
 
 useProviderBalances();
 const panelOptions = [
@@ -236,6 +341,26 @@ provide("mentionCanvas", () => canvasPanelRef.value?.mentionSource);
 provide("activateCanvasPanel", () => switchPanel("canvas"));
 provide("performWorkspaceFileAction", (directory: string, action: "copy" | "rename" | "move" | "delete", path: string, target?: string, entryType: "canvas" | "directory" = "canvas") =>
   documentPanelRef.value ? documentPanelRef.value.performFileAction(directory, action, path, target, entryType) : performFileAction(directory, action, path, target));
+
+// ACT: 计划 Task 5 —— 单辐条画布中继。打开的工作室（step-by-step）标签页把自己注册为当前 Matrix
+// 房间的辐条：服务器侧编排器（customer_service）经 /api/matrix/spoke/* 下发画布调用，本辐条在实时
+// vue-flow 图上执行并回传结果。仅在已登录且有活动房间时保持连接。
+// ACT: 计划 Task 11 —— 解构出待处理覆盖层状态与「更新/同步/恢复」动作，供画布工具区的工作流同步控件使用。
+const { pending: graphPending, canReapply: graphCanReapply, proposeUpdate, synchronize, reapplyProposal } = useRoomSpoke({
+  roomId: () => activeRoomId.value,
+  active: () => auth.signedIn && !!activeRoomId.value,
+  getCanvasContext: () => canvasPanelRef.value?.getCanvasContext(),
+  canvasId: () => canvasPanelRef.value?.canvasId ?? "",
+  // ACT: 计划 Task 9/13 —— 上报设备能力（按设备注册）：携带 Matrix 设备 id；本地模型可达性仅在
+  // 已配置本地模型且用户已授权 invokeLocalModels 时才广告为 true，未授权则编排器看不到、不会派本地模型任务给本机。
+  capabilities: () => ({ deviceId: auth.deviceId || undefined, localModel: !!localModelConfig.value && roomGrant.invokeLocalModels }),
+  // ACT: 计划 Task 10 —— 图扇出：编排器变更后上报实时语义图；收到已提交图广播时按 revision 幂等收敛到实时画布。
+  getGraph: () => canvasPanelRef.value?.getGraphSnapshot(),
+  applyGraph: graph => canvasPanelRef.value?.applyGraphSnapshot(graph),
+  // ACT: 计划 Task 11 —— 权限/冲突策略：本地编辑信号驱动待处理覆盖层；提交提案后自动在房间发讨论消息。
+  editSignal: () => canvasPanelRef.value?.localEditSignal ?? 0,
+  announce: body => sendText(body),
+});
 
 const controlLifetime = new AbortController();
 onScopeDispose(() => {
@@ -398,7 +523,9 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
   :deep(.balanceCard),
   :deep(.canvasControlsCard),
   .panelSwitcher,
-  .toolMenu {
+  .toolMenu,
+  .syncMenu,
+  .generateMenu {
     background: color-mix(in srgb, var(--el-bg-color-overlay) 70%, transparent);
     backdrop-filter: blur(6px);
     border-color: var(--el-border-color-light);
@@ -460,6 +587,14 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
       }
     }
 
+    .modeSwitch {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 5;
+      pointer-events: auto;
+    }
+
     .bottomTools {
       position: absolute;
       bottom: 15px;
@@ -500,6 +635,71 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
           .toolTrigger { display: inline-flex; }
 
           .el-divider { margin: 0; }
+        }
+      }
+
+      .syncMenu {
+        flex-shrink: 0;
+        transition: none;
+
+        .syncMenuContent {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+
+          .syncButton {
+            position: relative;
+            height: 28px;
+            margin: 0;
+            padding: 0 8px;
+            gap: 4px;
+
+            .syncLabel { font-size: 12px; line-height: 1; }
+
+            .pendingDot {
+              position: absolute;
+              top: 3px;
+              right: 3px;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              background: var(--el-color-warning);
+            }
+          }
+        }
+      }
+
+      .generateMenu {
+        flex-shrink: 0;
+        transition: none;
+
+        .generateMenuContent {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+
+          .generateButton {
+            width: 28px;
+            height: 28px;
+            margin: 0;
+            padding: 0;
+          }
+
+          .generateIcon {
+            display: block;
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            background-color: currentColor;
+            mask-image: var(--tool-icon);
+            mask-repeat: no-repeat;
+            mask-position: center;
+            mask-size: contain;
+            -webkit-mask-image: var(--tool-icon);
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            -webkit-mask-size: contain;
+          }
         }
       }
 
@@ -668,6 +868,41 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
     color: var(--el-text-color-secondary);
     font-size: 12px;
     line-height: 1.7;
+  }
+}
+
+/* ACT: 计划 Task 13 —— 协作授权弹层（内容被 teleport 到 popper，故用顶层选择器）。 */
+.grantMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .grantIntro {
+    margin: 0;
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .grantRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    .grantLabel {
+      font-size: 13px;
+      line-height: 1.4;
+
+      &.disabled { color: var(--el-text-color-placeholder); }
+    }
+  }
+
+  .grantHint {
+    margin: 0;
+    color: var(--el-text-color-placeholder);
+    font-size: 12px;
+    line-height: 1.5;
   }
 }
 </style>
